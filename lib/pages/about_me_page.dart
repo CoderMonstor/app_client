@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../util/bottom_bar/g_nav_bar.dart';
 class AboutMePage extends StatefulWidget {
   const AboutMePage({super.key});
 
@@ -12,6 +14,9 @@ class _AboutMePageState extends State<AboutMePage> {
     return const Scaffold(
       body: Center(
         child: Text('About Me Page'),
+      ),
+      bottomNavigationBar: GNavBar(
+        selectedIndex: 3,
       ),
     );
   }

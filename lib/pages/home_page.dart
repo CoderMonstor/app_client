@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../util/bottom_bar/g_button.dart';
-import '../util/bottom_bar/g_nav.dart'; // 确保导入正确的文件路径
+import '../util/app_bar/my_app_bar.dart';
+import '../util/bottom_bar/g_nav_bar.dart'; // 使用封装后的 GNavBar 组件
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -10,20 +10,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0; // 添加 selectedIndex 状态
-
-  void _onTabChange(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('校园广场'),
-      ),
+      appBar: MyAppbar.build(context,null),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -38,27 +29,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: GNav( // 使用 GNav 构造函数
-        selectedIndex: _selectedIndex,
-        onTabChange: _onTabChange,
-        tabs: const [
-          GButton(
-            icon: Icons.home,
-            text: '首页',
-          ),
-          GButton(
-            icon: Icons.search,
-            text: '搜索',
-          ),
-          GButton(
-            icon: Icons.notifications,
-            text: '通知',
-          ),
-          GButton(
-            icon: Icons.person,
-            text: '个人',
-          ),
-        ],
+      bottomNavigationBar: const GNavBar(
+        selectedIndex: 0,
       ),
     );
   }

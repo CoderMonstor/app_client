@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../util/bottom_bar/g_nav_bar.dart';
 class ResalePage extends StatefulWidget {
   const ResalePage({super.key});
 
@@ -12,6 +14,9 @@ class _ResalePageState extends State<ResalePage> {
     return const Scaffold(
       body: Center(
         child: Text('Resale Page'),
+      ),
+      bottomNavigationBar: GNavBar(
+        selectedIndex: 1,
       ),
     );
   }
