@@ -3,7 +3,7 @@
 * */
 
 
-import 'package:client/config/model/user.dart';
+import 'package:client/core/model/user.dart';
 
 class Profile {
   User? user;

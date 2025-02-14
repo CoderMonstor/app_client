@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../pages/login_register/register_page.dart';
 import '../pages/first_lunch.dart';
-import '../pages/home_page.dart';
+import '../pages/thread/thread_page.dart';
 import '../pages/login_register/login_page.dart';
 import '../pages/resale_page.dart';
 import '../pages/about_me_page.dart';
@@ -16,7 +16,7 @@ final Map<String, WidgetBuilder> routes = {
   '/login': (context) => const LoginPage(),
   '/register': (context) => const RegisterPage(),
   '/root': (context) => const RootRoute(),
-  '/home': (context) => const MyHomePage(),
+  '/home': (context) => const ThreadPage(),
   '/resale': (context) => const ResalePage(),
   '/gather': (context) => const GatherPage(),
   '/about_me': (context) => const AboutMePage(),

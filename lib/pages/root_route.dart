@@ -1,12 +1,16 @@
-import 'package:client/pages/about_me_page.dart';
-import 'package:client/pages/gather_page.dart';
+import 'dart:io';
+
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:client/pages/resale_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:line_icons/line_icons.dart';
 
-import 'home_page.dart';
+import '../util/check_out_up_date.dart';
+import '../util/my_icon/my_icon.dart';
+import 'about_me_page.dart';
+import 'gather_page.dart';
+import 'thread/thread_page.dart';
+
 
 class RootRoute extends StatefulWidget {
   const RootRoute({super.key});
@@ -15,96 +19,104 @@ class RootRoute extends StatefulWidget {
   State<RootRoute> createState() => _RootRouteState();
 }
 
-class _RootRouteState extends State<RootRoute> {
-  final List<Widget> _pageList = [];
-  late int selectedIndex;
+class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final List<Widget> _pageList = []; //列表存放页面
+  late int _selectedIndex; //bar下标
+  late bool _hadCheckUpdate;
+
   late PageController _pageController;
-
-  void onTap(int index) {
-    setState(() {
-      selectedIndex = index;
-      _pageController.jumpToPage(index);
-    });
-  }
-
-  void onPageChanged(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    selectedIndex = 0;
+    _hadCheckUpdate = false;
+    _selectedIndex = 0;
     _pageController = PageController();
-    // 初始化页面列表
+    //初始化页面列表
     _pageList
-      ..add(MyHomePage())
-      ..add(ResalePage())
-      ..add(GatherPage())
-      ..add(AboutMePage());
+      ..add(const ThreadPage())
+      ..add(const ResalePage())
+      ..add(const GatherPage())
+      ..add(const AboutMePage());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: onPageChanged,
-        physics: const NeverScrollableScrollPhysics(),
-        children: _pageList,
-      ),
-      bottomNavigationBar: CupertinoTabBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              LineIcons.home,
-              size: ScreenUtil().setWidth(75),
+    if (!_hadCheckUpdate) {
+      CheckoutUpdateUtil.checkUpdate(context);
+      _hadCheckUpdate = true;
+    }
+    return PopScope(
+      onPopInvoked: (bool didPop) async{
+          await _dialogExitApp(context);
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: onPageChanged,
+          physics: const NeverScrollableScrollPhysics(),
+          children: _pageList,
+        ),
+        bottomNavigationBar: CupertinoTabBar(
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(
+                MyIcons.home,
+              ),
+              label: '主页',
+              activeIcon:
+              Icon(MyIcons.home_fill, ),
             ),
-            label: '首页',
-            activeIcon: Icon(
-              LineIcons.home,
-              size: ScreenUtil().setWidth(75 * 1.2), // 放大1.2倍
+            BottomNavigationBarItem(
+              icon: Icon(
+                MyIcons.explore,
+              ),
+              label: '发现',
+              activeIcon:
+              Icon(MyIcons.explore_fill),
             ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              LineIcons.handHoldingUsDollar,
-              size: ScreenUtil().setWidth(75),
+            BottomNavigationBarItem(
+              icon: Icon(
+                MyIcons.bell,
+              ),
+              label: '通知',
+              activeIcon:
+              Icon(MyIcons.bell_fill,),
             ),
-            label: '交易',
-            activeIcon: Icon(
-              LineIcons.handHoldingUsDollar,
-              size: ScreenUtil().setWidth(75 * 1.2),
+            BottomNavigationBarItem(
+              icon: Icon(MyIcons.user),
+              label: '我的',
+              activeIcon:
+              Icon(MyIcons.user_fill),
             ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              LineIcons.bullhorn,
-              size: ScreenUtil().setWidth(75),
-            ),
-            label: '通知',
-            activeIcon: Icon(
-              LineIcons.bullhorn,
-              size: ScreenUtil().setWidth(75 * 1.2),
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              LineIcons.user,
-              size: ScreenUtil().setWidth(75),
-            ),
-            label: '我',
-            activeIcon: Icon(
-              LineIcons.user,
-              size: ScreenUtil().setWidth(75 * 1.2),
-            ),
-          ),
-        ],
-        currentIndex: selectedIndex,
-        onTap: onTap,
+          ],
+          currentIndex: _selectedIndex,
+          onTap: onTap,
+        ),
       ),
     );
+  }
+
+  Future<bool> _dialogExitApp(BuildContext context) async {
+    if (Platform.isAndroid) {
+      AndroidIntent intent = const AndroidIntent(
+        action: 'android.intent.action.MAIN',
+        category: "android.intent.category.HOME",
+      );
+      await intent.launch();
+    }
+    return Future.value(false);
+  }
+
+  void onPageChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Future onTap(int index) async {
+      _pageController.jumpToPage(index);
   }
 }

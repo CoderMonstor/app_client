@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // 添加导入
-import 'package:client/config/routes.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // 添加导入
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'core/routes.dart'; // 添加导入
 
 void main() async {
   // 确保在使用 SharedPreferences 之前初始化

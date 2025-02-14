@@ -1,7 +1,6 @@
+import 'package:client/util/app_bar/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
-import '../util/bottom_bar/g_nav_bar.dart';
-import '../util/btn_nav.dart';
 class AboutMePage extends StatefulWidget {
   const AboutMePage({super.key});
 
@@ -13,12 +12,10 @@ class _AboutMePageState extends State<AboutMePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: MyAppbar.buildNormalAppbar(context, false, true,null),
       body: const Center(
         child: Text('About Me Page'),
       ),
-      // bottomNavigationBar: GNavBar(
-      //   selectedIndex: 3,
-      // ),
 
     );
   }

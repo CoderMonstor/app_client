@@ -1,4 +1,4 @@
-import 'package:client/pages/home_page.dart';
+import 'package:client/pages/thread/thread_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -76,7 +76,7 @@ class _FirstLaunchPageState extends State<FirstLaunchPage> {
                 _timer.cancel();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  MaterialPageRoute(builder: (context) => const ThreadPage()),
                 );
               },
               style: ElevatedButton.styleFrom(
