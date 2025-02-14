@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../util/bottom_bar/g_nav_bar.dart';
+import '../util/btn_nav.dart';
 class GatherPage extends StatefulWidget {
   const GatherPage({super.key});
 
@@ -11,13 +12,14 @@ class GatherPage extends StatefulWidget {
 class _GatherPageState extends State<GatherPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      body:Center(
         child: Text('GatherPage'),
       ),
-      bottomNavigationBar: GNavBar(
-        selectedIndex: 2,
-      ),
+      // bottomNavigationBar: GNavBar(
+      //   selectedIndex: 2,
+      // ),
+
     );
   }
 }

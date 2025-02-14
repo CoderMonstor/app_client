@@ -1,3 +1,4 @@
+import 'package:client/util/btn_nav.dart';
 import 'package:flutter/material.dart';
 import '../util/app_bar/my_app_bar.dart';
 import '../util/bottom_bar/g_nav_bar.dart'; // 使用封装后的 GNavBar 组件
@@ -14,23 +15,22 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppbar.build(context,null),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '0',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      appBar: MyAppbar.buildNormalAppbar(context,false,true,null),
+      body: Container(
+        color: Colors.blue,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/home');
+                },
+                child: const Text('跳转到首页'),
+              ),
+            ]
+          )
         ),
-      ),
-      bottomNavigationBar: const GNavBar(
-        selectedIndex: 0,
       ),
     );
   }

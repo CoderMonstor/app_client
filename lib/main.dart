@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/home', // 设置初始路由
+      initialRoute: '/root', // 设置初始路由
       routes: routes, // 使用路由映射
       builder: (context, child) {
         ScreenUtil.init(
