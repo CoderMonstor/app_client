@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../pages/login_register/register_page.dart';
 import '../pages/first_lunch.dart';
-import '../pages/thread/thread_page.dart';
+import '../pages/thread/post_page.dart';
 import '../pages/login_register/login_page.dart';
 import '../pages/resale_page.dart';
 import '../pages/about_me_page.dart';

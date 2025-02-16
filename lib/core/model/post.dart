@@ -1,3 +1,23 @@
+/*
+Post类：用于存储帖子信息
+@[param]:
+postId: 帖子id
+userId: 用户id
+username: 用户名
+date: 创建时间
+text: 帖子内容
+imageUrl: 帖子图片
+avatarUrl: 用户头像
+likeNum: 点赞数
+commentNum: 评论数
+forwardNum: 转发数
+isLiked: 是否点赞
+isStar: 是否收藏
+forwardId: 转发id
+forwardName: 转发用户名
+forwardText: 转发内容
+forwardImageUrl: 转发图片
+ */
 class Post {
   late int postId;
   late int userId;

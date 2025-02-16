@@ -3,10 +3,20 @@ import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
+import '../core/global.dart';
 import '../core/list_repository/post_repo.dart';
+import '../core/maps.dart';
 import '../core/model/post.dart';
+import '../core/net/my_api.dart';
+import '../core/net/net.dart';
+import '../core/net/net_request.dart';
+import '../pages/profile_page.dart';
+import '../pages/thread/post_detail.dart';
+import '../util/build_date.dart';
+import '../util/my_icon/my_icon.dart';
+import '../util/toast.dart';
+import 'my_list_tile.dart';
 
 
 class PostCard extends StatefulWidget {
@@ -74,11 +84,11 @@ class _PostCardState extends State<PostCard> {
           child: Container(
             height: ScreenUtil().setWidth(115),
             child: widget.post?.avatarUrl == '' || widget.post?.avatarUrl == null
-                ? Image.asset("images/flutter_logo.png")
+                ? Image.asset("images/app_logo.png")
                 : ClipOval(
-              child: ExtendedImage.network(
-                  '${NetConfig.ip}/images/${widget.post!.avatarUrl}',
-                  cache: true),
+                  child: ExtendedImage.network(
+                      '${NetConfig.ip}/images/${widget.post!.avatarUrl}',
+                      cache: true),
             ),
           ),
         ),
@@ -113,39 +123,6 @@ class _PostCardState extends State<PostCard> {
   _postText(String text) {
     return ExtendedText(
       text,
-      style: TextStyle(fontSize: ScreenUtil().setSp(44)),
-      specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-      onSpecialTextTap: (dynamic parameter) {
-        String str = parameter.toString();
-        print(str);
-        if (parameter.startsWith("@")) {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => ProfilePage(
-                    username: str.substring(1, str.length),
-                  )));
-        } else if (parameter.startsWith("￥-")) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ViewImgPage(
-                    images: [str.substring(2, str.length - 3)],
-                    index: 0,
-                    postId: widget.post?.postId.toString(),
-                  )));
-        }
-      },
-      maxLines: 6,
-      //TODO
-      // overFlowTextSpan: OverFlowTextSpan(children: <TextSpan>[
-      //   TextSpan(
-      //     text: "...查看更多",
-      //     style: TextStyle(
-      //       color: Theme.of(context).primaryColor,
-      //     ),
-      //   )
-      // ]),
     );
   }
 
@@ -162,13 +139,6 @@ class _PostCardState extends State<PostCard> {
     } else if (images.length == 1) {
       return InkWell(
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ViewImgPage(
-                        images: images,
-                        index: 0,
-                        postId: widget.post?.postId.toString())));
           },
           child: Hero(
               tag: '${widget.post!.postId.toString() + images[0]}0',
@@ -188,7 +158,7 @@ class _PostCardState extends State<PostCard> {
         constraints: BoxConstraints(
             maxHeight: ScreenUtil().setWidth(gridHeight[images.length])),
         child: GridView.count(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           childAspectRatio: 1.0,
           mainAxisSpacing: ScreenUtil().setWidth(12),
           crossAxisSpacing: ScreenUtil().setWidth(12),
@@ -196,13 +166,6 @@ class _PostCardState extends State<PostCard> {
           children: List.generate(images.length, (index) {
             return InkWell(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ViewImgPage(
-                            images: images,
-                            index: index,
-                            postId: widget.post?.postId.toString())));
               },
               child: Hero(
                 tag: widget.post!.postId.toString() +
@@ -379,16 +342,6 @@ class _PostCardState extends State<PostCard> {
 
           TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SendPostPage(
-                    type: 2,
-                    post: widget.post,
-                    text: textSend,
-                  ),
-                ),
-              );
             },
             style: TextButton.styleFrom(
               padding: EdgeInsets.all(0),
@@ -398,7 +351,7 @@ class _PostCardState extends State<PostCard> {
             child: Row(
               children: <Widget>[
                 Icon(
-                  AntDesign.retweet,
+                  MyIcons.image,
                   color: Colors.grey,
                   size: ScreenUtil().setWidth(60),
                 ),
@@ -510,51 +463,8 @@ class _PostCardState extends State<PostCard> {
     showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21))),
-            title: Text('确定删除'),
-            content: widget.post?.text == ''
-                ? Container(
-              height: ScreenUtil().setHeight(0),
-            )
-                : ExtendedText(
-              widget.post!.text,
-              style: TextStyle(fontSize: ScreenUtil().setSp(44)),
-              specialTextSpanBuilder:
-              MySpecialTextSpanBuilder(context: context),
-              maxLines: 2,
-              //TODO
-              // overFlowTextSpan: OverFlowTextSpan(children: <TextSpan>[
-              //   TextSpan(
-              //     text: "...",
-              //   )
-              // ]),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('取消'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              TextButton(
-                child: Text('删除'),
-                onPressed: () async {
-                  var res = await NetRequester.request(
-                      Apis.deletePost(widget.post!.postId));
-                  if (res['code'] == '1') {
-                    Toast.popToast('动态已删除');
-                    widget.list?.removeAt(widget.index!);
-                    widget.list?.setState();
-                    Global.profile.user!.postNum--;
-                    UserModel().notifyListeners();
-                  }
-                  Navigator.pop(context);
-                },
-              ),
-
-            ],
+          return const AlertDialog(
+            title: Text('确定删除吗？'),
           );
         });
   }

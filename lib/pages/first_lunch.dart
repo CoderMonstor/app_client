@@ -1,4 +1,4 @@
-import 'package:client/pages/thread/thread_page.dart';
+import 'package:client/pages/thread/post_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 

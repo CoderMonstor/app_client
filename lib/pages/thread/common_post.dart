@@ -6,11 +6,14 @@ orderBy hot:热门 postId:最新
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../core/global.dart';
 import '../../core/list_repository/post_repo.dart';
 import '../../core/model/post.dart';
+import '../../widget/build_indicator.dart';
+import '../../widget/post_card.dart';
 
 class CommonPostPage extends StatefulWidget {
   final int? type;

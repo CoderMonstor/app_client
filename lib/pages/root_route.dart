@@ -4,12 +4,13 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:client/pages/resale_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 
 import '../util/check_out_up_date.dart';
 import '../util/my_icon/my_icon.dart';
 import 'about_me_page.dart';
 import 'gather_page.dart';
-import 'thread/thread_page.dart';
+import 'thread/post_page.dart';
 
 
 class RootRoute extends StatefulWidget {
@@ -63,27 +64,25 @@ class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(
-                MyIcons.home,
-              ),
-              label: '主页',
-              activeIcon:
-              Icon(MyIcons.home_fill, ),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
                 MyIcons.explore,
               ),
-              label: '发现',
+              label: '广场',
               activeIcon:
               Icon(MyIcons.explore_fill),
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                MyIcons.bell,
-              ),
-              label: '通知',
+              icon: Icon(MyIcons.resale_solid),
+              label: '发现',
               activeIcon:
-              Icon(MyIcons.bell_fill,),
+              Icon(MyIcons.resale_filled),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                MyIcons.bullhorn_solid,
+              ),
+              label: '搭子',
+              activeIcon:
+              Icon(MyIcons.bullhorn),
             ),
             BottomNavigationBarItem(
               icon: Icon(MyIcons.user),

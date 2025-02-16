@@ -49,6 +49,9 @@ dependencies:
   path_provider: ^2.1.5
   open_file: ^3.5.10
   android_intent_plus: ^5.3.0
+  extended_nested_scroll_view: ^6.2.1
+  extended_image: ^9.1.0
+  extended_text: ^12.0.1
 
 dev_dependencies:
   flutter_test:
@@ -73,9 +76,10 @@ flutter:
     - assets/images/emotionIcons/
 
   fonts:
-    - family: myicon
+    - family: my_icon
       fonts:
-        - asset: assets/fonts/myicon.ttf
+        - asset: assets/fonts/my_icon.ttf
+        - asset: assets/fonts/MyFlutterApp.ttf
     - family: "chocolate"
       fonts:
         - asset: assets/fonts/chocolate.ttf

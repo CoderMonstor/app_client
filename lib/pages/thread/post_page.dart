@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../util/app_bar/my_app_bar.dart';
 import 'common_post.dart';
 
 class ThreadPage extends StatefulWidget {
@@ -19,7 +18,7 @@ class _ThreadPageState extends State<ThreadPage> {
   void initState() {
     super.initState();
     _pageList..add(const CommonPostPage(type: 6))..add(const CommonPostPage(type: 5));
-    _tabController = TabController(length: 2, vsync: this);
+    // _tabController = TabController(length: 2, vsync:TickerProvider);
     _pageController = PageController();
     _currentIndex = 0;
   }
