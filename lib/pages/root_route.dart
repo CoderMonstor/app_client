@@ -4,7 +4,6 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:client/pages/resale_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 
 import '../util/check_out_up_date.dart';
 import '../util/my_icon/my_icon.dart';
@@ -36,7 +35,7 @@ class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
     _pageController = PageController();
     //初始化页面列表
     _pageList
-      ..add(const ThreadPage())
+      ..add(const PostPage())
       ..add(const ResalePage())
       ..add(const GatherPage())
       ..add(const AboutMePage());
@@ -72,7 +71,7 @@ class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
             ),
             BottomNavigationBarItem(
               icon: Icon(MyIcons.resale_solid),
-              label: '发现',
+              label: '交换',
               activeIcon:
               Icon(MyIcons.resale_filled),
             ),

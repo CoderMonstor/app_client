@@ -12,7 +12,7 @@ class _AboutMePageState extends State<AboutMePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppbar.buildNormalAppbar(context, false, true,null),
+      appBar: MyAppbar.buildNormalAppbar(context, false, true,null,null),
       body: const Center(
         child: Text('About Me Page'),
       ),

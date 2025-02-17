@@ -76,7 +76,7 @@ class _FirstLaunchPageState extends State<FirstLaunchPage> {
                 _timer.cancel();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const ThreadPage()),
+                  MaterialPageRoute(builder: (context) => const PostPage()),
                 );
               },
               style: ElevatedButton.styleFrom(

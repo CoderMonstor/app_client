@@ -1,3 +1,11 @@
+/*
+这个类主要用于获取评论列表
+@[param]:
+postId: 帖子id
+_hasMore: 是否还有更多数据
+pageIndex: 当前页码
+forceRefresh: 是否强制刷新
+ */
 import 'package:flutter/foundation.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import '../model/comment.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyAppbar {
-  static PreferredSizeWidget buildNormalAppbar(BuildContext context, bool backIcon, bool msgIcon, TextEditingController? textController) {
+  static PreferredSizeWidget buildNormalAppbar(BuildContext context, bool backIcon, bool msgIcon, TextEditingController? textController,PreferredSizeWidget? bottom) {
     return AppBar(
       automaticallyImplyLeading: backIcon,
       title: Container(
@@ -64,7 +64,7 @@ class MyAppbar {
         ),
       ] : <Widget>[],
       // 底部占位，避免appbar被底部导航栏遮挡
-      bottom: PreferredSize(
+      bottom: bottom??PreferredSize(
         preferredSize: Size.fromHeight(ScreenUtil().setHeight(4)),
         child: Container(),
       ),
@@ -82,14 +82,12 @@ class MyAppbar {
       ),
     );
   }
+
   // 处理搜索操作
   static void _handleSearch(BuildContext context, String query) {
     if (query.isNotEmpty) {
       // 执行搜索操作
       print('Searching for: $query');
-
-      // 清空输入框
-      // textController.clear();
 
       // 隐藏键盘
       FocusScope.of(context).unfocus();

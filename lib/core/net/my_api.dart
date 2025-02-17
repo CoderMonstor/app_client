@@ -97,7 +97,7 @@ class Apis {
     return '/post/getPostsById?askId=$askId&userId=$userId&page=$page';
   }
 
-  //关注的动态，包括自己的
+  //关注的动态
   static String getFollowPosts(int userId, int page) {
     return '/post/getFollowPosts?userId=$userId&page=$page';
   }
@@ -136,7 +136,7 @@ class Apis {
     int? askId = Global.profile.user!.userId;
     return '/post/searchPost?askId=$askId&page=$page&key=$key&orderBy=$orderBy';
   }
-
+  //根据关注人搜索
   static String searchFollowPost(String key, int page) {
     int? askId = Global.profile.user!.userId;
     return '/post/searchFollowPost?askId=$askId&page=$page&key=$key';

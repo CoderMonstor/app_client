@@ -1,10 +1,14 @@
 /*
-
-
+这是公共动态页面的仓库
+主要功能：
+1.刷新
+2.加载更多
+3.搜索
 */
 import 'package:flutter/foundation.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
+import '../../util/toast.dart';
 import '../model/post.dart';
 import '../net/my_api.dart';
 import '../net/net_request.dart';
@@ -14,8 +18,7 @@ class PostRepository extends LoadingMoreBase<Post> {
   bool _hasMore = true;
   bool forceRefresh = false;
   int userId;
-  //1:getPostsById
-  //2:followPost
+
   int type;
   String? key;
   String? orderBy;
@@ -32,13 +35,13 @@ class PostRepository extends LoadingMoreBase<Post> {
     //for the case, if your list already has 20 items.
     forceRefresh = !clearBeforeRequest;
     var result = await super.refresh(clearBeforeRequest);
-    //if(result){
-    //Toast.popToast('刷新成功');
-    /*final assetsAudioPlayer = AssetsAudioPlayer();
-            assetsAudioPlayer.open(
-              "assets/audio/refresh.mp3",
-            );*/
-    //}
+    if(result){
+    Toast.popToast('刷新成功');
+    // final assetsAudioPlayer = AssetsAudioPlayer();
+    //         assetsAudioPlayer.open(
+    //           "assets/audio/refresh.mp3",
+    //         );
+    }
     forceRefresh = false;
     return result;
   }
