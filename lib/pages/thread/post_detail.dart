@@ -1,3 +1,7 @@
+/*
+动态详情页面
+ */
+
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';

@@ -31,7 +31,7 @@ class Apis {
   }
 
   static String findUserByName(int askId, String username) {
-    return '//user/findUserByName?askId=$askId&username=$username';
+    return '/user/findUserByName?askId=$askId&username=$username';
   }
 
   //修改用户信息

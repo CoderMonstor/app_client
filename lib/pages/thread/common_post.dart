@@ -4,9 +4,6 @@ type 1:动态 2:关注 3:评论 4:回复
 str 搜索内容
 orderBy hot:热门 postId:最新
 */
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -46,20 +43,30 @@ class _CommonPostPageState extends State<CommonPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: _postRepository.refresh,
-        child: LoadingMoreList(
-          ListConfig<Post>(
-            itemBuilder: (BuildContext context, Post item, int index){
-              return PostCard(post: item,list: _postRepository,index: index);
-            },
-            sourceList: _postRepository,
-            indicatorBuilder: _buildIndicator,
-            padding: EdgeInsets.only(
-                top:ScreenUtil().setWidth(20),
-                left: ScreenUtil().setWidth(20),
-                right: ScreenUtil().setWidth(20)
-            ),
+      body: LoadingMoreList(
+        ListConfig<Post>(
+          itemBuilder: (BuildContext context, Post item, int index){
+            return Card(
+              margin: EdgeInsets.only(
+                top: ScreenUtil().setWidth(20),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20)),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20)),
+                ),
+              ),
+            );
+          },
+          sourceList: _postRepository,
+          indicatorBuilder: _buildIndicator,
+          padding: EdgeInsets.only(
+              top:ScreenUtil().setWidth(20),
+              left: ScreenUtil().setWidth(20),
+              right: ScreenUtil().setWidth(20)
           ),
         ),
       ),

@@ -1,3 +1,7 @@
+/*
+根据postId获取帖子信息，并显示
+返回一个帖子卡片，点击可以跳转到帖子详情页
+ */
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +46,8 @@ class _PostCardState extends State<PostCard> {
         padding: EdgeInsets.symmetric(
             horizontal: ScreenUtil().setWidth(24),
             vertical: ScreenUtil().setHeight(30)),
+        // 点击事件，如果点击了帖子，则跳转到帖子详情页
+        // 长按帖子，则弹出一个对话框，让用户选择是否删除帖子
         child: InkWell(
           onLongPress: () {
             _showDialog(context);
@@ -63,7 +69,7 @@ class _PostCardState extends State<PostCard> {
       ),
     );
   }
-
+  // 帖子信息
   _postInfo() {
     return MyListTile(
       top: 0,
@@ -81,7 +87,7 @@ class _PostCardState extends State<PostCard> {
                     builder: (context) =>
                         ProfilePage(userId: widget.post?.userId)));
           },
-          child: Container(
+          child: SizedBox(
             height: ScreenUtil().setWidth(115),
             child: widget.post?.avatarUrl == '' || widget.post?.avatarUrl == null
                 ? Image.asset("images/app_logo.png")
@@ -104,12 +110,11 @@ class _PostCardState extends State<PostCard> {
                   fontSize: ScreenUtil().setSp(34), color: Colors.grey)),
         ],
       ),
-      trailing: Container(
+      trailing: SizedBox(
         width: ScreenUtil().setWidth(90),
-        child:
-        TextButton(
+        child: TextButton(
           style: TextButton.styleFrom(
-            padding: EdgeInsets.all(0),
+            // padding: const EdgeInsets.all(0),
           ),
           onPressed: () {
             _showDialog(context);
@@ -127,7 +132,7 @@ class _PostCardState extends State<PostCard> {
   }
 
   _buildImage() {
-    var url;
+    String url;
     if (widget.post?.forwardId != null) {
       url = widget.post?.forwardImageUrl ?? "";
     } else {
@@ -152,7 +157,9 @@ class _PostCardState extends State<PostCard> {
                     border: Border.all(color: Colors.black12, width: 1),
                     borderRadius:
                     BorderRadius.circular(ScreenUtil().setWidth(21))),
-              )));
+              )
+          )
+      );
     } else {
       return Container(
         constraints: BoxConstraints(
@@ -484,9 +491,7 @@ class _PostCardState extends State<PostCard> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _postText(
-              '@${widget.post!.forwardName} ：${widget.post!.forwardText}' ??
-                  ''),
+          _postText('@${widget.post!.forwardName} ：${widget.post!.forwardText}' ?? ''),
           _buildImage(),
         ],
       );

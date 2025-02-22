@@ -9,8 +9,8 @@ import '../global.dart';
 class NetRequester {
   // dio实例的配置
   static var options = BaseOptions(
-    baseUrl: Global.profile.ip!,
-    contentType: Headers.formUrlEncodedContentType,
+    // baseUrl: Global.profile.ip
+    // contentType: Headers.formUrlEncodedContentType,
   );
 
   static Dio dio = Dio(options);
@@ -20,8 +20,8 @@ class NetRequester {
   // 再修改ip或端口后直接重设dio实例的baseUrl，不然请求的链接是不正确的，是旧的配置并没有更新
   static resetDio() {
     var newOptions = BaseOptions(
-      baseUrl: Global.profile.ip!,
-      contentType: Headers.formUrlEncodedContentType,
+      // baseUrl: Global.profile.ip!,
+      // contentType: Headers.formUrlEncodedContentType,
     );
     dio = Dio(newOptions);
     if (kDebugMode) {
@@ -56,7 +56,7 @@ class NetRequester {
       }
     } on DioException catch (e) {
       if (kDebugMode) {
-        print('dioError:::::$e');
+        print('dioError::::::::$e');
       }
       switch (e.type) {
         case DioExceptionType.cancel:
