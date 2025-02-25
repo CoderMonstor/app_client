@@ -1,14 +1,19 @@
 import 'dart:io';
 
+import 'package:client/pages/login_register/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // 添加导入
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
+import 'core/model/theme_model.dart';
+import 'core/model/user_model.dart';
 import 'core/routes.dart';
-import 'core/theme_provider.dart'; // 添加导入
 
 void main() async {
+  final UserModel user = UserModel();
+  final ThemeModel theme = ThemeModel();
   // 确保在使用 SharedPreferences 之前初始化
   WidgetsFlutterBinding.ensureInitialized();
   // SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -21,19 +26,21 @@ void main() async {
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent,);
 
     // 设置状态栏样式为浅色，并应用到状态栏。
-    // SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
   // 设置设备方向为竖屏
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context)=>ThemeProvider(),
-      child: const MyApp(),
-    ),
-  );
+      MultiProvider(
+            providers: [
+              ChangeNotifierProvider<UserModel>.value(value: user),
+              ChangeNotifierProvider<ThemeModel>.value(value: theme,),
+            ],
+        child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -41,22 +48,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'client',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      initialRoute: '/root', // 设置初始路由
-      routes: routes, // 使用路由映射
-      builder: (context, child) {
-        ScreenUtil.init(
-          context,
-          designSize: const Size(412, 915), // 根据设计稿尺寸设置为 412x915 dp
-        );
-        return child!;
-      },
+    return OKToast(
+      dismissOtherOnShow: true,
+      child: Consumer<ThemeModel>(
+        builder: (BuildContext context, ThemeModel value, Widget? child) {
+          return MaterialApp(
+            title: 'client',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            // initialRoute: '/login', // 设置初始路由
+            home: LoginPage(),
+            routes: routes, // 使用路由映射
+            builder: (context, child) {
+              ScreenUtil.init(
+                context,
+                designSize: const Size(412, 915), // 根据设计稿尺寸设置为 412x915 dp
+              );
+              return child!;
+            },
+          );
+        },
+    ),
     );
   }
 }

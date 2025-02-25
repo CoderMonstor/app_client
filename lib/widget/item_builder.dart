@@ -27,7 +27,7 @@ class ItemBuilder {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: Text(post.text),
+      child: Text(post.text!),
     );
   }
 

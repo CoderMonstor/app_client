@@ -15,8 +15,8 @@ import '../core/model/post.dart';
 import '../core/net/my_api.dart';
 import '../core/net/net.dart';
 import '../core/net/net_request.dart';
-import '../pages/profile_page.dart';
-import '../pages/thread/post_detail.dart';
+import '../pages/user/profile_page.dart';
+import '../pages/post/post_detail.dart';
 import '../util/build_date.dart';
 import '../util/my_icon/my_icon.dart';
 import '../util/toast.dart';
@@ -77,7 +77,7 @@ class _PostCardState extends State<PostCard> {
       left: 0,
       right: 0,
       useScreenUtil: false,
-      leading: Container(
+      leading: SizedBox(
         width: ScreenUtil().setWidth(115),
         child: InkWell(
           onTap: () {
@@ -103,9 +103,9 @@ class _PostCardState extends State<PostCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(widget.post!.username,
+          Text(widget.post!.username!,
               style: TextStyle(fontSize: ScreenUtil().setSp(52))),
-          Text(buildDate(widget.post!.date),
+          Text(buildDate(widget.post!.date!),
               style: TextStyle(
                   fontSize: ScreenUtil().setSp(34), color: Colors.grey)),
         ],
@@ -267,28 +267,26 @@ class _PostCardState extends State<PostCard> {
         children: <Widget>[
           TextButton(
             onPressed: () async {
-              if (widget.post?.isLiked == 0) {
-                var res = await NetRequester.request(
-                    Apis.likePost(widget.post!.postId));
+              if (widget.post != null && widget.post!.isLiked == 0) {
+                var res = await NetRequester.request(Apis.likePost(widget.post!.postId!));
                 if (res['code'] == '1') {
                   setState(() {
-                    widget.post?.isLiked = 1;
-                    widget.post?.likeNum++;
+                    widget.post!.isLiked = 1;
+                    widget.post!.likeNum = (widget.post!.likeNum ?? 0) + 1;
                   });
                 }
-              } else {
-                var res = await NetRequester.request(
-                    Apis.cancelLikePost(widget.post!.postId));
+              } else if (widget.post != null && widget.post!.isLiked == 1) {
+                var res = await NetRequester.request(Apis.cancelLikePost(widget.post!.postId!));
                 if (res['code'] == '1') {
                   setState(() {
-                    widget.post?.isLiked = 0;
-                    widget.post?.likeNum--;
+                    widget.post!.isLiked = 0;
+                    widget.post!.likeNum = (widget.post!.likeNum ?? 0) - 1;
                   });
                 }
               }
             },
             style: TextButton.styleFrom(
-              padding: EdgeInsets.all(0),
+              // padding: EdgeInsets.all(0),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
@@ -351,7 +349,7 @@ class _PostCardState extends State<PostCard> {
             onPressed: () {
             },
             style: TextButton.styleFrom(
-              padding: EdgeInsets.all(0),
+              // padding: EdgeInsets.all(0),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
@@ -420,9 +418,9 @@ class _PostCardState extends State<PostCard> {
                               onTap: () async {
                                 String url;
                                 if (widget.post?.isStar == 1) {
-                                  url = Apis.cancelStarPost(widget.post!.postId);
+                                  url = Apis.cancelStarPost(widget.post!.postId!);
                                 } else {
-                                  url = Apis.starPost(widget.post!.postId);
+                                  url = Apis.starPost(widget.post!.postId!);
                                 }
                                 var res = await NetRequester.request(url);
                                 if (res['code'] == '1') {

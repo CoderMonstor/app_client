@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 
-import 'bunny.dart';
+import '../../widget/lottie/bunny.dart';
 
 /// Android版实现：https://github.com/omarsahl/Flopsy
-/// 感谢Flopsy项目提供的思路及素材
 class LottieDemo extends StatefulWidget {
 
   const LottieDemo({super.key,});
 
   @override
-  _LottieDemoState createState() => _LottieDemoState();
+  State<LottieDemo> createState() => _LottieDemoState();
 }
 
 const Color _primaryColor = Color(0xFFFFBCBF);
@@ -110,7 +109,7 @@ class _LottieDemoState extends State<LottieDemo> with TickerProviderStateMixin {
         primaryColor: _primaryColor,
         textSelectionTheme: TextSelectionThemeData(
           selectionColor: _primaryColor.withAlpha(70),
-          selectionHandleColor: _primaryColor,  // 覆盖`selectionHandleColor`不起作用 https://github.com/flutter/flutter/issues/74890
+          selectionHandleColor: _primaryColor,
           cursorColor: _primaryColor,
         ),
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: _primaryColor),

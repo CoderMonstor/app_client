@@ -30,6 +30,20 @@ class User {
     this.isFollow,
   });
 
+  User.none()
+      : userId = 0,
+        email = '1508537662@qq.com',
+        username = 'lisa',
+        avatarUrl = '',
+        bio = '1508537662',
+        birthDay = '2000-01-01',
+        gender = 1,
+        city = '宁夏-银川',
+        backImgUrl = '',
+        postNum = 0,
+        fanNum = 0,
+        followNum = 0,
+        isFollow = 0;
 
   User.fromJson(Map<String, dynamic> json)
       : userId = json['userId'] ?? 0,

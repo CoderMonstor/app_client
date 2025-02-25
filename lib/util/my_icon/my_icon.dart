@@ -22,6 +22,7 @@ class MyIcons {
   static const IconData smile = IconData(0xe783, fontFamily: 'my_icon');
   static const IconData at = IconData(0xe660, fontFamily: 'my_icon');
 
+  // bell
   static const IconData bell = IconData(0xe7c5, fontFamily: 'my_icon');
   static const IconData bell_fill = IconData(0xe868, fontFamily: 'my_icon');
   static const IconData explore = IconData(0xe622, fontFamily: 'my_icon');
@@ -30,16 +31,11 @@ class MyIcons {
   static const IconData fire_fill = IconData(0xe866, fontFamily: 'my_icon');
   static const IconData user = IconData(0xe8c8, fontFamily: 'my_icon');
   static const IconData user_fill = IconData(0xe8c9, fontFamily: 'my_icon');
+  //home
   static const IconData home = IconData(0xe7c6, fontFamily: 'my_icon');
   static const IconData home_fill = IconData(0xe867, fontFamily: 'my_icon');
   static const IconData like = IconData(0xe7c8, fontFamily: 'my_icon');
   static const IconData like_fill = IconData(0xe869, fontFamily: 'my_icon');
 
-//add some more icons
-  static const IconData resale_filled = IconData(0xe800, fontFamily: 'my_icon');
-  static const IconData resale_solid = IconData(0xe801, fontFamily: 'my_icon');
-  static const IconData message = IconData(0xe802, fontFamily: 'my_icon');
-  static const IconData message_unread = IconData(0xe803, fontFamily: 'my_icon');
-  static const IconData bullhorn = IconData(0xe804, fontFamily: 'my_icon');
-  static const IconData bullhorn_solid = IconData(0xe805, fontFamily: 'my_icon');
+//add some more icon
 }

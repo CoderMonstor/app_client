@@ -37,10 +37,6 @@ class PostRepository extends LoadingMoreBase<Post> {
     var result = await super.refresh(clearBeforeRequest);
     if(result){
     Toast.popToast('刷新成功');
-    // final assetsAudioPlayer = AssetsAudioPlayer();
-    //         assetsAudioPlayer.open(
-    //           "assets/audio/refresh.mp3",
-    //         );
     }
     forceRefresh = false;
     return result;

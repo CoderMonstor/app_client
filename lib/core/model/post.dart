@@ -19,40 +19,40 @@ forwardText: 转发内容
 forwardImageUrl: 转发图片
  */
 class Post {
-  late int postId;
-  late int userId;
-  late String username;
-  late String date;
-  late String text;
-  late String imageUrl;
-  late String avatarUrl;
-  late int likeNum;
-  late int commentNum;
-  late int forwardNum;
-  late int isLiked;
-  late int isStar;
-  late int forwardId;
-  late String forwardName;
-  late String forwardText;
-  late String forwardImageUrl;
+   int? postId;
+   int? userId;
+   String? username;
+   String? date;
+   String? text;
+   String? imageUrl;
+   String? avatarUrl;
+   int? likeNum;
+   int? commentNum;
+   int? forwardNum;
+   int? isLiked;
+   int? isStar;
+   int? forwardId;
+   String? forwardName;
+   String? forwardText;
+   String? forwardImageUrl;
 
   Post({
-    required this.postId,
-    required this.userId,
-    required this.username,
-    required this.date,
-    required this.text,
-    required this.imageUrl,
-    required this.avatarUrl,
-    required this.likeNum,
-    required this.commentNum,
-    required this.forwardNum,
-    required this.isLiked,
-    required this.isStar,
-    required this.forwardId,
-    required this.forwardName,
-    required this.forwardText,
-    required this.forwardImageUrl,
+     this.postId,
+     this.userId,
+     this.username,
+     this.date,
+     this.text,
+     this.imageUrl,
+     this.avatarUrl,
+     this.likeNum,
+     this.commentNum,
+     this.forwardNum,
+     this.isLiked,
+     this.isStar,
+     this.forwardId,
+     this.forwardName,
+     this.forwardText,
+     this.forwardImageUrl,
   });
 
   Post.fromJson(Map<String, dynamic> json)

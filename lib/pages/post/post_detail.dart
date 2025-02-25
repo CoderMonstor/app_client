@@ -72,9 +72,11 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
     var res = await NetRequester.request(Apis.getPostByPostId(widget.postId!));
     if (res['code'] == '1' && res['data'] != null) {
       _post = Post.fromJson(res['data']);
+      // 确保 likeNum 有默认值
+      _post.likeNum ??= 0;
       _userRepository = UserRepository(_post.postId, 3);
-      _postRepository = PostRepository(_post.postId, 4);
-      _commentRepository = CommentRepository(_post.postId);
+      _postRepository = PostRepository(_post.postId!, 4);
+      _commentRepository = CommentRepository(_post.postId!);
     } else {
       Toast.popToast('内容已经不在了');
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -227,7 +229,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
       child: Card(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
-        margin: EdgeInsets.all(0),
+        // margin: EdgeInsets.all(0),
         elevation: 0,
         child: const Text("_post Info"),
       ),
@@ -236,7 +238,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
 
   _buildContent() {
     var text = _post.text;
-    var index = text.indexOf('//@');
+    var index = text?.indexOf('//@');
     if (_post.imageUrl != '') {
       switch (index) {
         case -1:
@@ -246,10 +248,10 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
           text = ' ￥-${_post.imageUrl}-￥$text';
           break;
         default:
-          text = '${text.substring(0, index - 1)} ￥-${_post.imageUrl}-￥${text.substring(index, text.length)}';
+          text = '${text?.substring(0, index! - 1)} ￥-${_post.imageUrl}-￥${text?.substring(index!, text.length)}';
       }
     }
-    textSend = text;
+    textSend = text!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -387,26 +389,24 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
               Container(
                 width: ScreenUtil().setWidth(160),
                 child: TextButton(
-                  onPressed: () async {
-                    if (_post.isLiked == 0) {
-                      var res = await NetRequester.request(
-                          Apis.likePost(_post.postId));
-                      if (res['code'] == '1') {
-                        setState(() {
-                          _post.isLiked = 1;
-                          _post.likeNum++;
-                        });
+                    onPressed: () async {
+                      if (_post.isLiked == 0) {
+                        var res = await NetRequester.request(Apis.likePost(_post.postId!));
+                        if (res['code'] == '1') {
+                          setState(() {
+                            _post.isLiked = 1;
+                            _post.likeNum = (_post.likeNum ?? 0) + 1;
+                          });
+                        }
+                      } else {
+                        var res = await NetRequester.request(Apis.cancelLikePost(_post.postId!));
+                        if (res['code'] == '1') {
+                          setState(() {
+                            _post.isLiked = 0;
+                            _post.likeNum = (_post.likeNum ?? 0) - 1;
+                          });
+                        }
                       }
-                    } else {
-                      var res = await NetRequester.request(
-                          Apis.cancelLikePost(_post.postId));
-                      if (res['code'] == '1') {
-                        setState(() {
-                          _post.isLiked = 0;
-                          _post.likeNum--;
-                        });
-                      }
-                    }
                   },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,

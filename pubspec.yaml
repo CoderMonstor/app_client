@@ -54,6 +54,8 @@ dependencies:
   extended_image: ^9.1.0
   extended_text: ^13.0.1
   lottie: ^3.1.0
+  image_picker: ^1.1.2
+  chat_bubbles: ^1.7.0
 
 dev_dependencies:
   flutter_test:
@@ -77,12 +79,15 @@ flutter:
     - assets/images/
     - assets/images/emotionIcons/
     - assets/images/head/
+    - assets/lottie/
 
   fonts:
     - family: my_icon
       fonts:
         - asset: assets/fonts/my_icon.ttf
-        - asset: assets/fonts/MyFlutterApp.ttf
+    - family:  MyApp
+      fonts:
+        - asset: assets/fonts/MyApp.ttf
     - family: "chocolate"
       fonts:
         - asset: assets/fonts/chocolate.ttf

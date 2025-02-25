@@ -1,16 +1,16 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../../util/toast.dart';
 import '../global.dart';
+import 'net.dart';
 
 class NetRequester {
   // dio实例的配置
   static var options = BaseOptions(
-    // baseUrl: Global.profile.ip
-    // contentType: Headers.formUrlEncodedContentType,
+    baseUrl: Global.profile.ip ?? NetConfig.ip,
+    contentType: Headers.formUrlEncodedContentType,
   );
 
   static Dio dio = Dio(options);
@@ -20,8 +20,8 @@ class NetRequester {
   // 再修改ip或端口后直接重设dio实例的baseUrl，不然请求的链接是不正确的，是旧的配置并没有更新
   static resetDio() {
     var newOptions = BaseOptions(
-      // baseUrl: Global.profile.ip!,
-      // contentType: Headers.formUrlEncodedContentType,
+      baseUrl: Global.profile.ip ?? NetConfig.ip,
+      contentType: Headers.formUrlEncodedContentType,
     );
     dio = Dio(newOptions);
     if (kDebugMode) {
@@ -33,9 +33,16 @@ class NetRequester {
   /// 通用的网络请求方法，需传入@param[url]，
   /// @param[data]是可选参数，大部分[ApiAddress]返回的都是带参数的url，不需要[data]，提交审批结果那里是需要data的
   /// @param[file]也是可选参数，是上传图片的时候需要用到的
-  static Future request(String url,
-      {FormData? file, Map<String, dynamic>? data}) async {
+  static Future request(String url, {FormData? file, Map? data}) async {
     try {
+      if (kDebugMode) {
+        print('dio Connection ::::::::');
+        print('baseOption baseUrl: ${options.baseUrl}');
+        print('baseOption contentType: ${options.contentType}');
+        print('Full URL: ${options.baseUrl}$url'); // 打印完整 URL
+        print('Global profile ip: ${Global.profile.ip}');
+        print('NetConfig ip: ${NetConfig.ip}');
+      }
       if (data != null) {
         _response = await dio.post(url, data: data);
       } else if (file != null) {

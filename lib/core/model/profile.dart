@@ -27,7 +27,7 @@ class Profile {
   ///isDark 属性为 false，
   ///ip 属性为空字符串。
   Profile.none()
-      : user = User(),
+      : user = User.none(),
         searchList = [],
         theme = 0,
         isDark = false,
@@ -40,6 +40,8 @@ class Profile {
         theme = json['theme'] ?? 0,
         isDark = json['isDark'] ?? false,
         ip = json['ip'] ?? '';
+
+
 
   ///将 Profile 对象转换为 json 数据
   Map<String, dynamic> toJson() {

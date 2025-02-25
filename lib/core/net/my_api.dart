@@ -114,7 +114,7 @@ class Apis {
 
   //postId查找post
   static String getPostByPostId(int postId) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/post/getPostByPostId?postId=$postId&userId=$userId';
   }
 
@@ -128,22 +128,22 @@ class Apis {
   }
 
   static String getHotPost(int page) {
-    int? askId = Global.profile.user!.userId;
+    int? askId = Global.profile.user?.userId;
     return '/post/getHotPost?askId=$askId&page=$page';
   }
 
   static String searchPost(String key, String orderBy, int page) {
-    int? askId = Global.profile.user!.userId;
+    int? askId = Global.profile.user?.userId;
     return '/post/searchPost?askId=$askId&page=$page&key=$key&orderBy=$orderBy';
   }
   //根据关注人搜索
   static String searchFollowPost(String key, int page) {
-    int? askId = Global.profile.user!.userId;
+    int? askId = Global.profile.user?.userId;
     return '/post/searchFollowPost?askId=$askId&page=$page&key=$key';
   }
 
   static String getLikedUser(int postId, int page) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/user/getLikedUser?userId=$userId&postId=$postId&page=$page';
   }
 
@@ -151,19 +151,19 @@ class Apis {
   * 评论
   * */
   static String getCommentByPostId(int postId, int page) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/comment/getCommentByPostId?askId=$userId&postId=$postId&page=$page';
   }
 
   //点赞评论
   static String likeComment(int commentId) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/comment/likeComment?userId=$userId&commentId=$commentId';
   }
 
   //取消赞评论
   static String cancelLikeComment(int commentId) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/comment/cancelLikeComment?userId=$userId&commentId=$commentId';
   }
 
@@ -176,18 +176,18 @@ class Apis {
   * 回复
   * */
   static String likeReply(int replyId) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/reply/likeReply?userId=$userId&replyId=$replyId';
   }
 
   //取消赞
   static String cancelLikeReply(int replyId) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/reply/cancelLikeReply?userId=$userId&replyId=$replyId';
   }
 
   static String getReplyByCommentId(int commentId, int page) {
-    int? userId = Global.profile.user!.userId;
+    int? userId = Global.profile.user?.userId;
     return '/reply/getReplyByCommentId?askId=$userId&commentId=$commentId&page=$page';
   }
 
@@ -195,10 +195,8 @@ class Apis {
     return '/reply/deleteReply?replyId=$replyId';
   }
 
-
-
   //检查更新
-  static String checkUpdate() {
-    return '/user/checkUpdate';
-  }
+  // static String checkUpdate() {
+  //   return '/user/checkUpdate';
+  // }
 }

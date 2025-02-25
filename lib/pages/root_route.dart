@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
+import 'package:client/pages/post/post_page.dart';
 import 'package:client/pages/resale_page.dart';
+import 'package:client/util/my_icon/my_app_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../util/check_out_up_date.dart';
 import '../util/my_icon/my_icon.dart';
 import 'about_me_page.dart';
 import 'gather_page.dart';
-import 'thread/post_page.dart';
 
 
 class RootRoute extends StatefulWidget {
@@ -44,7 +44,7 @@ class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     if (!_hadCheckUpdate) {
-      CheckoutUpdateUtil.checkUpdate(context);
+      // CheckoutUpdateUtil.checkUpdate(context);
       _hadCheckUpdate = true;
     }
     return PopScope(
@@ -70,18 +70,18 @@ class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
               Icon(MyIcons.explore_fill),
             ),
             BottomNavigationBarItem(
-              icon: Icon(MyIcons.resale_solid),
+              icon: Icon(MyAppIcon.resale_solid),
               label: '交换',
               activeIcon:
-              Icon(MyIcons.resale_filled),
+              Icon(MyAppIcon.sale),
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                MyIcons.bullhorn_solid,
+                MyAppIcon.bullhorn_solid,
               ),
               label: '搭子',
               activeIcon:
-              Icon(MyIcons.bullhorn),
+              Icon(MyAppIcon.bullhorn),
             ),
             BottomNavigationBarItem(
               icon: Icon(MyIcons.user),
