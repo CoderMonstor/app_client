@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
               useMaterial3: true,
             ),
             // initialRoute: '/login', // 设置初始路由
-            home: LoginPage(),
+            home: const LoginPage(),
             routes: routes, // 使用路由映射
             builder: (context, child) {
               ScreenUtil.init(

@@ -8,7 +8,7 @@ import '../pages/first_lunch.dart';
 import '../pages/login_register/login_page.dart';
 import '../pages/post/post_page.dart';
 import '../pages/resale_page.dart';
-import '../pages/about_me_page.dart';
+import '../pages/user/about_me_page.dart';
 import '../pages/root_route.dart';
 import '../pages/search/search_page.dart';
 

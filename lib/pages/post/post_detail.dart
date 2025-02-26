@@ -213,7 +213,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
         elevation: 0,
-        margin: EdgeInsets.all(0),
+        margin: const EdgeInsets.all(0),
         child: Container(
           padding: EdgeInsets.symmetric(
               horizontal: ScreenUtil().setWidth(42),

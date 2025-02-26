@@ -72,10 +72,10 @@ class _PostCardState extends State<PostCard> {
   // 帖子信息
   _postInfo() {
     return MyListTile(
-      top: 0,
+      // top: 0,
       bottom: ScreenUtil().setWidth(20),
-      left: 0,
-      right: 0,
+      // left: 0,
+      // right: 0,
       useScreenUtil: false,
       leading: SizedBox(
         width: ScreenUtil().setWidth(115),
@@ -90,7 +90,7 @@ class _PostCardState extends State<PostCard> {
           child: SizedBox(
             height: ScreenUtil().setWidth(115),
             child: widget.post?.avatarUrl == '' || widget.post?.avatarUrl == null
-                ? Image.asset("images/app_logo.png")
+                ? Image.asset("assets/images/app_logo.png")
                 : ClipOval(
                   child: ExtendedImage.network(
                       '${NetConfig.ip}/images/${widget.post!.avatarUrl}',
@@ -363,7 +363,7 @@ class _PostCardState extends State<PostCard> {
                 SizedBox(width: ScreenUtil().setWidth(5)),
                 Text(
                   widget.post!.forwardNum.toString(),
-                  style: TextStyle(color: Colors.grey),
+                  style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),
@@ -378,86 +378,84 @@ class _PostCardState extends State<PostCard> {
     showDialog(
         context: context,
         builder: (context) {
-          return Container(
-            child: Material(
-              textStyle: TextStyle(
-                  fontSize: ScreenUtil().setSp(48), color: Colors.black),
-              color: Colors.black12,
-              child: Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+          return Material(
+            textStyle: TextStyle(
+                fontSize: ScreenUtil().setSp(48), color: Colors.black),
+            color: Colors.black12,
+            child: Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    color: Colors.transparent,
+                    width: ScreenUtil().setWidth(1080),
+                    height: ScreenUtil().setHeight(1920),
+                  ),
+                ),
+                Center(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(ScreenUtil().setWidth(21)),
+                    ),
                     child: Container(
-                      color: Colors.transparent,
-                      width: ScreenUtil().setWidth(1080),
-                      height: ScreenUtil().setHeight(1920),
-                    ),
-                  ),
-                  Center(
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(ScreenUtil().setWidth(21)),
-                      ),
-                      child: Container(
-                        width: ScreenUtil().setWidth(740),
-                        height: ScreenUtil().setHeight(
-                            widget.post?.userId != Global.profile.user!.userId
-                                ? 400
-                                : 500),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(60),
-                            vertical: ScreenUtil().setHeight(40)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            MyListTile(
-                              onTap: () async {
-                                String url;
-                                if (widget.post?.isStar == 1) {
-                                  url = Apis.cancelStarPost(widget.post!.postId!);
-                                } else {
-                                  url = Apis.starPost(widget.post!.postId!);
-                                }
-                                var res = await NetRequester.request(url);
-                                if (res['code'] == '1') {
-                                  Navigator.pop(context);
-                                  Toast.popToast('已收藏');
-                                  widget.post?.isStar =
-                                  widget.post?.isStar == 1 ? 0 : 1;
-                                }
-                              },
-                              leading:
-                              Text(widget.post?.isStar == 0 ? '收藏' : '取消收藏'),
-                            ),
-                            MyListTile(
-                              onTap: () {
+                      width: ScreenUtil().setWidth(740),
+                      height: ScreenUtil().setHeight(
+                          widget.post?.userId != Global.profile.user!.userId
+                              ? 400
+                              : 500),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(60),
+                          vertical: ScreenUtil().setHeight(40)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          MyListTile(
+                            onTap: () async {
+                              String url;
+                              if (widget.post?.isStar == 1) {
+                                url = Apis.cancelStarPost(widget.post!.postId!);
+                              } else {
+                                url = Apis.starPost(widget.post!.postId!);
+                              }
+                              var res = await NetRequester.request(url);
+                              if (res['code'] == '1') {
                                 Navigator.pop(context);
-                              },
-                              leading: Text('复制'),
+                                Toast.popToast('已收藏');
+                                widget.post?.isStar =
+                                widget.post?.isStar == 1 ? 0 : 1;
+                              }
+                            },
+                            leading:
+                            Text(widget.post?.isStar == 0 ? '收藏' : '取消收藏'),
+                          ),
+                          MyListTile(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            leading: const Text('复制'),
+                          ),
+                          MyListTile(
+                            onTap: () {},
+                            leading: const Text('举报'),
+                          ),
+                          Offstage(
+                            offstage: widget.post?.userId !=
+                                Global.profile.user!.userId,
+                            child: MyListTile(
+                              onTap: _deletePost,
+                              leading: const Text('删除'),
                             ),
-                            MyListTile(
-                              onTap: () {},
-                              leading: Text('举报'),
-                            ),
-                            Offstage(
-                              offstage: widget.post?.userId !=
-                                  Global.profile.user!.userId,
-                              child: MyListTile(
-                                onTap: _deletePost,
-                                leading: Text('删除'),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         });
@@ -476,9 +474,9 @@ class _PostCardState extends State<PostCard> {
 
   _buildForward() {
     if (widget.post?.forwardId != null && widget.post?.forwardName == null) {
-      return Container(
+      return const SizedBox(
         width: double.infinity,
-        child: const Column(
+        child: Column(
           children: <Widget>[
             Icon(Icons.error_outline),
             Text('哦豁，内容已不在了'),

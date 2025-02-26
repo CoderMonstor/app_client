@@ -56,6 +56,9 @@ dependencies:
   lottie: ^3.1.0
   image_picker: ^1.1.2
   chat_bubbles: ^1.7.0
+  flutter_picker_plus: ^1.4.1
+  image_editor: ^1.6.0
+
 
 dev_dependencies:
   flutter_test:

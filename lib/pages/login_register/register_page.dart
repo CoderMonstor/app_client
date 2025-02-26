@@ -48,45 +48,56 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(height: 40),
             buildEmailTextField(_emailController),
             buildPwdTextField(_passwordController),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              controller: _codeController,
-              decoration: InputDecoration(
-                labelText: "验证码",
-                hintText: "点击右侧获取",
-                icon: const Icon(Icons.security),
-                suffix: GestureDetector(
-                  onTap: () async {
-                    if ((_formKey.currentState)?.validate() == true) {
-                      startCountdownTimer(); //点击后开始倒计时
-                      Toast.popToast("验证码发送中，请稍等");
-                      //请求发送验证码
-                      _email = _emailController.text;
-                      var result =
-                      await NetRequester.request(Apis.sendEmail(_email));
-                      if (result == 1) {
-                        Toast.popToast("验证码已发送请注意查收");
-                      } else {
-                        Toast.popToast("请检查网络或反馈错误 ");
-                      }
-                    }
-                  },
-                  child: Text(
-                    _countdownTime == 30 ? '获取验证码' : '$_countdownTime秒后重新获取',
-                    style: TextStyle(
-                      color: _countdownTime == 30
-                          ? const Color.fromARGB(255, 17, 132, 255)
-                          : const Color.fromARGB(255, 183, 184, 195),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: _codeController,
+                    decoration: const InputDecoration(
+                      labelText: "验证码",
+                      icon: Icon(Icons.security),
+                      //suffix是输入框右边的图标，点击后会执行onPressed回调
                     ),
+                    validator: (v) {
+                      if (v!.trim().length < 4) {
+                        return '验证码不能少于4位';
+                      }
+                      return null;
+                    },
                   ),
                 ),
-              ),
-              validator: (v) {
-                if (v!.trim().length < 6) {
-                  return '验证码不能少于6位';
-                }
-                return null;
-              },
+                Expanded(
+                  flex: 1,
+                  child: TextButton(
+                      onPressed: () async {
+                        if ((_formKey.currentState)?.validate() == true) {
+                          startCountdownTimer(); //点击后开始倒计时
+                          Toast.popToast("验证码发送中，请稍等");
+                          //请求发送验证码
+                          _email = _emailController.text;
+                          var result =
+                          await NetRequester.request(Apis.sendEmail(_email));
+                          if (result == 1) {
+                            Toast.popToast("验证码已发送请注意查收");
+                          } else {
+                            Toast.popToast("请检查网络或反馈错误 ");
+                          }
+                        }
+                      },
+                      child: Text(
+                      _countdownTime == 30 ? '获取验证码' : '$_countdownTime秒后重新获取',
+                        style: TextStyle(
+                          color: _countdownTime == 30
+                              ? const Color.fromARGB(255, 17, 132, 255)
+                              : const Color.fromARGB(255, 183, 184, 195),
+                        ),
+                      ),
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.only(top: 70, left: 60, right: 40),

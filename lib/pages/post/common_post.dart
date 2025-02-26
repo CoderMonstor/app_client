@@ -30,25 +30,25 @@ class CommonPostPage extends StatefulWidget {
 
 class _CommonPostPageState extends State<CommonPostPage> {
   late PostRepository _postRepository;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _postRepository =  PostRepository(Global.profile.user!.userId!, widget.type!,widget.str,widget.orderBy);
-  // }
   @override
   void initState() {
     super.initState();
-
-    // 确保 Global.profile.user 不为 null
-    final user = Global.profile.user ?? User.none();
-
-    // 使用空值合并运算符提供默认值
-    final type = widget.type ?? 1;
-    final str = widget.str ?? '';
-    final orderBy = widget.orderBy ?? 'hot';
-
-    _postRepository = PostRepository(user.userId!, type, str, orderBy);
+    _postRepository =  PostRepository(Global.profile.user!.userId!, widget.type!,widget.str,widget.orderBy);
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   // 确保 Global.profile.user 不为 null
+  //   final user = Global.profile.user ?? User.none();
+  //
+  //   // 使用空值合并运算符提供默认值
+  //   final type = widget.type ?? 1;
+  //   final str = widget.str ?? '';
+  //   final orderBy = widget.orderBy ?? 'hot';
+  //
+  //   _postRepository = PostRepository(user.userId!, type, str, orderBy);
+  // }
 
   @override
   void dispose() {

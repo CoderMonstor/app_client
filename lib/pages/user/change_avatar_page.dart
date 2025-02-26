@@ -93,7 +93,7 @@ class ChangeAvatarPage extends StatelessWidget {
     var widget;
     if(type== 1){
       widget = Global.profile.user!.avatarUrl ==null
-          ? Image.asset("assets/images/flutter_logo.png")
+          ? Image.asset("assets/images/head/head1.jpg")
           : ExtendedImage.network('${NetConfig.ip}/images/${Global.profile.user!.avatarUrl!}');
     }else{
       widget = Global.profile.user!.backImgUrl ==null

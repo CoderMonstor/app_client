@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:client/pages/post/post_page.dart';
 import 'package:client/pages/resale_page.dart';
+import 'package:client/pages/user/profile_page.dart';
 import 'package:client/util/my_icon/my_app_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../core/global.dart';
 import '../util/my_icon/my_icon.dart';
-import 'about_me_page.dart';
 import 'gather_page.dart';
 
 
@@ -26,7 +27,7 @@ class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
   late bool _hadCheckUpdate;
 
   late PageController _pageController;
-
+  int? id=Global.profile.user?.userId;
   @override
   void initState() {
     super.initState();
@@ -38,7 +39,7 @@ class _RootRouteState extends State<RootRoute> with TickerProviderStateMixin {
       ..add(const PostPage())
       ..add(const ResalePage())
       ..add(const GatherPage())
-      ..add(const AboutMePage());
+      ..add(ProfilePage(userId: id));
   }
 
   @override
