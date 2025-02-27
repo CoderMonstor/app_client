@@ -53,11 +53,12 @@ dependencies:
   extended_nested_scroll_view: ^6.2.1
   extended_image: ^9.1.0
   extended_text: ^13.0.1
-  lottie: ^3.1.0
+#  lottie: ^3.1.0
   image_picker: ^1.1.2
   chat_bubbles: ^1.7.0
   flutter_picker_plus: ^1.4.1
   image_editor: ^1.6.0
+  image: ^4.5.3
 
 
 dev_dependencies:

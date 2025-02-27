@@ -16,7 +16,7 @@ import '../util/upload.dart';
 class ClipImgPage extends StatefulWidget {
   final File? image;
   final int? type;
-  ClipImgPage({super.key, this.image, this.type});
+  const ClipImgPage({super.key, this.image, this.type});
 
   @override
   State<StatefulWidget> createState() => _ClipImgPageState();
@@ -25,7 +25,7 @@ class ClipImgPage extends StatefulWidget {
 class _ClipImgPageState extends State<ClipImgPage> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
   GlobalKey<ExtendedImageEditorState>();
-
+  final ImageEditorController _imageEditorController = ImageEditorController();
   @override
   void initState() {
     super.initState();
@@ -50,7 +50,7 @@ class _ClipImgPageState extends State<ClipImgPage> {
                 '完成',
                 style: TextStyle(
                   color: Theme.of(context).primaryColor,
-                  fontSize: ScreenUtil().setSp(48),
+                  fontSize: ScreenUtil().setSp(24),
                 ),
               ),
               onPressed: () {
@@ -72,7 +72,7 @@ class _ClipImgPageState extends State<ClipImgPage> {
               editorMaskColorHandler:(context,pointerDown)=> Colors.black.withOpacity(pointerDown ? 0.4 : 0.8),
               lineColor: Colors.black.withOpacity(0.7),
               maxScale: 8.0,
-              cropRectPadding: EdgeInsets.all(20.0),
+              cropRectPadding: const EdgeInsets.all(20.0),
               hitTestSize: 20.0,
               cropAspectRatio: CropAspectRatios.ratio1_1);
         },
@@ -117,12 +117,12 @@ class _ClipImgPageState extends State<ClipImgPage> {
     var msg = "";
     try {
       fileData =
-      (await cropImageDataWithNativeLibrary(state: editorKey.currentState!)) as Uint8List;
+      (await cropImageDataWithNativeLibrary(_imageEditorController)) as Uint8List;
       /*final filePath = await ImageSaver.save('cropped_image.jpg', fileData);
       msg = "图片保存路径 : $filePath";
       res = filePath;*/
     } catch (e, stack) {
-      msg = "save faild: $e\n $stack";
+      msg = "save failed: $e\n $stack";
     }
     print(msg);
     //showToast(msg);
