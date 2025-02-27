@@ -25,10 +25,11 @@ class ClipImgPage extends StatefulWidget {
 class _ClipImgPageState extends State<ClipImgPage> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
   GlobalKey<ExtendedImageEditorState>();
-  final ImageEditorController _imageEditorController = ImageEditorController();
+  late ImageEditorController _imageEditorController;
   @override
   void initState() {
     super.initState();
+    _imageEditorController = ImageEditorController();
   }
 
   @override
@@ -60,7 +61,6 @@ class _ClipImgPageState extends State<ClipImgPage> {
 
           ),
         ],
-
       ),
       body: ExtendedImage.file(
         widget.image!,
@@ -68,6 +68,7 @@ class _ClipImgPageState extends State<ClipImgPage> {
         mode: ExtendedImageMode.editor,
         extendedImageEditorKey: editorKey,
         initEditorConfigHandler: (state) {
+          // _imageEditorController.state = state;
           return EditorConfig(
               editorMaskColorHandler:(context,pointerDown)=> Colors.black.withOpacity(pointerDown ? 0.4 : 0.8),
               lineColor: Colors.black.withOpacity(0.7),
@@ -81,6 +82,7 @@ class _ClipImgPageState extends State<ClipImgPage> {
   }
 
   _upLoadImg() async {
+    print('---------------------------_upLoadImg have been called------------------------------------------');
     Toast.popLoading('上传中...');
     var path = widget.image?.path.toString();
     var type = path?.substring(path.lastIndexOf('.',path.length));
@@ -88,6 +90,7 @@ class _ClipImgPageState extends State<ClipImgPage> {
     var filename = Global.profile.user!.userId.toString()+timeStamp+type!;
     var fileData = await _clipImg();
     var res = await UpLoad.upLoad(fileData, filename);
+    print('---------------------------now we well going to attach data to map------------------------------------------');
     if (res == 0) {
       print('上传失败');
       Toast.popToast('上传失败请重试');
@@ -98,6 +101,7 @@ class _ClipImgPageState extends State<ClipImgPage> {
         'property': widget.type ==1 ? 'avatarUrl' :'backImgUrl',
         'value': remoteFilePath
       };
+      print('-----------------------------we well send data to server just a moment--------------------------');
       var result = await NetRequester.request('/user/updateUserProperty',data: map);
       if(result['code'] == '1'){
         Toast.popToast('上传成功');
@@ -113,19 +117,41 @@ class _ClipImgPageState extends State<ClipImgPage> {
   }
 
   Future<Uint8List> _clipImg() async {
+    // 获取 ExtendedImage 的编辑状态
+    final state = editorKey.currentState;
+    if (state == null) {
+      throw Exception("Editor state is not available");
+    }
+
+    // 直接通过 state 获取裁剪区域
+    final Rect? cropRect = state.getCropRect();
+    if (cropRect == null) {
+      throw Exception("Crop area not defined");
+    }
+
+    // 获取原始图片数据
+    final Uint8List? rawImage = state.rawImageData;
+    if (rawImage == null) {
+      throw Exception("Image data is missing");
+    }
+
     Uint8List? fileData;
     var msg = "";
     try {
-      fileData =
-      (await cropImageDataWithNativeLibrary(_imageEditorController)) as Uint8List;
-      /*final filePath = await ImageSaver.save('cropped_image.jpg', fileData);
-      msg = "图片保存路径 : $filePath";
-      res = filePath;*/
+      // 尝试裁剪图片
+      fileData = await cropImageDataWithNativeLibrary(_imageEditorController) as Uint8List?;
+      // 检查 fileData 是否为 null
+      if (fileData == null) {
+        msg = "裁剪失败：返回值为空";
+        print(msg);
+        throw Exception(msg); // 抛出异常或返回默认值
+      }
     } catch (e, stack) {
-      msg = "save failed: $e\n $stack";
+      msg = "保存失败: $e\n$stack";
+      print(msg);
+      throw Exception(msg); // 抛出异常或返回默认值
     }
-    print(msg);
-    //showToast(msg);
-    return fileData!;
+
+    return fileData; // 返回非空的 fileData
   }
 }

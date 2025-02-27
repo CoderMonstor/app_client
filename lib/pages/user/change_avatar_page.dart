@@ -47,12 +47,7 @@ class ChangeAvatarPage extends StatelessWidget {
                 if (xImage != null) {
                   final File image = File(xImage.path);
                   print('image: $image');
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => ClipImgPage(image: image, type: type),
-                    ),
-                  );
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => ClipImgPage(image: image, type: type),),);
                 }
               },
               child: Text(

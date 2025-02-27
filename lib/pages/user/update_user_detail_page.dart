@@ -240,23 +240,22 @@ class _UpdateUserDetailPageState extends State<UpdateUserDetailPage> {
             child: Scaffold(
               backgroundColor: Colors.transparent,
               body: SizedBox(
-                width: ScreenUtil().setWidth(1080),
-                height: ScreenUtil().setHeight(1920),
+                // width: ScreenUtil().setWidth(1080),
+                // height: ScreenUtil().setHeight(1920),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Container(
                       constraints: BoxConstraints(maxHeight: ScreenUtil().setHeight(410)),
                       padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(48),
+                          horizontal: ScreenUtil().setWidth(30),
                           vertical: ScreenUtil().setHeight(30)
                       ),
                       color: Colors.white,
                       child: TextField(
                         controller: controller,
-                        style: TextStyle(fontSize: ScreenUtil().setSp(42)),
+                        style: TextStyle(fontSize: ScreenUtil().setSp(24)),
                         maxLength: 60,
-                        //TODO
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         autofocus: true,
                         maxLines: null,
@@ -331,21 +330,21 @@ class _UpdateUserDetailPageState extends State<UpdateUserDetailPage> {
             child: Scaffold(
               backgroundColor: Colors.transparent,
               body: SizedBox(
-                width: ScreenUtil().setWidth(1080),
-                height: ScreenUtil().setHeight(1920),
+                // width: ScreenUtil().setWidth(1080),
+                // height: ScreenUtil().setHeight(1920),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Container(
-                      constraints: BoxConstraints(maxHeight: ScreenUtil().setHeight(410)),
+                      // constraints: BoxConstraints(maxHeight: ScreenUtil().setHeight(410)),
                       padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(48),
+                          horizontal: ScreenUtil().setWidth(20),
                           vertical: ScreenUtil().setHeight(30)
                       ),
                       color: Colors.white,
                       child: TextField(
                         controller: controller,
-                        style: TextStyle(fontSize: ScreenUtil().setSp(42)),
+                        style: TextStyle(fontSize: ScreenUtil().setSp(24)),
                         maxLength: 15,
                         // maxLengthEnforced: false,
                         autofocus: true,

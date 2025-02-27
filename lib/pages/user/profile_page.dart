@@ -477,8 +477,6 @@ class _ProfilePageState extends State<ProfilePage>
 
   Future<void> _getUser() async {
     int askId = _localUser!.userId!;
-    // print('------------------------------------------------------------------');
-    // print(Global.profile.user);
     var res;
     if(widget.userId != null){
       res = await NetRequester.request(Apis.findUserById(askId, widget.userId!));
