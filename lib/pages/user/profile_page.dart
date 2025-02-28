@@ -25,6 +25,8 @@ import '../../widget/build_indicator.dart';
 import '../../widget/flexible_detail_bar.dart';
 import '../../widget/my_list_tile.dart';
 import '../../widget/post_card.dart';
+import '../mobile_scan_dialog.dart';
+import '../setting_page.dart';
 import 'chat_page.dart';
 
 
@@ -200,7 +202,8 @@ class _ProfilePageState extends State<ProfilePage>
         TextButton(
           child: const Icon(MyIcons.scan, color: Colors.white),
           onPressed: () {
-
+            Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => const MobileScanCameraDialog()));
           },
         ),
         Container(
@@ -208,7 +211,8 @@ class _ProfilePageState extends State<ProfilePage>
           child: TextButton(
             child: const Icon(MyIcons.setting, color: Colors.white),
             onPressed: () {
-
+              Navigator.push(context,
+                  CupertinoPageRoute(builder: (context) => SettingPage()));
             },
           ),
         ),

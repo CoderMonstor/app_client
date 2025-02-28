@@ -33,7 +33,7 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
 
   @override
   void initState() {
-    super.initState(); // 只保留一个super.initState()
+    super.initState();
 
     // 初始化动画控制器
     _lineController = AnimationController(
@@ -42,7 +42,7 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
     );
 
     // 初始化线条动画
-    _lineAnimation = Tween<double>(begin: 30, end: 500).animate(_lineController)
+    _lineAnimation = Tween<double>(begin: 30, end: 290).animate(_lineController)
       ..addListener(() {
         // 当动画完成时，重置并重新启动动画
         if (_lineController.isCompleted) {
@@ -53,7 +53,6 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
         setState(() {});
       });
 
-
     _lineController.forward();
 
     // 初始化摄像头控制器
@@ -61,16 +60,7 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
       detectionSpeed: DetectionSpeed.normal,
       facing: CameraFacing.back,
     );
-
   }
-
-  // 正确的切换摄像头方法
-  // void _switchCamera() {
-  //   _controller.switchCamera();
-  // }
-
-  // 获取当前摄像头方向
-  // CameraFacing get _currentFacing => _controller.cameraFacing;
 
   @override
   void dispose() {
@@ -96,33 +86,35 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
             ),
           Column(
             children: <Widget>[
+              AppBar(
+                iconTheme: const IconThemeData(color: Colors.white),
+                title: const Text('扫一扫',style: TextStyle(color: Colors.white),),
+                backgroundColor: backColor,
+              ),
               Container(
-                // width: ScreenUtil().setWidth(1080),
-                height: ScreenUtil().setHeight(200),
+                height: ScreenUtil().setHeight(150),
                 decoration: BoxDecoration(
                     color: backColor,
-                    border: Border(
-                        top: BorderSide(color: backColor, width: 0.11),
-                        bottom: BorderSide(color: backColor, width: 0.05))),
+                ),
               ),
               Row(
                 children: <Widget>[
                   Expanded(
+                    flex: 1, // 左侧部分
                     child: Container(
-                      width: ScreenUtil().setWidth(100),
-                      height: double.infinity,
+                      height: ScreenUtil().setWidth(350),
                       decoration: BoxDecoration(
                         color: backColor,
-                        border: Border.all(width: 0.04, color: backColor),
+                        // border: Border.all(width: 0.04, color: backColor),
                       ),
                     ),
                   ),
-                  Flexible(
+                  Expanded(
+                    flex: 5, // 中间部分占据更多空间
                     child: Stack(
                       children: <Widget>[
                         Container(
-                          width: double.infinity, // 让容器宽度自适应
-                          height: ScreenUtil().setWidth(500),
+                          height: ScreenUtil().setWidth(350),
                           decoration: BoxDecoration(
                             border: Border.all(color: Theme.of(context).colorScheme.secondary),
                           ),
@@ -152,7 +144,7 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
                             left: ScreenUtil().setHeight(15),
                             right: ScreenUtil().setHeight(15),
                           ),
-                          width: double.infinity, // 让容器宽度自适应
+                          width: double.infinity,
                           height: ScreenUtil().setWidth(1),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -172,8 +164,9 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
                     ),
                   ),
                   Expanded(
+                    flex: 1, // 右侧部分
                     child: Container(
-                      height: ScreenUtil().setWidth(100),
+                      height: ScreenUtil().setWidth(350),
                       decoration: BoxDecoration(
                         color: backColor,
                         border: Border.all(width: 0.04, color: backColor),
@@ -182,22 +175,25 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
                   ),
                 ],
               ),
-              Container(
-                decoration: BoxDecoration(
-                    color: backColor,
-                    border: Border.all(width: 0.04, color: backColor)),
-                width: ScreenUtil().setWidth(1080),
-                height: ScreenUtil().setHeight(836),
-                child: Column(
-                  children: <Widget>[
-                    // SizedBox(height: ScreenUtil().setHeight(120)),
-                    const Text('将二维码图片对准取景框即可自动扫描',
-                        style: TextStyle(color: Colors.white)),
-                    // SizedBox(height: ScreenUtil().setHeight(360)),
-                    SizedBox(
-                      width: ScreenUtil().setHeight(500),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: backColor,
+                      border: Border.all(width: 0.04, color: backColor)),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: ScreenUtil().setHeight(30)),
+                      const Text(
+                        '将二维码图片对准取景框即可自动扫描',
+                        style: TextStyle(
+                            color: Colors.white,
+                          fontSize: 20
+                        ),
+                      ),
+                      SizedBox(height: ScreenUtil().setHeight(50)),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           _buildGridItem(MyIcons.qr_code, '我的二维码名片', () {
                             Navigator.push(
@@ -212,9 +208,8 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
                             picker.pickImage(source: ImageSource.gallery).then((image) async {
                               if (image != null) {
                                 try {
-                                  // ✅ 直接传递图片路径 (String)
                                   final BarcodeCapture? capture = await _controller.analyzeImage(
-                                    image.path, // 关键改动：用 path 而非 imageBytes
+                                    image.path,
                                     formats: [BarcodeFormat.qrCode],
                                   );
 
@@ -232,8 +227,8 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
                           }),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -261,20 +256,17 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
 
   Widget _buildGridItem(IconData icon, String label, Function function) {
     return SizedBox(
-      width: ScreenUtil().setWidth(290),
       child: Column(
         children: <Widget>[
           TextButton(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: ScreenUtil().setWidth(35)),
               shape: const CircleBorder(),
-              backgroundColor: Colors.white38,
             ),
             onPressed: () => function(),
             child: Icon(
               icon,
               color: Colors.white,
-              // size: ScreenUtil().setWidth(70),
+              size: ScreenUtil().setWidth(45),
             ),
           ),
           SizedBox(height: ScreenUtil().setHeight(15)),

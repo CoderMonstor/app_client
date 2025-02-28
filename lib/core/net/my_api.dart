@@ -196,7 +196,7 @@ class Apis {
   }
 
   //检查更新
-  // static String checkUpdate() {
-  //   return '/user/checkUpdate';
-  // }
+  static String checkUpdate() {
+    return '/user/checkUpdate';
+  }
 }

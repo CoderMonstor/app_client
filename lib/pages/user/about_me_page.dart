@@ -96,7 +96,7 @@ class _AboutMePageState extends State<AboutMePage> with AutomaticKeepAliveClient
               ),
               onPressed: () {
                 //TODO:跳转到设置页面
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => const SettingPage()));
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingPage()));
               },
             ),
           )
