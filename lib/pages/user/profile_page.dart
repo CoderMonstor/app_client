@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 
 import '../../core/global.dart';
 import '../../core/list_repository/post_repo.dart';
-import '../../core/maps.dart';
 import '../../core/model/post.dart';
 import '../../core/model/theme_model.dart';
 import '../../core/model/user.dart';
@@ -216,10 +215,9 @@ class _ProfilePageState extends State<ProfilePage>
       ],
       expandedHeight: 350,
       flexibleSpace: FlexibleDetailBar(
-        background: const FlexShadowBackground(
+        background: FlexShadowBackground(
             child:Image(
-              image: AssetImage('assets/images/back.jpg'),
-              // image:_user.backImgUrl == null ?const AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${_user.backImgUrl}'),
+              image:_user.backImgUrl == null ?const AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${_user.backImgUrl}'),
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,)),
@@ -234,12 +232,11 @@ class _ProfilePageState extends State<ProfilePage>
             children: <Widget>[
               Expanded(flex: 8,child: Container(),),
               MyListTile(
-                leading: const SizedBox(
+                leading:  SizedBox(
                     height: 90,
                     width: 90,
                     child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/head/head1.jpg'),
-                        // backgroundImage:_user.avatarUrl == null ? const AssetImage("assets/images/head/head1.jpg") : NetworkImage('${NetConfig.ip}/images/${_user.avatarUrl}')
+                        backgroundImage:_user.avatarUrl == null ? const AssetImage("assets/images/head/head1.jpg") : NetworkImage('${NetConfig.ip}/images/${_user.avatarUrl}')
                     )),
                 trailing: Row(
                   children: <Widget>[
@@ -278,9 +275,9 @@ class _ProfilePageState extends State<ProfilePage>
                             _user.isFollow == 1
                                 ? Global.profile.user!.followNum! +  1
                                 : Global.profile.user!.followNum! -  1;
-                                // UserModel().notifyListeners();
                               final userModel = Provider.of<UserModel>(context, listen: false);
                               userModel.updateUser(Global.profile.user!);
+                              UserModel().notifyListeners();
                           }
                         },
                         child: Text(
@@ -323,8 +320,8 @@ class _ProfilePageState extends State<ProfilePage>
               ),
               Expanded(flex: 1,child: Container(),),
               Text(
-                // _user.username ?? "用户${_user.userId.toString()}",
-                "用户${_user.userId.toString()}",
+                _user.username ?? "用户${_user.userId.toString()}",
+                // "用户${_user.userId.toString()}",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: ScreenUtil().setSp(26),
@@ -332,8 +329,8 @@ class _ProfilePageState extends State<ProfilePage>
               ),
               Expanded(flex: 1,child: Container(),),
               Text(
-                  // _user.bio ?? '这个人很懒，什么都没写',
-                  '这个人很懒，什么都没写',
+                  _user.bio ?? '这个人很懒，什么都没写',
+                  // '这个人很懒，什么都没写',
                   style: TextStyle(
                       fontSize: ScreenUtil().setSp(16),
                       color: Colors.white)),
@@ -448,8 +445,7 @@ class _ProfilePageState extends State<ProfilePage>
             ),
             child:
             // Text(_user.city == ''||_user.city==null?'':_user.city?.split('.')[1],
-            Text(
-              _user.city == null || _user.city!.isEmpty ? '' : _user.city!.split('.')[1],
+            Text(_user.city == null || _user.city!.isEmpty ? '' : _user.city!.split('.')[1],
               // style: TextStyle(fontSize: ScreenUtil().setSp(33),),
             ),
           ),

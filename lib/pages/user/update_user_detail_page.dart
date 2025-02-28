@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../core/maps.dart';
 import '../../core/model/user_model.dart';
 import '../../core/net/my_api.dart';
+import '../../core/net/net.dart';
 import '../../core/net/net_request.dart';
 import '../../util/toast.dart';
 import '../../widget/my_list_tile.dart';
@@ -48,12 +49,12 @@ class _UpdateUserDetailPageState extends State<UpdateUserDetailPage> {
                     '头像',
                     style: TextStyle(fontSize: ScreenUtil().setSp(20))
                 ),
-                trailing: const SizedBox(
+                trailing: SizedBox(
                   height: 90,
                   width: 90,
                   child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/head/head1.jpg'),
-                    // backgroundImage: model.user.avatarUrl == null ?const AssetImage("assets/images/head/head1.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.avatarUrl}'),
+                    // backgroundImage: AssetImage('assets/images/head/head1.jpg'),
+                    backgroundImage: model.user.avatarUrl == null ?const AssetImage("assets/images/head/head1.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.avatarUrl}'),
                   ),
                 ),
               ),
@@ -71,11 +72,11 @@ class _UpdateUserDetailPageState extends State<UpdateUserDetailPage> {
                 trailing: Container(
                   width: 90,
                   height: 90,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                       // borderRadius: BorderRadius.circular(ScreenUtil().setWidth(12)),
                       image: DecorationImage(
-                        image: AssetImage('assets/images/back.jpg'),
-                          // image: model.user.backImgUrl == null ?AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.backImgUrl}'),
+                        // image: AssetImage('assets/images/back.jpg'),
+                          image: model.user.backImgUrl == null ?const AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.backImgUrl}'),
                           fit: BoxFit.cover
                       )
                   ),

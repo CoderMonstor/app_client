@@ -59,6 +59,12 @@ dependencies:
   flutter_picker_plus: ^1.4.1
   image_editor: ^1.6.0
   image: ^4.5.3
+  qr_flutter:
+    git:
+      url: https://github.com/theyakka/qr.flutter.git
+  image_gallery_saver: ^2.0.3
+  permission_handler: ^10.2.0
+  mobile_scanner: ^6.0.6
 
 
 dev_dependencies:

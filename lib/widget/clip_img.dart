@@ -25,11 +25,9 @@ class ClipImgPage extends StatefulWidget {
 class _ClipImgPageState extends State<ClipImgPage> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
   GlobalKey<ExtendedImageEditorState>();
-  late ImageEditorController _imageEditorController;
   @override
   void initState() {
     super.initState();
-    _imageEditorController = ImageEditorController();
   }
 
   @override
@@ -77,6 +75,7 @@ class _ClipImgPageState extends State<ClipImgPage> {
               hitTestSize: 20.0,
               cropAspectRatio: CropAspectRatios.ratio1_1);
         },
+        cacheRawData: true,
       ),
     );
   }
@@ -139,13 +138,12 @@ class _ClipImgPageState extends State<ClipImgPage> {
     var msg = "";
     try {
       // 尝试裁剪图片
-      fileData = await cropImageDataWithNativeLibrary(_imageEditorController) as Uint8List?;
-      // 检查 fileData 是否为 null
-      if (fileData == null) {
-        msg = "裁剪失败：返回值为空";
-        print(msg);
-        throw Exception(msg); // 抛出异常或返回默认值
+      List<int>? imageData = await cropImageDataWithNativeLibrary(editorKey.currentState);
+      if (imageData == null) {
+        throw Exception("Cropped image data is null");
       }
+      // 将 List<int> 转换为 Uint8List
+      fileData = Uint8List.fromList(imageData);
     } catch (e, stack) {
       msg = "保存失败: $e\n$stack";
       print(msg);

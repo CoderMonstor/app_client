@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:client/pages/login_register/login_page.dart';
+import 'package:client/util/upload.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // 添加导入
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,7 +32,6 @@ void main() async {
   }
   // 设置设备方向为竖屏
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
 
   runApp(
       MultiProvider(
