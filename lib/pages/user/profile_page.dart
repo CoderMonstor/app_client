@@ -1,5 +1,4 @@
 import 'package:client/pages/user/qr_page.dart';
-import 'package:client/pages/user/update_user_detail_page.dart';
 import 'package:client/util/my_icon/my_app_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide NestedScrollView;
@@ -198,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage>
         offstage: _offLittleAvatar,
         child: Text(_user.username!),
       ),
-      actions: <Widget>[
+      actions: _localUser!.userId == _user.userId?[
         TextButton(
           child: const Icon(MyIcons.scan, color: Colors.white),
           onPressed: () {
@@ -216,7 +215,7 @@ class _ProfilePageState extends State<ProfilePage>
             },
           ),
         ),
-      ],
+      ]:null,
       expandedHeight: 350,
       flexibleSpace: FlexibleDetailBar(
         background: FlexShadowBackground(
@@ -244,51 +243,44 @@ class _ProfilePageState extends State<ProfilePage>
                     )),
                 trailing: Row(
                   children: <Widget>[
-                    TextButton(
-                        style: ButtonStyle(
-                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0))),
-                          backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                                  (Set<WidgetState> states) {
-                                if (states.contains(WidgetState.pressed)) {
-                                  return Colors.grey; // 按下时的颜色
-                                }
-                                return _user.userId == _localUser!.userId || _user.isFollow == 1
-                                    ? Colors.white54
-                                    : Theme.of(context).primaryColor;
-                              }),
-                        ),
-                        onPressed: _user.userId == _localUser!.userId
-                            ? () {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) => const UpdateUserDetailPage()));
-                        }
-                            : () async {
-                          var fanId = Global.profile.user!.userId;
-                          var res = await NetRequester.request(
-                              _user.isFollow == 0
-                                  ? Apis.followAUser(fanId!, _user.userId!)
-                                  : Apis.cancelFollowAUser(fanId!, _user.userId!));
-                          if (res['code'] == '1') {
-                            setState(() {
-                              _user.isFollow = _user.isFollow == 1 ? 0 : 1;
-                            });
-                            _user.isFollow == 1
-                                ? Global.profile.user!.followNum! +  1
-                                : Global.profile.user!.followNum! -  1;
-                              final userModel = Provider.of<UserModel>(context, listen: false);
-                              userModel.updateUser(Global.profile.user!);
-                              UserModel().notifyListeners();
-                          }
-                        },
-                        child: Text(
-                            _user.userId == _localUser.userId
-                                ? '编辑资料'
-                                : _user.isFollow == 1 ? '已关注' : '关注',
-                            style: const TextStyle(color: Colors.white))
+                    Offstage(
+                      offstage: _localUser.userId == _user.userId,
+                      child: TextButton(
+                          style: ButtonStyle(
+                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0))),
+                            backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                                    (Set<WidgetState> states) {
+                                  if (states.contains(WidgetState.pressed)) {
+                                    return Colors.grey; // 按下时的颜色
+                                  }
+                                  return _user.isFollow == 1
+                                      ? Colors.white54
+                                      : Theme.of(context).primaryColor;
+                                }),
+                          ),
+                          onPressed: () async {
+                            var fanId = Global.profile.user!.userId;
+                            var res = await NetRequester.request(
+                                _user.isFollow == 0
+                                    ? Apis.followAUser(fanId!, _user.userId!)
+                                    : Apis.cancelFollowAUser(fanId!, _user.userId!));
+                            if (res['code'] == '1') {
+                              setState(() {
+                                _user.isFollow = _user.isFollow == 1 ? 0 : 1;
+                              });
+                              _user.isFollow == 1
+                                  ? Global.profile.user!.followNum! +  1
+                                  : Global.profile.user!.followNum! -  1;
+                                final userModel = Provider.of<UserModel>(context, listen: false);
+                                userModel.updateUser(Global.profile.user!);
+                                UserModel().notifyListeners();
+                            }
+                          },
+                          child: Text(_user.isFollow == 1 ? '已关注' : '关注',
+                              style: const TextStyle(color: Colors.white))
+                      ),
                     ),
                     SizedBox(width: ScreenUtil().setWidth(30)),
                     SizedBox(

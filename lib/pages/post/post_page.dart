@@ -1,4 +1,5 @@
 import 'package:client/util/app_bar/my_app_bar.dart';
+import 'package:client/widget/send_button.dart';
 import 'package:flutter/material.dart';
 import 'common_post.dart';
 
@@ -59,6 +60,7 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
         },
         children: _pageList,
       ),
+      floatingActionButton: const SendButton(),
     );
   }
 }

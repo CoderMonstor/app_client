@@ -38,7 +38,7 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
           const Text("正在加载...")
         ],
       );
-      widget = _setbackground(context, false, widget, 35.0);
+      widget = _setBackground(context, false, widget, 35.0);
       break;
       // 加载更多完成
     case IndicatorStatus.fullScreenBusying:
@@ -54,7 +54,7 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
           ),
         ],
       );
-      widget = _setbackground(context, true, widget, double.infinity);
+      widget = _setBackground(context, true, widget, double.infinity);
       if (isSliver) {
         widget = SliverFillRemaining(
           child: widget,
@@ -68,7 +68,7 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
       widget = const Text(
         "好像出现了问题呢？",
       );
-      widget = _setbackground(context, false, widget, 35.0);
+      widget = _setBackground(context, false, widget, 35.0);
 
       widget = GestureDetector(
         onTap: () {
@@ -83,7 +83,7 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
       widget = const Text(
         "好像出现了问题呢？",
       );
-      widget = _setbackground(context, true, widget, double.infinity);
+      widget = _setBackground(context, true, widget, double.infinity);
       widget = GestureDetector(
         onTap: () {
           listRepository.errorRefresh();
@@ -101,14 +101,14 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
       // 没有更多了
     case IndicatorStatus.noMoreLoad:
       widget = const Text("没有更多了");
-      widget = _setbackground(context, false, widget, 50.0);
+      widget = _setBackground(context, false, widget, 50.0);
       break;
       // 空页面
     case IndicatorStatus.empty:
       widget = Text(
-        "什么也没有找到(つд⊂)", style: TextStyle(color: Colors.grey, fontSize: ScreenUtil().setSp(46)),
+        "什么也没有找到(つд⊂)", style: TextStyle(color: Colors.grey, fontSize: ScreenUtil().setSp(23)),
       );
-      widget = _setbackground(context, true, widget, double.infinity);
+      widget = _setBackground(context, true, widget, double.infinity);
       widget = GestureDetector(
         onTap: () {
           listRepository.errorRefresh();
@@ -127,7 +127,7 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
   return widget;
 }
 // 设置背景颜色和padding
-Widget _setbackground(BuildContext context,bool full, Widget widget, double height) {
+Widget _setBackground(BuildContext context,bool full, Widget widget, double height) {
   widget = Container(
       width: double.infinity,
       height: height,

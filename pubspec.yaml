@@ -53,6 +53,7 @@ dependencies:
   extended_nested_scroll_view: ^6.2.1
   extended_image: ^9.1.0
   extended_text: ^13.0.1
+  extended_text_field: ^15.0.1
 #  lottie: ^3.1.0
   image_picker: ^1.1.2
   chat_bubbles: ^1.7.0
@@ -65,6 +66,7 @@ dependencies:
   image_gallery_saver: ^2.0.3
   permission_handler: ^10.2.0
   mobile_scanner: ^6.0.6
+  wechat_assets_picker: ^9.5.0
 
 
 dev_dependencies:
