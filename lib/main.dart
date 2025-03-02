@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:client/pages/login_register/login_page.dart';
-import 'package:client/util/upload.dart';
+import 'package:client/pages/root_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // 添加导入
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -62,6 +62,10 @@ class MyApp extends StatelessWidget {
             // initialRoute: '/login', // 设置初始路由
             home: const LoginPage(),
             routes: routes, // 使用路由映射
+            onUnknownRoute: (settings) {
+              // 当找不到匹配路由时，返回一个默认页面
+              return MaterialPageRoute(builder: (context) => const RootRoute());
+            },
             builder: (context, child) {
               ScreenUtil.init(
                 context,

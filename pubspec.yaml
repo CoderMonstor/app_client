@@ -68,6 +68,7 @@ dependencies:
   mobile_scanner: ^6.0.6
   wechat_assets_picker: ^9.5.0
   device_info_plus: ^10.0.1
+  sticky_headers: ^0.3.0+2
 
 
 dev_dependencies:

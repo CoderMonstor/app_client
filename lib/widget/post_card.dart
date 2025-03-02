@@ -2,13 +2,13 @@
 根据postId获取帖子信息，并显示
 返回一个帖子卡片，点击可以跳转到帖子详情页
  */
+import 'package:client/widget/image_build.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../core/global.dart';
 import '../core/list_repository/post_repo.dart';
 import '../core/maps.dart';
 import '../core/model/post.dart';
@@ -19,7 +19,7 @@ import '../pages/user/profile_page.dart';
 import '../pages/post/post_detail.dart';
 import '../util/build_date.dart';
 import '../util/my_icon/my_icon.dart';
-import '../util/toast.dart';
+import 'dialog_build.dart';
 import 'my_list_tile.dart';
 
 
@@ -40,7 +40,7 @@ class _PostCardState extends State<PostCard> {
     return Card(
       margin: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(20)),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21)),
+        borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20)),
       ),
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -50,7 +50,7 @@ class _PostCardState extends State<PostCard> {
         // 长按帖子，则弹出一个对话框，让用户选择是否删除帖子
         child: InkWell(
           onLongPress: () {
-            _showDialog(context);
+            DialogBuild.showPostDialog(context, widget.post?.postId);
           },
           onTap: () {
             Navigator.push(
@@ -76,9 +76,9 @@ class _PostCardState extends State<PostCard> {
       bottom: ScreenUtil().setWidth(20),
       // left: 0,
       // right: 0,
-      useScreenUtil: false,
+      // useScreenUtil: false,
       leading: SizedBox(
-        width: ScreenUtil().setWidth(115),
+        width: ScreenUtil().setWidth(60),
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -88,7 +88,7 @@ class _PostCardState extends State<PostCard> {
                         ProfilePage(userId: widget.post?.userId)));
           },
           child: SizedBox(
-            height: ScreenUtil().setWidth(115),
+            height: ScreenUtil().setWidth(60),
             child: widget.post?.avatarUrl == '' || widget.post?.avatarUrl == null
                 ? Image.asset("assets/images/app_logo.png")
                 : ClipOval(
@@ -99,25 +99,30 @@ class _PostCardState extends State<PostCard> {
           ),
         ),
       ),
-      center: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(widget.post!.username!,
-              style: TextStyle(fontSize: ScreenUtil().setSp(52))),
-          Text(buildDate(widget.post!.date!),
-              style: TextStyle(
-                  fontSize: ScreenUtil().setSp(34), color: Colors.grey)),
+      center: Row(
+        children: [
+          SizedBox(width: ScreenUtil().setWidth(20)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(widget.post!.username!,
+                  style: TextStyle(fontSize: ScreenUtil().setSp(20))),
+              Text(buildDate(widget.post!.date!),
+                  style: TextStyle(
+                      fontSize: ScreenUtil().setSp(14), color: Colors.grey)),
+            ],
+          ),
         ],
       ),
       trailing: SizedBox(
-        width: ScreenUtil().setWidth(90),
+        width: ScreenUtil().setWidth(40),
         child: TextButton(
           style: TextButton.styleFrom(
             // padding: const EdgeInsets.all(0),
           ),
           onPressed: () {
-            _showDialog(context);
+            DialogBuild.showPostDialog(context, widget.post?.postId);
           },
           child: const Icon(MyIcons.and_more, color: Colors.grey),
         ),
@@ -142,60 +147,14 @@ class _PostCardState extends State<PostCard> {
     if (images[0] == '') {
       return Container();
     } else if (images.length == 1) {
-      return InkWell(
-          onTap: () {
-          },
-          child: Hero(
-              tag: '${widget.post!.postId.toString() + images[0]}0',
-              child: Container(
-                constraints: BoxConstraints(
-                    maxHeight: ScreenUtil().setHeight(800),
-                    maxWidth: ScreenUtil().setWidth(700)),
-                child: ExtendedImage.network(NetConfig.ip + images[0],
-                    cache: true,
-                    shape: BoxShape.rectangle,
-                    border: Border.all(color: Colors.black12, width: 1),
-                    borderRadius:
-                    BorderRadius.circular(ScreenUtil().setWidth(21))),
-              )
-          )
-      );
+      return ImageBuild.singlePostImage(images);
     } else {
-      return Container(
-        constraints: BoxConstraints(
-            maxHeight: ScreenUtil().setWidth(gridHeight[images.length])),
-        child: GridView.count(
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.0,
-          mainAxisSpacing: ScreenUtil().setWidth(12),
-          crossAxisSpacing: ScreenUtil().setWidth(12),
-          crossAxisCount: images.length < 3 ? 2 : 3,
-          children: List.generate(images.length, (index) {
-            return InkWell(
-              onTap: () {
-              },
-              child: Hero(
-                tag: widget.post!.postId.toString() +
-                    images[index] +
-                    index.toString(),
-                child: ExtendedImage.network(
-                  NetConfig.ip + images[index],
-                  fit: BoxFit.cover,
-                  shape: BoxShape.rectangle,
-                  border: Border.all(color: Colors.black12, width: 1),
-                  borderRadius:
-                  BorderRadius.circular(ScreenUtil().setWidth(21)),
-                  cache: true,
-                ),
-              ),
-            );
-          }),
-        ),
-      );
+      return ImageBuild.multiPostImage(images);
     }
   }
 
   _buildContent() {
+    //如果不是转发，则显示文本和图片
     if (widget.post?.forwardId == null) {
       var text = widget.post?.text;
       return Column(
@@ -258,9 +217,8 @@ class _PostCardState extends State<PostCard> {
   }
 
   _likeBar(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
-      height: ScreenUtil().setHeight(90),
+    return SizedBox(
+      height: ScreenUtil().setHeight(60),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -297,7 +255,7 @@ class _PostCardState extends State<PostCard> {
                   color: widget.post?.isLiked == 1
                       ? Theme.of(context).colorScheme.secondary
                       : Colors.grey,
-                  size: ScreenUtil().setWidth(60),
+                  size: ScreenUtil().setWidth(30),
                 ),
                 SizedBox(width: ScreenUtil().setWidth(5)),
                 Text(
@@ -325,7 +283,6 @@ class _PostCardState extends State<PostCard> {
               );
             },
             style: TextButton.styleFrom(
-              padding: EdgeInsets.all(0),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
@@ -334,7 +291,7 @@ class _PostCardState extends State<PostCard> {
                 Icon(
                   MyIcons.comment,
                   color: Colors.grey,
-                  size: ScreenUtil().setWidth(60),
+                  size: ScreenUtil().setWidth(30),
                 ),
                 SizedBox(width: ScreenUtil().setWidth(5)),
                 Text(
@@ -356,9 +313,9 @@ class _PostCardState extends State<PostCard> {
             child: Row(
               children: <Widget>[
                 Icon(
-                  MyIcons.image,
+                  MyIcons.share,
                   color: Colors.grey,
-                  size: ScreenUtil().setWidth(60),
+                  size: ScreenUtil().setWidth(30),
                 ),
                 SizedBox(width: ScreenUtil().setWidth(5)),
                 Text(
@@ -374,103 +331,7 @@ class _PostCardState extends State<PostCard> {
     );
   }
 
-  void _showDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Material(
-            textStyle: TextStyle(
-                fontSize: ScreenUtil().setSp(48), color: Colors.black),
-            color: Colors.black12,
-            child: Stack(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    color: Colors.transparent,
-                    width: ScreenUtil().setWidth(1080),
-                    height: ScreenUtil().setHeight(1920),
-                  ),
-                ),
-                Center(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.circular(ScreenUtil().setWidth(21)),
-                    ),
-                    child: Container(
-                      width: ScreenUtil().setWidth(740),
-                      height: ScreenUtil().setHeight(
-                          widget.post?.userId != Global.profile.user!.userId
-                              ? 400
-                              : 500),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(60),
-                          vertical: ScreenUtil().setHeight(40)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          MyListTile(
-                            onTap: () async {
-                              String url;
-                              if (widget.post?.isStar == 1) {
-                                url = Apis.cancelStarPost(widget.post!.postId!);
-                              } else {
-                                url = Apis.starPost(widget.post!.postId!);
-                              }
-                              var res = await NetRequester.request(url);
-                              if (res['code'] == '1') {
-                                Navigator.pop(context);
-                                Toast.popToast('已收藏');
-                                widget.post?.isStar =
-                                widget.post?.isStar == 1 ? 0 : 1;
-                              }
-                            },
-                            leading:
-                            Text(widget.post?.isStar == 0 ? '收藏' : '取消收藏'),
-                          ),
-                          MyListTile(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            leading: const Text('复制'),
-                          ),
-                          MyListTile(
-                            onTap: () {},
-                            leading: const Text('举报'),
-                          ),
-                          Offstage(
-                            offstage: widget.post?.userId !=
-                                Global.profile.user!.userId,
-                            child: MyListTile(
-                              onTap: _deletePost,
-                              leading: const Text('删除'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-  }
 
-  void _deletePost() {
-    Navigator.pop(context);
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text('确定删除吗？'),
-          );
-        });
-  }
 
   _buildForward() {
     if (widget.post?.forwardId != null && widget.post?.forwardName == null) {

@@ -1,9 +1,5 @@
 /*
-这是公共动态页面的仓库
-主要功能：
-1.刷新
-2.加载更多
-3.搜索
+公共动态页面仓库
 */
 import 'package:flutter/foundation.dart';
 import 'package:loading_more_list/loading_more_list.dart';

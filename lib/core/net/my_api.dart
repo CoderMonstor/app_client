@@ -167,7 +167,7 @@ class Apis {
     return '/comment/cancelLikeComment?userId=$userId&commentId=$commentId';
   }
 
-  //删除post
+  //删除
   static String deleteComment(int commentId) {
     return '/comment/deleteComment?commentId=$commentId';
   }

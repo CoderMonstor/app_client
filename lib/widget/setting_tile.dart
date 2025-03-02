@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 /*
 * Settings List tile
-*
-*
-*
 * */
 class MySettingsTile extends StatelessWidget {
   final String title;

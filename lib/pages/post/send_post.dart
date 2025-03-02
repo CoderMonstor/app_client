@@ -18,7 +18,7 @@ import '../../core/net/net_request.dart';
 import '../../util/my_icon/my_icon.dart';
 import '../../util/permission_request.dart';
 import '../../util/text_util/emoji_text.dart';
-import '../../util/text_util/special_textsapn.dart';
+import '../../util/text_util/special_text_span.dart';
 import '../../util/toast.dart';
 import '../../util/upload.dart';
 

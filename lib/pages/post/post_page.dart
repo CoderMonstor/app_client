@@ -13,16 +13,14 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
   late TabController _tabController;
   late PageController _pageController;
-  List<Widget> _pageList = []; //列表存放页面
-  late int _currentIndex;
+  final List<Widget> _pageList = []; //列表存放页面
 
   @override
   void initState() {
     super.initState();
-    _pageList..add(const CommonPostPage(type: 6))..add(const CommonPostPage(type: 5))..add(const CommonPostPage(type: 2));
+    _pageList..add(const CommonPostPage(type: 5))..add(const CommonPostPage(type: 6))..add(const CommonPostPage(type: 2));
     _tabController = TabController(length: 3, vsync: this);
     _pageController = PageController();
-    _currentIndex = 0;
   }
 
   @override
@@ -43,8 +41,8 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
       indicatorSize: TabBarIndicatorSize.label,
       labelStyle: const TextStyle(fontWeight: FontWeight.bold),
       tabs: const <Widget>[
-        Tab(text: '热门'),
         Tab(text: '最新'),
+        Tab(text: '热门'),
         Tab(text: '关注')
       ],
     );
@@ -54,7 +52,6 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
         controller: _pageController,
         onPageChanged: (index) {
           setState(() {
-            _currentIndex = index;
             _tabController.index = index;
           });
         },

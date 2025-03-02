@@ -14,6 +14,7 @@ import '../../core/global.dart';
 import '../../core/list_repository/post_repo.dart';
 import '../../core/model/post.dart';
 import '../../widget/build_indicator.dart';
+import '../../widget/post_card.dart';
 
 class CommonPostPage extends StatefulWidget {
   final int? type;
@@ -56,30 +57,20 @@ class _CommonPostPageState extends State<CommonPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LoadingMoreList(
-        ListConfig<Post>(
-          itemBuilder: (BuildContext context, Post item, int index){
-            return Card(
-              margin: EdgeInsets.only(
-                top: ScreenUtil().setWidth(20),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20)),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20)),
-                ),
-              ),
-            );
-          },
-          sourceList: _postRepository,
-          indicatorBuilder: _buildIndicator,
-          padding: EdgeInsets.only(
-              top:ScreenUtil().setWidth(20),
-              left: ScreenUtil().setWidth(20),
-              right: ScreenUtil().setWidth(20)
+      body: RefreshIndicator(
+        onRefresh: _postRepository.refresh,
+        child: LoadingMoreList(
+          ListConfig<Post>(
+            itemBuilder: (BuildContext context, Post item, int index){
+              return PostCard(post: item,list: _postRepository,index: index);
+            },
+            sourceList: _postRepository,
+            indicatorBuilder: _buildIndicator,
+            padding: EdgeInsets.only(
+                top:ScreenUtil().setWidth(20),
+                left: ScreenUtil().setWidth(20),
+                right: ScreenUtil().setWidth(20)
+            ),
           ),
         ),
       ),

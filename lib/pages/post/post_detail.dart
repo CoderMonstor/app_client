@@ -2,13 +2,18 @@
 动态详情页面
  */
 
+import 'package:client/widget/dialog_build.dart';
+import 'package:client/widget/image_build.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart' as extended;
+import 'package:provider/provider.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 
 import '../../core/list_repository/comment_repo.dart';
 import '../../core/list_repository/post_repo.dart';
@@ -16,14 +21,20 @@ import '../../core/list_repository/user_repo.dart';
 import '../../core/maps.dart';
 import '../../core/model/comment.dart';
 import '../../core/model/post.dart';
+import '../../core/model/theme_model.dart';
 import '../../core/model/user.dart';
 import '../../core/net/my_api.dart';
 import '../../core/net/net.dart';
 import '../../core/net/net_request.dart';
+import '../../util/build_date.dart';
 import '../../util/my_icon/my_icon.dart';
+import '../../util/text_util/special_text_span.dart';
 import '../../util/toast.dart';
 import '../../widget/build_indicator.dart';
 import '../../widget/item_builder.dart';
+import '../../widget/my_list_tile.dart';
+import '../user/profile_page.dart';
+import '../view_images.dart';
 
 
 class PostDetailPage extends StatefulWidget {
@@ -52,7 +63,6 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   @override
   void initState() {
     _future = _getPost();
-
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
     _pageController = PageController(initialPage: 1);
     super.initState();
@@ -73,6 +83,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
     if (res['code'] == '1' && res['data'] != null) {
       _post = Post.fromJson(res['data']);
       // 确保 likeNum 有默认值
+      print(_post);
       _post.likeNum ??= 0;
       _userRepository = UserRepository(_post.postId, 3);
       _postRepository = PostRepository(_post.postId!, 4);
@@ -137,7 +148,8 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
                   sourceList: _userRepository,
                   indicatorBuilder: _buildIndicator,
                   lastChildLayoutType: LastChildLayoutType.none,
-                  padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90))),
+                  padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90)),
+              ),
             ),
             LoadingMoreList(
               ListConfig<Comment>(
@@ -170,35 +182,40 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
     return <Widget>[
       const SliverAppBar(
         pinned: true,
-        elevation: 0,
+        // elevation: 0,
         title: Text('动态'),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(-8),
-          child: SizedBox(),
-        ),
       ),
       _postInfo(),
       _content(),
-      SliverToBoxAdapter(child: SizedBox(height: 20.w)),
+      // SliverToBoxAdapter(child: SizedBox(height: 20.w)),
       _tabBar()
     ];
   }
 
   Widget _tabBar() {
     return SliverToBoxAdapter(
-      child:SizedBox(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.black,
-            ),
-            child: Text(
-              '评论',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: ScreenUtil().setSp(48),
-                  fontWeight: FontWeight.w500),
-            ),
+      child: StickyHeader(
+        header: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
+          child: Consumer<ThemeModel>(
+              builder: (BuildContext context, themeModel, _) {
+                return TabBar(
+                  onTap: (index) {
+                    _pageController.jumpToPage(index);
+                  },
+                  controller: _tabController,
+                  labelColor: Theme.of(context).primaryColorDark,
+                  unselectedLabelColor: themeModel.isDark?Colors.white:Colors.grey,
+                  tabs: <Widget>[
+                    Tab(text:'赞 ${_post.likeNum}'),
+                    Tab(text:'评论 ${_post.commentNum}'),
+                    Tab(text:'转发 ${_post.forwardNum}')
+                  ],
+                );
+              }
           ),
+        ),
+        content: const SizedBox(height: 0),
       ),
     );
   }
@@ -210,10 +227,9 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   Widget _content() {
     return SliverToBoxAdapter(
       child: Card(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
+        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
         elevation: 0,
-        margin: const EdgeInsets.all(0),
+        // margin: const EdgeInsets.all(0),
         child: Container(
           padding: EdgeInsets.symmetric(
               horizontal: ScreenUtil().setWidth(42),
@@ -227,114 +243,145 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   _postInfo() {
     return SliverToBoxAdapter(
       child: Card(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
-        // margin: EdgeInsets.all(0),
+        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
+        // margin: const EdgeInsets.all(0),
         elevation: 0,
-        child: const Text("_post Info"),
+        child: MyListTile(
+          top: 20,
+          bottom: ScreenUtil().setWidth(20),
+          left: 40,
+          right: 20,
+          // useScreenUtil: false,
+          leading: SizedBox(
+            width: ScreenUtil().setWidth(60),
+            child: InkWell(
+              onTap: (){
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => ProfilePage(userId:_post.userId)));
+              },
+              child: SizedBox(
+                height: ScreenUtil().setWidth(60),
+                child:  _post.avatarUrl==''|| _post.avatarUrl == null
+                    ?Image.asset("images/flutter_logo.png")
+                    :ClipOval(
+                      child: ExtendedImage.network('${NetConfig.ip}/images/${_post.avatarUrl!}',cache: true),
+                ),
+              ),
+            ),
+          ),
+          center: Row(
+            children: [
+              SizedBox(width: ScreenUtil().setWidth(30)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(_post.username!,style: TextStyle(fontSize: ScreenUtil().setSp(25))),
+                  Text(buildDate(_post.date!),style: TextStyle(
+                      fontSize: ScreenUtil().setSp(14),color: Colors.grey)),
+                ],
+              ),
+            ],
+          ),
+          trailing: SizedBox(
+            width: ScreenUtil().setWidth(40),
+            child: TextButton(
+              style: TextButton.styleFrom(
+                // padding: const EdgeInsets.all(0),
+              ),
+              onPressed: () {
+                DialogBuild.showPostDialog(context, widget.postId);
+              },
+              child: const Icon(MyIcons.and_more, color: Colors.grey),
+            ),
+          ),
+        ),
       ),
     );
   }
 
   _buildContent() {
+    if(_post.forwardId == null){
+      var text =_post.text;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          text ==''? Container(): _postText(text!),
+          SizedBox(height: ScreenUtil().setHeight(10)),
+          _buildImage(),
+        ],
+      );
+    }
     var text = _post.text;
     var index = text?.indexOf('//@');
-    if (_post.imageUrl != '') {
-      switch (index) {
+    if(_post.imageUrl!=''){
+      switch(index){
         case -1:
-          text = '$text ￥-${_post.imageUrl}-￥';
+          text ='$text ￥-${_post.imageUrl}-￥';
           break;
         case 0:
-          text = ' ￥-${_post.imageUrl}-￥$text';
+          text =' ￥-${_post.imageUrl}-￥$text';
           break;
         default:
-          text = '${text?.substring(0, index! - 1)} ￥-${_post.imageUrl}-￥${text?.substring(index!, text.length)}';
+          text='${text?.substring(0,index!-1)} ￥-${_post.imageUrl}-￥${text?.substring(index!,text.length)}';
       }
     }
     textSend = text!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        text == '' ? Container() : _postText(text),
-        SizedBox(
-          height: ScreenUtil().setHeight(10),
-        ),
+        text==''? Container(): _postText(text),
+        SizedBox(height: ScreenUtil().setHeight(10),),
         Container(
           padding: EdgeInsets.symmetric(
-              horizontal: ScreenUtil().setWidth(20),
+              horizontal:ScreenUtil().setWidth(20),
               vertical: ScreenUtil().setHeight(5)),
           decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.06),
-              borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21))),
+              borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21))
+          ),
           child: _buildForward(),
         ),
       ],
     );
   }
 
+
   _postText(String text) {
-    return ExtendedText(
-      text,
-      style: TextStyle(fontSize: ScreenUtil().setSp(46)),
+    return ExtendedText(text,
+      style: TextStyle(fontSize: ScreenUtil().setSp(22)),
+      specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+      onSpecialTextTap: (dynamic parameter) {
+        String str =parameter.toString();
+        print(str);
+        if (parameter.startsWith("@")) {
+          Navigator.push(context,
+              CupertinoPageRoute(builder: (context) =>
+                  ProfilePage(username: str.substring(1,str.length),)));
+        }else if(parameter.startsWith("￥-")){
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) =>
+                  ViewImgPage(images: [str.substring(2,str.length-3)],
+                    index: 0,postId: _post.postId.toString(),)));
+        }
+      },
     );
   }
 
   _buildImage() {
-    var url;
-    url = _post.forwardImageUrl;
+    String url;
+    if(_post.forwardId != null){
+      url = _post.forwardImageUrl ?? "";
+    }else{
+      url = _post.imageUrl ?? "";
+    }
     List images = url.split('￥');
     if (images[0] == '') {
       return Container();
     } else if (images.length == 1) {
-      return InkWell(
-        onTap: () {
-          },
-        child: Hero(
-            tag: '${_post.postId.toString() + images[0]}0',
-            child: Container(
-              /*constraints: BoxConstraints(maxHeight: ScreenUtil().setHeight(700),
-                      maxWidth: ScreenUtil().setWidth(600)),*/
-              child: ExtendedImage.network(NetConfig.ip + images[0],
-                  cache: true,
-                  shape: BoxShape.rectangle,
-                  border: Border.all(color: Colors.black12, width: 0.5),
-                  borderRadius:
-                  BorderRadius.circular(ScreenUtil().setWidth(21))),
-            )
-        ),
-      );
+      return ImageBuild.singlePostImage(images);
     } else {
-      return Container(
-        constraints: BoxConstraints(
-            maxHeight: ScreenUtil().setWidth(gridHeight[images.length])),
-        child: GridView.count(
-          padding: const EdgeInsets.all(0),
-          controller: _gridController,
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.0,
-          mainAxisSpacing: ScreenUtil().setWidth(12),
-          crossAxisSpacing: ScreenUtil().setWidth(12),
-          crossAxisCount: images.length < 3 ? 2 : 3,
-          children: List.generate(images.length, (index) {
-            return InkWell(
-              onTap: () {
-              },
-              child: Hero(
-                tag: _post.postId.toString() + images[index] + index.toString(),
-                child: ExtendedImage.network(
-                  NetConfig.ip + images[index],
-                  fit: BoxFit.cover,
-                  shape: BoxShape.rectangle,
-                  border: Border.all(color: Colors.black12, width: 1),
-                  borderRadius:
-                  BorderRadius.circular(ScreenUtil().setWidth(21)),
-                  cache: true,
-                ),
-              ),
-            );
-          }),
-        ),
-      );
+      return ImageBuild.multiPostImage(images);
     }
   }
 
@@ -367,7 +414,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
         margin: const EdgeInsets.all(0),
         elevation: 100,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-        child: Container(
+        child: SizedBox(
           height: 120.h,
           width: ScreenUtil().setWidth(1080),
           child: Row(
@@ -379,14 +426,14 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.grey,
                   ),
-                  icon: const Icon(MyIcons.image, color: Colors.grey, size: 15),
+                  icon: const Icon(MyIcons.share, color: Colors.grey, size: 15),
                   label: Text(
                     '说点什么吧...                             ',
-                    style: TextStyle(fontSize: ScreenUtil().setSp(40)),
+                    style: TextStyle(fontSize: ScreenUtil().setSp(20)),
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: ScreenUtil().setWidth(160),
                 child: TextButton(
                     onPressed: () async {
@@ -419,7 +466,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: ScreenUtil().setWidth(160),
                 child: TextButton(
                   onPressed: () {
@@ -436,4 +483,5 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
       ),
     );
   }
+
 }
