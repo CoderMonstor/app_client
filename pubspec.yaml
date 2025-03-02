@@ -67,6 +67,7 @@ dependencies:
   permission_handler: ^10.2.0
   mobile_scanner: ^6.0.6
   wechat_assets_picker: ^9.5.0
+  device_info_plus: ^10.0.1
 
 
 dev_dependencies:

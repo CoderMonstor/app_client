@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:extended_text_field/extended_text_field.dart';
@@ -15,6 +16,7 @@ import '../../core/model/user_model.dart';
 import '../../core/net/net.dart';
 import '../../core/net/net_request.dart';
 import '../../util/my_icon/my_icon.dart';
+import '../../util/permission_request.dart';
 import '../../util/text_util/emoji_text.dart';
 import '../../util/text_util/special_textsapn.dart';
 import '../../util/toast.dart';
@@ -38,8 +40,18 @@ class _SendPostPageState extends State<SendPostPage> {
   late bool _showEmoji;
   final FocusNode _focusNode = FocusNode();
   late int _maxImgNum;
+  late PermissionUtil _permissionUtil;
 
-
+  Future<void> _initializePermissionUtil() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        _permissionUtil = PermissionUtil(context);
+        // 如果有异步初始化逻辑，可以在这里处理
+      } catch (e) {
+        print('初始化权限工具失败: $e');
+      }
+    });
+  }
   @override
   void initState() {
     _showEmoji = false;
@@ -48,6 +60,7 @@ class _SendPostPageState extends State<SendPostPage> {
       _textController.text='//@${widget.post?.username} :${widget.text}';
       _textController.selection = const TextSelection.collapsed(offset: 0);
     }
+    _initializePermissionUtil();
     super.initState();
   }
   @override
@@ -190,54 +203,35 @@ class _SendPostPageState extends State<SendPostPage> {
   );
 
   Future<void> loadAssets() async {
-    // List<AssetEntity>? resultList;
-    // // var PStatus = await Permission.notification.status;
-    // // print('-----------------------------------------$PStatus');
-    //
-    // try {
-    //
-    //   final PermissionStatus status = await Permission.photos.request();
-    //   print('存储权限请求状态: $status'); // 添加日志输出
-    //
-    //   if (!status.isGranted) {
-    //     print('请授予存储访问权限');
-    //     Toast.popToast('请授予存储访问权限');
-    //
-    //     // 检查是否永久拒绝权限
-    //     if (await Permission.storage.isPermanentlyDenied) {
-    //       openAppSettings(); // 引导用户前往设置页面授予权限
-    //     }
-    //     return;
-    //   }
-    //
-    //
-    //   // 2. 使用新版 AssetPicker 参数
-    //   resultList = await AssetPicker.pickAssets(
-    //     context,
-    //     pickerConfig: AssetPickerConfig(
-    //       maxAssets: _maxImgNum,
-    //       selectedAssets: images,
-    //       requestType: RequestType.image,
-    //       // themeColor: Theme.of(context).primaryColor,
-    //       // textDelegate: const AssetPickerTextDelegate(),
-    //       gridThumbnailSize: const ThumbnailSize.square(80),
-    //       previewThumbnailSize: const ThumbnailSize.square(150),
-    //     ),
-    //   );
-    // } catch (e) {
-    //   print('图片选择错误: $e');
-    //   Toast.popToast('图片选择错误，请重试');
-    // }
-    // if (!mounted || resultList == null) return;
-    // setState(() => images = resultList!);
-    final List<AssetEntity>? result = await AssetPicker.pickAssets(
-      context,
-      pickerConfig: const AssetPickerConfig(
-        maxAssets: 9,
-      ),
-    );
-    if (!mounted || result == null) return;
-    setState(() => images = result);
+    try {
+      // 检查并请求权限
+      Permission permission;
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt <= 32) {
+        permission = Permission.storage;
+      } else {
+        permission = Permission.photos;
+      }
+      await _permissionUtil.checkPermission(permission);
+
+      // 如果权限已授予，继续选择图片
+      List<AssetEntity>? resultList = await AssetPicker.pickAssets(
+        context,
+        pickerConfig: AssetPickerConfig(
+          maxAssets: _maxImgNum,
+          selectedAssets: images,
+          requestType: RequestType.image,
+          gridThumbnailSize: const ThumbnailSize.square(80),
+          previewThumbnailSize: const ThumbnailSize.square(150),
+        ),
+      );
+
+      if (!mounted || resultList == null) return;
+      setState(() => images = resultList);
+    } catch (e) {
+      print('图片选择错误: $e');
+      Toast.popToast('图片选择错误，请重试');
+    }
   }
 
 
@@ -353,26 +347,6 @@ class _SendPostPageState extends State<SendPostPage> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                // SizedBox(
-                //   // width: ScreenUtil().setWidth(160),
-                //   child: TextButton(
-                //     style: TextButton.styleFrom(
-                //       padding: const EdgeInsets.symmetric(horizontal: 0),
-                //     ),
-                //     onPressed: () {
-                //       if (_showEmoji && _focusNode.canRequestFocus) {
-                //         updateEmojiStatus();
-                //         Future.delayed(const Duration(milliseconds: 50), () {
-                //           SystemChannels.textInput.invokeMethod('TextInput.show');
-                //         });
-                //       } else {
-                //         updateEmojiStatus();
-                //       }
-                //     },
-                //     child: Icon(_showEmoji ? Icons.keyboard : MyIcons.smile,
-                //       color: const Color(0xff757575),),
-                //   ),
-                // ),
                 SizedBox(
                   // width: ScreenUtil().setWidth(160),
                   child: TextButton(
