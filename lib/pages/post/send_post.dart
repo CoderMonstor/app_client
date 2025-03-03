@@ -173,8 +173,8 @@ class _SendPostPageState extends State<SendPostPage> {
     );
   }
   Widget deleteButton(int index) => Positioned(
-    right: 0.0,
-    top: 0.0,
+    right: 0,
+    top: 0,
     child: GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -183,21 +183,10 @@ class _SendPostPageState extends State<SendPostPage> {
         });
         print(images.length);
       },
-      child: Container(
-        padding: EdgeInsets.all(ScreenUtil().setWidth(4.0)),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(ScreenUtil().setWidth(10.0)),
-          ),
-          color: Colors.black54,
-        ),
-        child: Center(
-          child: Icon(
-            Icons.delete,
-            size: ScreenUtil().setWidth(45.0),
-            color: Colors.white,
-          ),
-        ),
+      child: Icon(
+        Icons.dangerous,
+        size: ScreenUtil().setWidth(25.0),
+        color: Colors.black54,
       ),
     ),
   );

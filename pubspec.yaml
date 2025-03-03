@@ -53,10 +53,11 @@ dependencies:
   extended_nested_scroll_view: ^6.2.1
   extended_image: ^9.1.0
   extended_text: ^13.0.1
+  extended_list: ^3.0.2
   extended_text_field: ^15.0.1
 #  lottie: ^3.1.0
   image_picker: ^1.1.2
-  chat_bubbles: ^1.7.0
+  bubble_box: ^0.5.3
   flutter_picker_plus: ^1.4.1
   image_editor: ^1.6.0
   image: ^4.5.3
@@ -69,7 +70,7 @@ dependencies:
   wechat_assets_picker: ^9.5.0
   device_info_plus: ^10.0.1
   sticky_headers: ^0.3.0+2
-
+  web_socket_channel: ^3.0.1
 
 dev_dependencies:
   flutter_test:
