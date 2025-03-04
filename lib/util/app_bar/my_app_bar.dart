@@ -43,7 +43,7 @@ class MyAppbar {
           },
           onTap: () {
             if (msgIcon) {
-              Navigator.pushNamed(context, 'search');
+              Navigator.pushNamed(context, '/search');
             }
           },
         ),
@@ -58,7 +58,7 @@ class MyAppbar {
               color: Colors.red,
             ),
             onPressed: () {
-              Navigator.pushNamed(context, 'message');
+              Navigator.pushNamed(context, '/message');
             },
           ),
         ),

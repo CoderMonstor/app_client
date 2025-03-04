@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:client/core/global.dart';
+import 'package:client/pages/first_lunch.dart';
 import 'package:client/pages/login_register/login_page.dart';
 import 'package:client/pages/root_route.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +34,9 @@ void main() async {
   }
   // 设置设备方向为竖屏
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
+  Global.init();
+  print("============================here is the initial status ============================");
+  print("----current User is ${Global.profile.user}-----current SearchList is ${Global.profile.searchList}");
   runApp(
       MultiProvider(
             providers: [
@@ -60,7 +64,7 @@ class MyApp extends StatelessWidget {
               useMaterial3: true,
             ),
             // initialRoute: '/login', // 设置初始路由
-            home: const LoginPage(),
+            home: const FirstLaunchPage(),
             routes: routes, // 使用路由映射
             onUnknownRoute: (settings) {
               // 当找不到匹配路由时，返回一个默认页面

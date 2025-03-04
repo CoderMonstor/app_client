@@ -32,10 +32,6 @@ class MyDio {
 
   static Dio createDio() {
       var options = BaseOptions(
-        //baseUrl: "http://10.0.2.2:8080/",
-        //baseUrl: "http://112.74.169.4:8080/bebro/",
-        // baseUrl: "http://192.168.1.110:8080/",
-        // baseUrl: "http://47.109.108.66:8888/",
         baseUrl: NetConfig.ip,
         contentType: Headers.formUrlEncodedContentType,
       );

@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/list_repository/post_repo.dart';
-import '../core/maps.dart';
 import '../core/model/post.dart';
 import '../core/net/my_api.dart';
 import '../core/net/net.dart';
@@ -38,7 +37,7 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(20)),
+      // margin: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(20)),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20)),
       ),
@@ -106,7 +105,7 @@ class _PostCardState extends State<PostCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(widget.post!.username!,
+              Text(widget.post!.username?? '用户${widget.post?.userId}',
                   style: TextStyle(fontSize: ScreenUtil().setSp(20))),
               Text(buildDate(widget.post!.date!),
                   style: TextStyle(

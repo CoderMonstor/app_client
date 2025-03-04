@@ -18,7 +18,6 @@ import 'package:sticky_headers/sticky_headers/widget.dart';
 import '../../core/list_repository/comment_repo.dart';
 import '../../core/list_repository/post_repo.dart';
 import '../../core/list_repository/user_repo.dart';
-import '../../core/maps.dart';
 import '../../core/model/comment.dart';
 import '../../core/model/post.dart';
 import '../../core/model/theme_model.dart';

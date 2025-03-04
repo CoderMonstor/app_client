@@ -11,7 +11,7 @@ import '../../core/net/net.dart';
 import '../../util/my_icon/my_icon.dart';
 import '../fans_page.dart';
 import '../follow_page.dart';
-import '../my_post_page.dart';
+import '../post/my_post_page.dart';
 
 class AboutMePage extends StatefulWidget {
   const AboutMePage({super.key});

@@ -40,6 +40,7 @@ class Global {
 
   static void saveProfile() {
     _prefs.setString("profile", jsonEncode(profile.toJson()));
+    print(jsonEncode(profile.toJson()));
   }
 
 }

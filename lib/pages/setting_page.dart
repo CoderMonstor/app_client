@@ -1,4 +1,7 @@
+import 'package:client/pages/fans_page.dart';
+import 'package:client/pages/follow_page.dart';
 import 'package:client/pages/user/update_user_detail_page.dart';
+import 'package:client/widget/setting_tail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +12,8 @@ import '../widget/my_list_tile.dart';
 import 'about_page.dart';
 
 class SettingPage extends StatelessWidget {
+  const SettingPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,43 +22,13 @@ class SettingPage extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          SizedBox(height: ScreenUtil().setHeight(40)),
-          MyListTile(
-            left: 40,
-            leading: Text(
-              '头像与个人信息',
-              style: TextStyle(
-                  fontSize: ScreenUtil().setSp(24),
-                  fontWeight: FontWeight.w500),
-            ),
-            trailing: Icon(
-                MyIcons.right, size: ScreenUtil().setWidth(25), color: Colors.grey
-            ),
-            onTap: () {
-              Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => const UpdateUserDetailPage()));
-            },
-          ),
-          Divider(indent: ScreenUtil().setWidth(40)),
-          MyListTile(
-            left: 40,
-            leading: Text(
-              '关于',
-              style: TextStyle(
-                  fontSize: ScreenUtil().setSp(24),
-                  fontWeight: FontWeight.w500),
-            ),
-            trailing: Icon(
-              MyIcons.right,
-              size: ScreenUtil().setWidth(25),
-              color: Colors.grey,
-            ),
-            onTap: () {
-              Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => AboutPage()));
-            },
-          ),
-          Divider(indent: ScreenUtil().setWidth(40)),
+          const SettingTail(title: '编辑资料',page: UpdateUserDetailPage(), ),
+          const SettingTail(title: '我的关注',page: FollowPage(),),
+          const SettingTail(title: '我的粉丝',page: FansPage(),),
+          SettingTail(title: '我的关注',page: AboutPage(),),
+          SettingTail(title: '主题肤色', page: AboutPage(),),
+          SettingTail(title: '我的粉丝',page: AboutPage(),),
+          SizedBox(height: ScreenUtil().setHeight(100)),
           TextButton(
             onPressed: () async {
               SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -64,7 +39,7 @@ class SettingPage extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0),
               ),
-              backgroundColor: Colors.white,
+              // backgroundColor: Colors.white,
             ),
             child: Text(
               '退出登录',

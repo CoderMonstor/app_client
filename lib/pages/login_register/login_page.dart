@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.pushNamed(context, '/forget');
                   },
                 ),
-              ), //忘记密码//忘记密码
+              ), //忘记密码
               Padding(
                 padding: const EdgeInsets.only(top: 35.0, left: 60.0, right: 40.0),
                 child: ElevatedButton(
@@ -119,8 +119,9 @@ class _LoginPageState extends State<LoginPage> {
                         User user = User.fromJson(result["data"]);
                         print(user);
                         Global.profile.user = user;
+                        Global.saveProfile();
                         // 使用 Provider 获取 UserModel 实例并调用 updateUser 方法
-                        Provider.of<UserModel>(context, listen: false).updateUser(user);
+                        // Provider.of<UserModel>(context, listen: false).updateUser(user);
                         print(Global.profile.user);
                       }
                     }

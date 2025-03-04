@@ -6,10 +6,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class SendButton extends StatefulWidget {
-  const SendButton({super.key});
+  final ValueChanged<bool> onToggle;
+  final bool isExpanded;
 
+  const SendButton({
+    super.key,
+    required this.onToggle,
+    required this.isExpanded,
+  });
   @override
   State<SendButton> createState() => _SendButtonState();
 }
@@ -17,7 +22,6 @@ class SendButton extends StatefulWidget {
 class _SendButtonState extends State<SendButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  bool _isExpanded = false;
   final List<IconData> _icons = [
     Icons.ac_unit,
     Icons.cabin,
@@ -31,60 +35,60 @@ class _SendButtonState extends State<SendButton>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
+    _syncAnimationState();
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void didUpdateWidget(covariant SendButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isExpanded != oldWidget.isExpanded) {
+      _syncAnimationState();
+    }
+  }
+
+  void _syncAnimationState() {
+    widget.isExpanded ? _controller.forward() : _controller.reverse();
   }
 
   void _toggleMenu() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-      _isExpanded ? _controller.forward() : _controller.reverse();
-    });
+    widget.onToggle(!widget.isExpanded);
   }
 
   void _navigateToPage(int index) {
-    const pages = [SendResalePage(),BuyingRequestPage(),SendGatherPage()];
+    const pages = [SendResalePage(), BuyingRequestPage(), SendGatherPage()];
     Navigator.push(
       context,
       CupertinoPageRoute(builder: (context) => pages[index]),
     );
     _toggleMenu();
   }
-
   @override
   Widget build(BuildContext context) {
-    final fabSize = ScreenUtil().setWidth(56); // 主按钮尺寸
-    final miniFabSize = ScreenUtil().setWidth(40); // 子按钮尺寸
-    final spacing = ScreenUtil().setWidth(16); // 按钮间距
+    final fabSize = ScreenUtil().setWidth(56);
+    final miniFabSize = ScreenUtil().setWidth(40);
+    final spacing = ScreenUtil().setWidth(16);
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 50), // 增加底部空间
+      padding: const EdgeInsets.only(bottom: 30),
       child: Stack(
         alignment: Alignment.bottomRight,
         clipBehavior: Clip.none,
         children: [
-          // 展开的子按钮
+          // 修改点：使用 widget.isExpanded
           ...List.generate(_icons.length, (index) {
-            final offsetY = (fabSize + spacing) * (index + 1)+ScreenUtil().setHeight(20);
+            final offsetY = (fabSize + spacing) * (index + 1) + ScreenUtil().setHeight(20);
             return AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
               right: 16,
-              bottom: _isExpanded
-                  ? offsetY // 动态计算垂直位置
-                  : -miniFabSize, // 隐藏到屏幕下方
+              bottom: widget.isExpanded ? offsetY : -miniFabSize,
               child: _buildChildButton(index),
             );
           }),
-          // 主按钮（必须最后渲染）
           Positioned(
             right: 16,
             bottom: 16,
             child: _buildMainButton(),
           ),
-          // 主按钮
         ],
       ),
     );
@@ -95,11 +99,15 @@ class _SendButtonState extends State<SendButton>
       onPressed: _toggleMenu,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
-        child: _isExpanded
-            ? IconButton(onPressed: (){
-              Navigator.push(context, CupertinoPageRoute(builder: (context)=>const SendPostPage(type: 1,)));
-        },
-              icon: const Icon(Icons.accessibility_new_rounded))
+        child: widget.isExpanded // 修改点：使用父级状态
+            ? IconButton(
+          onPressed: () => Navigator.push(
+            context,
+            CupertinoPageRoute(
+                builder: (context) => const SendPostPage(type: 1)),
+          ),
+              icon: const Icon(Icons.accessibility_new_rounded),
+        )
             : const Icon(Icons.add),
       ),
     );
@@ -122,3 +130,4 @@ class _SendButtonState extends State<SendButton>
     );
   }
 }
+

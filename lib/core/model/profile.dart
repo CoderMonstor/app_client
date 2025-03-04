@@ -10,14 +10,12 @@ class Profile {
   List<String>? searchList;
   int? theme;
   bool? isDark;
-  String? ip;
 
   Profile({
     this.user,
-    this.searchList,
+    this.searchList=const [],
     this.theme,
     this.isDark,
-    this.ip,
   });
 
   ///此时创建一个空的 Profile 对象，
@@ -30,16 +28,14 @@ class Profile {
       : user = User.none(),
         searchList = [],
         theme = 0,
-        isDark = false,
-        ip = '';
+        isDark = false;
 
   ///从 json 数据中创建 Profile 对象
   Profile.fromJson(Map<String, dynamic> json)
       : user = json['user'] != null ? User.fromJson(json['user']) : User(),
         searchList = json['searchList'].cast<String>()??[],
         theme = json['theme'] ?? 0,
-        isDark = json['isDark'] ?? false,
-        ip = json['ip'] ?? '';
+        isDark = json['isDark'] ?? false;
 
 
 
@@ -50,7 +46,6 @@ class Profile {
     data['searchList'] = searchList;
     data['theme'] = theme;
     data['isDark'] = isDark;
-    data['ip'] = ip;
     return data;
   }
 

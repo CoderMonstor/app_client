@@ -39,7 +39,8 @@ class _ChatPageState extends State<ChatPage> {
   late WebSocketChannel channel ;
   @override
   void initState() {
-    channel = IOWebSocketChannel.connect("ws://47.109.108.66:8003");
+    // channel = IOWebSocketChannel.connect("ws://47.109.108.66:8003");
+    channel = IOWebSocketChannel.connect("ws://192.168.1.108:8003");
     var data = {
       "userId" : Global.profile.user?.userId.toString(),
       "type" : "REGISTER"

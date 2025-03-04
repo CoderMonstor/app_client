@@ -16,7 +16,7 @@ import '../pages/root_route.dart';
 import '../pages/search/search_page.dart';
 
 final Map<String, WidgetBuilder> routes = {
-  // '/': (context) => const FirstLaunchPage(),
+  '/first_launch': (context) => const FirstLaunchPage(),
   '/login': (context) => const LoginPage(),
   '/register': (context) => const RegisterPage(),
   '/forget':(context)=>const ForgetPage(),
@@ -25,7 +25,7 @@ final Map<String, WidgetBuilder> routes = {
   '/resale': (context) => const ResalePage(),
   '/gather': (context) => const GatherPage(),
   '/about_me': (context) => const AboutMePage(),
-  '/search': (context) => const SearchPage(),
+  '/search': (context) => SearchPage(),
   '/message': (context) => const MessagePage(),
   '/send_post': (context) => const SendPostPage(),
   '/send_resale': (context) => const SendResalePage(),

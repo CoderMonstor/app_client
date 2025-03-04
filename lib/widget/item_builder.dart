@@ -71,13 +71,11 @@ class ItemBuilder {
     showDialog(
         context: context,
         builder: (context) {
-          return Container(
-            child: Material(
-              textStyle: TextStyle(fontSize: ScreenUtil().setSp(48),
-                  color: Colors.black),
-              color: Colors.black12,
-              child: Text("$userId"),
-            ),
+          return Material(
+            textStyle: TextStyle(fontSize: ScreenUtil().setSp(48),
+                color: Colors.black),
+            color: Colors.black12,
+            child: Text("$userId"),
           );
         }
     );

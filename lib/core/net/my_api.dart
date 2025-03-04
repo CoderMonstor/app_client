@@ -37,6 +37,7 @@ class Apis {
   //修改用户信息
   static String updateUserProperty(String property, value) {
     int? userId = Global.profile.user?.userId;
+    print("------------------now ,we well going to update User Property,and userId is $userId-- value is $value------");
     return '/user/updateUserProperty?userId=$userId&property=$property&value=$value';
   }
 

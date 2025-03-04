@@ -74,7 +74,7 @@ class _FirstLaunchPageState extends State<FirstLaunchPage> {
               ),
             ),
             Positioned(
-              top: 20,
+              top: 30,
               right: 20,
               child: ElevatedButton(
                 onPressed: () {
@@ -99,17 +99,17 @@ class _FirstLaunchPageState extends State<FirstLaunchPage> {
 
   Future goToHomePage() async {
     if(mounted){
-      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       //如果页面还未跳转过则跳转页面
-      if (_prefs.getString('profile') != null) {
+      if (prefs.getString('profile') != null) {
         //跳转主页 且销毁当前页面
         Navigator.of(context).pushAndRemoveUntil(
-            new MaterialPageRoute(builder: (context) => const RootRoute()),
+            MaterialPageRoute(builder: (context) => const RootRoute()),
                 (Route<dynamic> rout) => false);
       } else {
         //跳转登录页 且销毁当前页面
         Navigator.of(context).pushAndRemoveUntil(
-            new MaterialPageRoute(builder: (context) => const LoginPage()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
                 (Route<dynamic> rout) => false);
       }
     }
