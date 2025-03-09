@@ -1,5 +1,5 @@
 import 'package:client/pages/gather_page.dart';
-import 'package:client/pages/message_page.dart';
+import 'package:client/pages/chat/message_page.dart';
 import 'package:client/pages/post/send_post.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,7 @@ import '../pages/first_lunch.dart';
 import '../pages/login_register/login_page.dart';
 import '../pages/post/post_page.dart';
 import '../pages/resale/send_resale.dart';
-import '../pages/resale_page.dart';
+import '../pages/resale/resale_page.dart';
 import '../pages/user/about_me_page.dart';
 import '../pages/root_route.dart';
 import '../pages/search/search_page.dart';
@@ -25,7 +25,7 @@ final Map<String, WidgetBuilder> routes = {
   '/resale': (context) => const ResalePage(),
   '/gather': (context) => const GatherPage(),
   '/about_me': (context) => const AboutMePage(),
-  '/search': (context) => SearchPage(),
+  '/search': (context) => const SearchPage(),
   '/message': (context) => const MessagePage(),
   '/send_post': (context) => const SendPostPage(),
   '/send_resale': (context) => const SendResalePage(),

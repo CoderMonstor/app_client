@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:client/pages/post/post_page.dart';
-import 'package:client/pages/resale_page.dart';
+import 'package:client/pages/resale/resale_page.dart';
 import 'package:client/pages/user/profile_page.dart';
 import 'package:client/util/my_icon/my_app_icons.dart';
 import 'package:flutter/cupertino.dart';

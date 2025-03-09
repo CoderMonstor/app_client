@@ -9,12 +9,10 @@ class SendResalePage extends StatefulWidget {
 class _SendResalePageState extends State<SendResalePage> {
   @override
   Widget build(BuildContext context) {
+    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Send Resale'),
-      ),
-      body: const Center(
-        child: Text('Send Resale Page'),
+        title: const Text('发布交换'),
       ),
     );
   }

@@ -2,13 +2,11 @@ import 'package:client/pages/fans_page.dart';
 import 'package:client/pages/follow_page.dart';
 import 'package:client/pages/user/update_user_detail_page.dart';
 import 'package:client/widget/setting_tail.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../util/my_icon/my_icon.dart';
-import '../widget/my_list_tile.dart';
+
 import 'about_page.dart';
 
 class SettingPage extends StatelessWidget {

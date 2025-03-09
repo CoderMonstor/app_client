@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:client/core/global.dart';
 import 'package:client/pages/first_lunch.dart';
-import 'package:client/pages/login_register/login_page.dart';
 import 'package:client/pages/root_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // 添加导入

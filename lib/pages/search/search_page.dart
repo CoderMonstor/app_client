@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
     return Scaffold(
       appBar: AppBar(
         // 隐藏阴影
-        // elevation: 1,
+        elevation: 0,
         //自动隐藏AppBar
         automaticallyImplyLeading: false,
         title: _searchBar(),

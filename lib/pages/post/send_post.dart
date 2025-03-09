@@ -358,19 +358,7 @@ class _SendPostPageState extends State<SendPostPage> {
                 ),
               ],
             ),
-            // Offstage(
-            //   offstage: !_showEmoji,
-            //   child: SizedBox(
-            //     width: ScreenUtil().setWidth(160),
-            //     child: TextButton(
-            //       style: TextButton.styleFrom(
-            //         padding: const EdgeInsets.symmetric(horizontal: 0),
-            //       ),
-            //       onPressed: manualDelete,
-            //       child: Icon(Icons.backspace, color: Theme.of(context).primaryColor,),
-            //     ),
-            //   ),
-            // ),
+
           ],
         ),
       ),

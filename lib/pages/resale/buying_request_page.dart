@@ -11,7 +11,7 @@ class _BuyingRequestPageState extends State<BuyingRequestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BuyingRequestPage'),
+        title: const Text('BuyingRequestPage'),
       ),
       body: const Center(
         child: Text('BuyingRequestPage'),

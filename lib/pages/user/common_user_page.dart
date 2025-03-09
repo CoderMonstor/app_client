@@ -1,3 +1,4 @@
+import 'package:client/widget/user_card.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
@@ -5,7 +6,6 @@ import '../../core/global.dart';
 import '../../core/list_repository/user_repo.dart';
 import '../../core/model/user.dart';
 import '../../widget/build_indicator.dart';
-import '../../widget/item_builder.dart';
 
 class CommonUserPage extends StatefulWidget{
 
@@ -30,7 +30,7 @@ class _CommonUserPageState extends State<CommonUserPage> {
 
   @override
   void dispose() {
-    _userRepository?.dispose();
+    _userRepository.dispose();
     super.dispose();
   }
   @override
@@ -41,7 +41,7 @@ class _CommonUserPageState extends State<CommonUserPage> {
         child: LoadingMoreList(
           ListConfig<User>(
             itemBuilder: (BuildContext context, User user, int index){
-              return ItemBuilder.buildUserRow(context,user,1);
+              return UserCard(user: user,list: _userRepository,index: index);
             },
             sourceList: _userRepository,
             indicatorBuilder: _buildIndicator,
