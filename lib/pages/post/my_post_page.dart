@@ -9,7 +9,7 @@ import '../../core/global.dart';
 import '../../core/list_repository/post_repo.dart';
 import '../../core/model/post.dart';
 import '../../widget/build_indicator.dart';
-import '../../widget/post_card.dart';
+import '../../widget/my_card/post_card.dart';
 
 class MyPostPage extends StatefulWidget{
   const MyPostPage({super.key});

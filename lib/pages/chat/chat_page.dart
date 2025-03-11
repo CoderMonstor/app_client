@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:bubble_box/bubble_box.dart';
@@ -6,7 +5,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:extended_list/extended_list.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -146,7 +144,7 @@ class _ChatPageState extends State<ChatPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(width: 10), // 左边距10
+            const SizedBox(width: 10), // 左边距10
             Expanded(
               child: ConstrainedBox(
                 constraints: BoxConstraints(

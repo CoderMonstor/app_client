@@ -200,4 +200,8 @@ class Apis {
   static String checkUpdate() {
     return '/user/checkUpdate';
   }
+  //查询消息列表
+  static String getMsgListById(int userId) {
+    return '/msg/getMsgListById?userId=$userId';
+  }
 }

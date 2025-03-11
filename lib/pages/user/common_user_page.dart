@@ -1,4 +1,4 @@
-import 'package:client/widget/user_card.dart';
+import 'package:client/widget/my_card/user_card.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 

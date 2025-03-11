@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:client/widget/search_field.dart';
@@ -9,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/model/msg_model.dart';
-import '../../core/model/user_send_user_msg_model.dart';
+import '../../core/model/send_msg_model.dart';
 
 class MessageDetailsPage extends StatefulWidget {
   const MessageDetailsPage({super.key, required this.msgModel});
@@ -23,81 +22,28 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
   late TextEditingController textEditingController = TextEditingController();
   late bool displaySend = false;
   late String me = "https://foruda.gitee.com/avatar/1677180609201628769/9580418_zhangnull_1639032531.png";
-  late List<UserSendUserMsgModel> msgs = [];
+  late List<UserSendUserMsgModel> msg = [];
 
   void addData() {
-    msgs.add(UserSendUserMsgModel(
-      imageurl: widget.msgModel.imageurl,
-      role: "you",
-      msg: '可以把',
-    ));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl,
-        msg: 'https://w.wallhaven.cc/full/zy/wallhaven-zyvg1j.png',
-        role: "you",
-        type: "image"));
-
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl,
-        msg: 'https://w.wallhaven.cc/full/d6/wallhaven-d6vp7m.jpg',
-        role: "you",
-        type: "image"));
-    msgs.add(UserSendUserMsgModel(
-      imageurl: me,
-      msg: '来点摄图',
-    ));
-    msgs.add(UserSendUserMsgModel(
-      imageurl: me,
-      msg: '你配个机霸',
-    ));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: me,
-        msg: 'https://w.wallhaven.cc/full/7p/wallhaven-7pxx99.png',
-        type: "image"));
-
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl,
+    msg.add(UserSendUserMsgModel(
+        imageUrl: widget.msgModel.imageUrl,
         msg: '感觉我这种臭鱼烂虾进去要坐大牢',
-        role: "you"));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl, msg: '这里的invoke没有啊', role: "you"));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl,
-        msg:
-            '我的识别码:364819064使用向日葵即可对我发起远程协助向日葵下载地址:http://url.oray.com/tGJdas/',
-        role: "you"));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl, msg: '谢谢你，大屌侠', role: "you"));
-
-    msgs.add(UserSendUserMsgModel(
-      imageurl: me,
+        role: "receiver"));
+    msg.add(UserSendUserMsgModel(
+        imageUrl: widget.msgModel.imageUrl, msg: '这里的invoke没有啊', role: "you"));
+    msg.add(UserSendUserMsgModel(
+        imageUrl: widget.msgModel.imageUrl,
+        msg: '我的识别码:364819064使用向日葵即可对我发起远程协助向日葵下载地址:http://url.oray.com/tGJdas/',
+        role: "receiver"));
+    msg.add(UserSendUserMsgModel(
+        imageUrl: widget.msgModel.imageUrl, msg: '谢谢你，大屌侠', role: "you"));
+    msg.add(UserSendUserMsgModel(
+      imageUrl: me,
       msg: '所以说，点不出来就等于没有吗',
     ));
-    msgs.add(UserSendUserMsgModel(
-      imageurl: me,
-      msg: '眼睛不要可以捐了',
-    ));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl, msg: '唉，我是傻逼！', role: "you"));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl, msg: '我感觉这些东西我不太配', role: "you"));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl,
-        msg: '我真的他妈的开始找的时候有点心虚了',
-        role: "you"));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl, msg: '我感觉我不配', role: "you"));
-    msgs.add(UserSendUserMsgModel(
-      imageurl: me,
-      msg: '你行个机霸',
-    ));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl, msg: '我得问问啥情况', role: "you"));
-    msgs.add(UserSendUserMsgModel(
-        imageurl: widget.msgModel.imageurl, msg: '我感觉我真不太行', role: "you"));
   }
 
-  late bool isdisplay = false;
+  late bool isDisplay = false;
   late double height = 0;
   late ScrollController scrollController = ScrollController();
   //实例化
@@ -110,7 +56,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         displaySend = true;
-        if (isdisplay) {
+        if (isDisplay) {
           height = 0;
         }
         setState(() {});
@@ -135,7 +81,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
             backgroundColor: Colors.transparent,
             leading: const BackButton(
               style: ButtonStyle(
-                  overlayColor: MaterialStatePropertyAll(Colors.transparent)),
+                  overlayColor: WidgetStatePropertyAll(Colors.transparent)),
             ),
             leadingWidth: 70,
             title: Column(
@@ -158,8 +104,8 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
               child: GestureDetector(
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  if (isdisplay) {
-                    isdisplay = !isdisplay;
+                  if (isDisplay) {
+                    isDisplay = !isDisplay;
                     height = 0;
                   }
                   displaySend = textEditingController.text.isNotEmpty;
@@ -173,10 +119,10 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                   controller: scrollController,
                   physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics(),
                   ),
-                  itemCount: msgs.length,
+                  itemCount: msg.length,
                   itemBuilder: (context, index) {
                     return DefaultTextStyle(style: const TextStyle(fontSize: 16, color: Colors.black),
-                        child: item(msgs[index]));
+                        child: item(msg[index]));
                   },
                   separatorBuilder: (BuildContext context, int index) {
                     return const SizedBox(height: 20);
@@ -201,16 +147,16 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                       focusNode: focusNode,
                       onSubmitted: (p0) {
                         if (p0.isEmpty) return;
-                        msgs.insert(
-                            0, UserSendUserMsgModel(imageurl: me, msg: p0));
+                        msg.insert(
+                            0, UserSendUserMsgModel(imageUrl: me, msg: p0));
                         textEditingController.clear();
                         //displaySend = false;
                         Future.delayed(const Duration(seconds: 2), () {
-                          msgs.insert(
+                          msg.insert(
                               0,
                               UserSendUserMsgModel(
-                                  imageurl: widget.msgModel.imageurl,
-                                  role: "you",
+                                  imageUrl: widget.msgModel.imageUrl,
+                                  role: "receiver",
                                   msg: "${widget.msgModel.name}:$p0"));
                           setState(() {});
                         });
@@ -227,8 +173,8 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                   !displaySend
                       ? GestureDetector(
                           onTap: () {
-                            isdisplay = !isdisplay;
-                            if (isdisplay) {
+                            isDisplay = !isDisplay;
+                            if (isDisplay) {
                               height = 300;
                               scrollController.animateTo(-20,
                                   curve: Curves.ease,
@@ -240,7 +186,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                           },
                           child: SvgPicture.asset(
                             "assets/svg/Add_Plus_Circle.svg",
-                            color: !isdisplay ? Colors.black : Colors.blue,
+                            color: !isDisplay ? Colors.black : Colors.blue,
                           ),
                         )
                       : SizedBox(
@@ -249,10 +195,10 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (textEditingController.text.isEmpty) return;
-                              msgs.insert(
+                              msg.insert(
                                   0,
                                   UserSendUserMsgModel(
-                                      imageurl: me,
+                                      imageUrl: me,
                                       msg: textEditingController.text));
                               String youtext = textEditingController.text;
                               textEditingController.clear();
@@ -262,10 +208,10 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                                   curve: Curves.ease,
                                   duration: const Duration(milliseconds: 300));
                               Future.delayed(const Duration(seconds: 2), () {
-                                msgs.insert(
+                                msg.insert(
                                     0,
                                     UserSendUserMsgModel(
-                                        imageurl: widget.msgModel.imageurl,
+                                        imageUrl: widget.msgModel.imageUrl,
                                         role: "you",
                                         msg:
                                             "${widget.msgModel.name}:$youtext"));
@@ -275,14 +221,14 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                               setState(() {});
                             },
                             style: ButtonStyle(
-                                padding: const MaterialStatePropertyAll(
+                                padding: const WidgetStatePropertyAll(
                                     EdgeInsets.zero),
-                                shape: MaterialStatePropertyAll(
+                                shape: WidgetStatePropertyAll(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(3),
                                   ),
                                 ),
-                                backgroundColor: MaterialStatePropertyAll(
+                                backgroundColor: WidgetStatePropertyAll(
                                     Colors.blue.shade400)),
                             child: const Text(
                               "发送",
@@ -316,8 +262,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              userMsgModel.type == "text"
-                  ? Container(
+                  Container(
                       constraints: BoxConstraints(maxWidth: width),
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -326,40 +271,11 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                       child: Text(
                         userMsgModel.msg,
                         style: const TextStyle(color: Colors.white),
-                      ))
-                  : GestureDetector(
-                      onTap: () {
-                        showDialog(
-                            builder: (BuildContext context) {
-                              return DetailPage(userMsgModel.msg);
-                            },
-                            context: context);
-                      },
-                      child: Container(
-                        constraints: BoxConstraints(maxWidth: width),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: ExtendedImage.network(
-                            userMsgModel.msg,
-                            cache: true,
-                            loadStateChanged: (state) {
-                              if (state.extendedImageLoadState ==
-                                  LoadState.loading) {
-                                return loading;
-                              } else if (state.extendedImageLoadState ==
-                                  LoadState.failed) {
-                                return loading;
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
+                      )),
               const SizedBox(width: 10),
               ClipOval(
                   child: ExtendedImage.network(
-                userMsgModel.imageurl,
+                userMsgModel.imageUrl,
                 cache: true,
                 width: 35,
                 height: 35,
@@ -381,7 +297,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
             children: [
               ClipOval(
                   child: ExtendedImage.network(
-                userMsgModel.imageurl,
+                userMsgModel.imageUrl,
                 cache: true,
                 width: 35,
                 height: 35,
@@ -396,8 +312,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                 },
               )),
               const SizedBox(width: 10),
-              userMsgModel.type == "text"
-                  ? Container(
+                  Container(
                       constraints: BoxConstraints(maxWidth: width),
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -406,36 +321,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                       child: Text(
                         userMsgModel.msg,
                         style: const TextStyle(color: Colors.black),
-                      ))
-                  : GestureDetector(
-                      onTap: () {
-                        showDialog(
-                            builder: (BuildContext context) {
-                              return DetailPage(userMsgModel.msg);
-                            },
-                            context: context);
-                      },
-                      child: Container(
-                        constraints: BoxConstraints(maxWidth: width),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: ExtendedImage.network(
-                            userMsgModel.msg,
-                            cache: true,
-                            loadStateChanged: (state) {
-                              if (state.extendedImageLoadState ==
-                                  LoadState.loading) {
-                                return loading;
-                              } else if (state.extendedImageLoadState ==
-                                  LoadState.failed) {
-                                return loading;
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                    )
+                      )),
             ],
           );
   }

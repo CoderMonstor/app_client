@@ -4,6 +4,7 @@
 
 import 'package:client/widget/dialog_build.dart';
 import 'package:client/widget/image_build.dart';
+import 'package:client/widget/my_card/user_card.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,6 +35,7 @@ import '../../widget/item_builder.dart';
 import '../../widget/my_list_tile.dart';
 import '../user/profile_page.dart';
 import '../view_images.dart';
+import 'common_dialog.dart';
 
 
 class PostDetailPage extends StatefulWidget {
@@ -142,25 +144,24 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
             LoadingMoreList(
               ListConfig<User>(
                   itemBuilder: (BuildContext context, User user, int index) {
-                    return ItemBuilder.buildUserRow(context, user, 3);
+                    return UserCard(user:  user, list: _userRepository,index: index,);
                   },
                   sourceList: _userRepository,
                   indicatorBuilder: _buildIndicator,
                   lastChildLayoutType: LastChildLayoutType.none,
-                  padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90)),
+                  // padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90)),
               ),
             ),
             LoadingMoreList(
               ListConfig<Comment>(
-                  itemBuilder:
-                      (BuildContext context, Comment comment, int index) {
-                    return ItemBuilder.buildComment(
-                        context, comment, _commentRepository, index);
+                  itemBuilder: (BuildContext context, Comment comment, int index) {
+                    return ItemBuilder.buildComment(context, comment, _commentRepository, index);
                   },
                   sourceList: _commentRepository,
                   indicatorBuilder: _buildIndicator,
                   lastChildLayoutType: LastChildLayoutType.none,
-                  padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90))),
+                  // padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90))
+              ),
             ),
             LoadingMoreList(
               ListConfig<Post>(
@@ -186,7 +187,6 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
       ),
       _postInfo(),
       _content(),
-      // SliverToBoxAdapter(child: SizedBox(height: 20.w)),
       _tabBar()
     ];
   }
@@ -409,75 +409,76 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   _buildInputBar() {
     return Positioned(
       bottom: 0,
-      child: Card(
-        margin: const EdgeInsets.all(0),
-        elevation: 100,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-        child: SizedBox(
-          height: 120.h,
-          width: ScreenUtil().setWidth(1080),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: TextButton.icon(
-                  onPressed: () {
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey,
-                  ),
-                  icon: const Icon(MyIcons.share, color: Colors.grey, size: 15),
-                  label: Text(
-                    '说点什么吧...                             ',
-                    style: TextStyle(fontSize: ScreenUtil().setSp(20)),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: ScreenUtil().setWidth(160),
-                child: TextButton(
-                    onPressed: () async {
-                      if (_post.isLiked == 0) {
-                        var res = await NetRequester.request(Apis.likePost(_post.postId!));
-                        if (res['code'] == '1') {
-                          setState(() {
-                            _post.isLiked = 1;
-                            _post.likeNum = (_post.likeNum ?? 0) + 1;
-                          });
-                        }
-                      } else {
-                        var res = await NetRequester.request(Apis.cancelLikePost(_post.postId!));
-                        if (res['code'] == '1') {
-                          setState(() {
-                            _post.isLiked = 0;
-                            _post.likeNum = (_post.likeNum ?? 0) - 1;
-                          });
-                        }
+      child: SizedBox(
+        // height: 120.h,
+        width: ScreenUtil().setWidth(1080),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () {
+                  showDialog(context: context,
+                      builder: (context){
+                        return CommentDialog(postId: _post.postId,list: _commentRepository);
                       }
-                  },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Icon(
-                    _post.isLiked == 1 ? MyIcons.like_fill : MyIcons.like,
-                    color: _post.isLiked == 1
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey,
-                  ),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey,
+                ),
+                icon: const Icon(MyIcons.share, color: Colors.grey, size: 15),
+                label: Text(
+                  '说点什么吧...                             ',
+                  style: TextStyle(fontSize: ScreenUtil().setSp(20)),
                 ),
               ),
-              SizedBox(
-                width: ScreenUtil().setWidth(160),
-                child: TextButton(
-                  onPressed: () {
-                  },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: const Icon(MyIcons.retweet, color: Colors.grey),
+            ),
+            SizedBox(
+              width: ScreenUtil().setWidth(160),
+              child: TextButton(
+                  onPressed: () async {
+                    if (_post.isLiked == 0) {
+                      var res = await NetRequester.request(Apis.likePost(_post.postId!));
+                      if (res['code'] == '1') {
+                        setState(() {
+                          _post.isLiked = 1;
+                          _post.likeNum = (_post.likeNum ?? 0) + 1;
+                        });
+                      }
+                    } else {
+                      var res = await NetRequester.request(Apis.cancelLikePost(_post.postId!));
+                      if (res['code'] == '1') {
+                        setState(() {
+                          _post.isLiked = 0;
+                          _post.likeNum = (_post.likeNum ?? 0) - 1;
+                        });
+                      }
+                    }
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                ),
+                child: Icon(
+                  _post.isLiked == 1 ? MyIcons.like_fill : MyIcons.like,
+                  color: _post.isLiked == 1
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey,
                 ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              width: ScreenUtil().setWidth(160),
+              child: TextButton(
+                onPressed: () {
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                ),
+                child: const Icon(MyIcons.retweet, color: Colors.grey),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -7,20 +7,34 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../core/net/net.dart';
-import '../pages/user/chat_page.dart';
-import '../pages/user/profile_page.dart';
+import '../../core/net/net.dart';
+import '../../pages/chat/chat_page.dart';
+import '../../pages/user/profile_page.dart';
+
 class UserCard extends StatefulWidget {
   final User? user;
   final UserRepository? list;
   final int? index;
-  const UserCard({super.key, this.user, this.list, this.index});
+  final bool showConnect; // 修改为非空类型
+
+  UserCard({
+    super.key,
+    this.user,
+    this.list,
+    this.index,
+    this.showConnect = false, // 设置默认值为 false
+  });
 
   @override
   State<UserCard> createState() => _UserCardState();
 }
 
 class _UserCardState extends State<UserCard> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -45,7 +59,7 @@ class _UserCardState extends State<UserCard> {
                 child: ExtendedImage.network(
                     '${NetConfig.ip}/images/${widget.user!.avatarUrl}',
                     cache: true),
-              ),
+          ),
         ),
         center: Row(
           children: [
@@ -61,18 +75,21 @@ class _UserCardState extends State<UserCard> {
             ),
           ],
         ),
-        trailing: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                builder: (context) =>  ChatPage(user: widget.user),
-              ),
-            );
-          },
-          icon: const Icon(MyAppIcon.envelope_regular),
-        ),
+        trailing: widget.showConnect
+            ? IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => ChatPage(user: widget.user),
+                    ),
+                  );
+                },
+              icon: const Icon(MyAppIcon.envelope_regular),
+        )
+            : null,
       ),
     );
   }
 }
+

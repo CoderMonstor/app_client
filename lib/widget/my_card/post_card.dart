@@ -9,17 +9,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../core/list_repository/post_repo.dart';
-import '../core/model/post.dart';
-import '../core/net/my_api.dart';
-import '../core/net/net.dart';
-import '../core/net/net_request.dart';
-import '../pages/user/profile_page.dart';
-import '../pages/post/post_detail.dart';
-import '../util/build_date.dart';
-import '../util/my_icon/my_icon.dart';
-import 'dialog_build.dart';
-import 'my_list_tile.dart';
+import '../../core/list_repository/post_repo.dart';
+import '../../core/model/post.dart';
+import '../../core/net/my_api.dart';
+import '../../core/net/net.dart';
+import '../../core/net/net_request.dart';
+import '../../pages/post/post_detail.dart';
+import '../../pages/user/profile_page.dart';
+import '../../util/build_date.dart';
+import '../../util/my_icon/my_icon.dart';
+import '../dialog_build.dart';
+import '../my_list_tile.dart';
+
+
 
 
 class PostCard extends StatefulWidget {

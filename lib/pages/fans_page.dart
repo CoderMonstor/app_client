@@ -6,8 +6,7 @@ import '../core/list_repository/user_repo.dart';
 import '../core/model/user.dart';
 import '../util/app_bar/my_app_bar.dart';
 import '../widget/build_indicator.dart';
-import '../widget/item_builder.dart';
-import '../widget/user_card.dart';
+import '../widget/my_card/user_card.dart';
 
 class FansPage extends StatefulWidget{
   const FansPage({super.key});
@@ -39,7 +38,7 @@ class _FansPageState extends State<FansPage> {
       body: LoadingMoreList(
         ListConfig<User>(
           itemBuilder: (BuildContext context, User user, int index){
-            return UserCard(user: user,list: _userRepository,index: index);
+            return UserCard(user: user,list: _userRepository,index: index,showConnect: true,);
           },
           sourceList: _userRepository,
           indicatorBuilder: _buildIndicator,

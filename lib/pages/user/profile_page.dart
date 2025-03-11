@@ -23,11 +23,11 @@ import '../../util/my_icon/my_icon.dart';
 import '../../util/toast.dart';
 import '../../widget/build_indicator.dart';
 import '../../widget/flexible_detail_bar.dart';
+import '../../widget/my_card/post_card.dart';
 import '../../widget/my_list_tile.dart';
-import '../../widget/post_card.dart';
 import '../mobile_scan_dialog.dart';
 import '../setting_page.dart';
-import 'chat_page.dart';
+import '../chat/chat_page.dart';
 
 
 class ProfilePage extends StatefulWidget {
