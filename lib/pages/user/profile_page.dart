@@ -141,9 +141,6 @@ class _ProfilePageState extends State<ProfilePage>
               },
               sourceList: _postRepository,
               indicatorBuilder: _buildIndicator,
-              padding: EdgeInsets.only(
-                  top:ScreenUtil().setWidth(20),
-              ),
             ),
           ),
           const MyPostPage(),
@@ -154,11 +151,6 @@ class _ProfilePageState extends State<ProfilePage>
               },
               sourceList: _postRepository,
               indicatorBuilder: _buildIndicator,
-              padding: EdgeInsets.only(
-                  top:ScreenUtil().setWidth(20),
-                  left: ScreenUtil().setWidth(20),
-                  right: ScreenUtil().setWidth(20)
-              ),
             ),
           ),
         ],

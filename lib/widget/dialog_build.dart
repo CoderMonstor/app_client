@@ -12,7 +12,6 @@ class DialogBuild {
 
   static Future showPostDialog(BuildContext context,int? postId) async {
     bool isCurrentUser=false;
-    print('------------------------------is current user $isCurrentUser====================');
     var res = await NetRequester.request(Apis.getPostByPostId(postId!));
     Post post= Post.fromJson(res['data']);
     if(Global.profile.user!.userId==post.userId) {
@@ -44,7 +43,7 @@ class DialogBuild {
                   ),
                   child: Container(
                     width: ScreenUtil().setWidth(300),
-                    height: ScreenUtil().setHeight(isCurrentUser?150:200),
+                    height: ScreenUtil().setHeight(isCurrentUser?160:130),
                     padding: EdgeInsets.symmetric(
                         horizontal: ScreenUtil().setWidth(60),
                         vertical: ScreenUtil().setHeight(40)),

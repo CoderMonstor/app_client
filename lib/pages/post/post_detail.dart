@@ -4,7 +4,6 @@
 
 import 'package:client/widget/dialog_build.dart';
 import 'package:client/widget/image_build.dart';
-import 'package:client/widget/my_card/user_card.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,7 +56,6 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   late TabController _tabController;
   late PageController _pageController;
   final ScrollController _scrollController = ScrollController();
-  // final ScrollController _gridController = ScrollController();
   late UserRepository _userRepository;
   late PostRepository _postRepository;
   late CommentRepository _commentRepository;
@@ -227,9 +225,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   Widget _content() {
     return SliverToBoxAdapter(
       child: Card(
-        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
         elevation: 0,
-        // margin: const EdgeInsets.all(0),
         child: Container(
           padding: EdgeInsets.symmetric(
               horizontal: ScreenUtil().setWidth(42),
@@ -353,7 +349,6 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
       specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
       onSpecialTextTap: (dynamic parameter) {
         String str =parameter.toString();
-        print(str);
         if (parameter.startsWith("@")) {
           Navigator.push(context,
               CupertinoPageRoute(builder: (context) =>
@@ -379,9 +374,9 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
     if (images[0] == '') {
       return Container();
     } else if (images.length == 1) {
-      return ImageBuild.singlePostImage(images);
+      return ImageBuild.singlePostImage(context,widget.postId!,images);
     } else {
-      return ImageBuild.multiPostImage(images);
+      return ImageBuild.multiPostImage(context, widget.postId!,images);
     }
   }
 

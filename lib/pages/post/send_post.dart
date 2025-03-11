@@ -181,7 +181,6 @@ class _SendPostPageState extends State<SendPostPage> {
         setState(() {
           images.removeAt(index);
         });
-        print(images.length);
       },
       child: Icon(
         Icons.dangerous,
@@ -227,8 +226,7 @@ class _SendPostPageState extends State<SendPostPage> {
   Widget _buildAdd() {
     return Container(
       color: Colors.black.withOpacity(0.05),
-      // width: ScreenUtil().setWidth(330),
-      // height: ScreenUtil().setWidth(330),
+
       child: InkWell(
         onTap: loadAssets,
         child: Icon(
@@ -408,13 +406,15 @@ class _SendPostPageState extends State<SendPostPage> {
     List images = url.split('￥');
     return Container(
       width: ScreenUtil().setWidth(1080),
-      padding: EdgeInsets.all(ScreenUtil().setWidth(33)),
+      padding: EdgeInsets.all(ScreenUtil().setWidth(20)),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(15),
-            horizontal: ScreenUtil().setWidth(20)),
+        padding: EdgeInsets.symmetric(
+            vertical: ScreenUtil().setHeight(15),
+            horizontal: ScreenUtil().setWidth(20)
+        ),
         decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21))
+            borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20))
         ),
         child: Row(
           children: <Widget>[
@@ -425,37 +425,39 @@ class _SendPostPageState extends State<SendPostPage> {
               width: ScreenUtil().setHeight(120),
               fit: BoxFit.cover,
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21)),
+              borderRadius: BorderRadius.circular(ScreenUtil().setWidth(20)),
             ),
-            const SizedBox(width: 5),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  widget.post!.forwardId == null
-                      ? '@${widget.post?.username ?? '未知用户'}'
-                      : '@${widget.post?.forwardName ?? '未知用户'}',
-                  style: TextStyle(fontSize: ScreenUtil().setSp(48)),
-                ),
-                SizedBox(
-                  width: ScreenUtil().setWidth(819),
-                  child:
-                  ExtendedText(
-                    widget.post?.forwardId == null
-                        ? widget.post?.text ?? ''
-                        : widget.post?.forwardText ?? '',
-                    maxLines: 1,
-                    style: TextStyle(color: Colors.grey, fontSize: ScreenUtil().setSp(38)),
-                    specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-                    overflowWidget: CustomTextOverflowWidget(
-                      overflowText: "...",
-                      child: Container(), // 添加一个空的容器或其他合适的 widget
-                    ),
-                    overflow: TextOverflow.ellipsis,
+            SizedBox(
+              width: ScreenUtil().setWidth(200),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    widget.post!.forwardId == null
+                        ? '@${widget.post?.username ?? '未知用户'}'
+                        : '@${widget.post?.forwardName ?? '未知用户'}',
+                    style: TextStyle(fontSize: ScreenUtil().setSp(24)),
                   ),
-                ),
+                  SizedBox(
+                    width: ScreenUtil().setWidth(819),
+                    child:
+                    ExtendedText(
+                      widget.post?.forwardId == null
+                          ? widget.post?.text ?? ''
+                          : widget.post?.forwardText ?? '',
+                      maxLines: 1,
+                      style: TextStyle(color: Colors.grey, fontSize: ScreenUtil().setSp(20)),
+                      specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                      overflowWidget: CustomTextOverflowWidget(
+                        overflowText: "...",
+                        child: Container(), // 添加一个空的容器或其他合适的 widget
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
 
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -479,52 +481,21 @@ class _SendPostPageState extends State<SendPostPage> {
         : const SizedBox(height: 0);
   }
 
-  // void manualDelete() {
-  //   //delete by code
-  //   final _value = _textController.value;
-  //   final selection = _value.selection;
-  //   if (!selection.isValid) return;
-  //
-  //   TextEditingValue value;
-  //   final actualText = _value.text;
-  //   if (selection.isCollapsed && selection.start == 0) return;
-  //   final int start =
-  //   selection.isCollapsed ? selection.start - 1 : selection.start;
-  //   final int end = selection.end;
-  //
-  //   value = TextEditingValue(
-  //     text: actualText.replaceRange(start, end, ""),
-  //     selection: TextSelection.collapsed(offset: start),
-  //   );
-  //   MySpecialTextSpanBuilder mySpecialTextSpanBuilder =
-  //   MySpecialTextSpanBuilder(context: context);
-  //   final oldTextSpan = mySpecialTextSpanBuilder.build(_value.text);
-  //
-  //   value = handleSpecialTextSpanDelete(value, _value, oldTextSpan, context);
-  //
-  //   _textController.value = value;
-  // }
-  //
-  // TextEditingValue handleSpecialTextSpanDelete(
-  //     TextEditingValue value, TextEditingValue oldValue, InlineSpan oldTextSpan, BuildContext context) {
-  //   return value;
-  // }
 }
 
 class CustomTextOverflowWidget extends TextOverflowWidget {
   final String overflowText;
 
   // 添加 key 和 child 参数并使用 const 关键字
-  CustomTextOverflowWidget({
+  const CustomTextOverflowWidget({
     required this.overflowText,
     required super.child, // 添加 child 参数
   });
 
   @override
   Widget build(BuildContext context) {
-    // 如果需要使用 RenderBox 和 textWidth，可以在 build 方法中获取这些信息
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    double textWidth = 0; // 根据实际需求计算或传递 textWidth
+    double textWidth = 0;
 
     return Text(
       "...$overflowText",

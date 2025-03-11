@@ -116,24 +116,31 @@ class ItemBuilder {
               CupertinoPageRoute(
                   builder: (context) => ProfilePage(userId: post.userId)));
         },
-        left: 40,
-        leading: Container(
-          height: ScreenUtil().setHeight(110),
-          child: post.avatarUrl == '' || post.avatarUrl == null
-              ? Image.asset("images/flutter_logo.png")
-              : ClipOval(
-                child: ExtendedImage.network(NetConfig.ip+'/images/'+post.avatarUrl!, cache: true),
-          ),
+        left: 20,
+        betweenLeadingAndCenter: 10,
+        crossAxis: CrossAxisAlignment.start,
+        leading: Column(
+          children: [
+            SizedBox(height: ScreenUtil().setHeight(10),),
+            SizedBox(
+              height: ScreenUtil().setHeight(50),
+              child: post.avatarUrl == '' || post.avatarUrl == null
+                  ? Image.asset("images/flutter_logo.png")
+                  : ClipOval(
+                    child: ExtendedImage.network('${NetConfig.ip}/images/${post.avatarUrl!}', cache: true),
+              ),
+            ),
+          ],
         ),
         center: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(post.username ?? '用户${post.userId}',
-                style: TextStyle(fontSize: ScreenUtil().setSp(24))),
+                style: TextStyle(fontSize: ScreenUtil().setSp(20))),
             Text(buildDate(post.date!),
                 style: TextStyle(
-                    color: Colors.grey, fontSize: ScreenUtil().setSp(34))),
+                    color: Colors.grey, fontSize: ScreenUtil().setSp(14))),
             ExtendedText(
               post.text!,
               specialTextSpanBuilder:

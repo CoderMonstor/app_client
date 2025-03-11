@@ -15,6 +15,7 @@ import '../../core/net/my_api.dart';
 import '../../core/net/net.dart';
 import '../../core/net/net_request.dart';
 import '../../pages/post/post_detail.dart';
+import '../../pages/post/send_post.dart';
 import '../../pages/user/profile_page.dart';
 import '../../util/build_date.dart';
 import '../../util/my_icon/my_icon.dart';
@@ -119,9 +120,6 @@ class _PostCardState extends State<PostCard> {
       trailing: SizedBox(
         width: ScreenUtil().setWidth(40),
         child: TextButton(
-          style: TextButton.styleFrom(
-            // padding: const EdgeInsets.all(0),
-          ),
           onPressed: () {
             DialogBuild.showPostDialog(context, widget.post?.postId);
           },
@@ -138,22 +136,21 @@ class _PostCardState extends State<PostCard> {
   }
 
   _buildImage() {
-    String url;
-    if (widget.post?.forwardId != null) {
+    var url;
+    if(widget.post?.forwardId != null){
       url = widget.post?.forwardImageUrl ?? "";
-    } else {
+    }else{
       url = widget.post?.imageUrl ?? "";
     }
     List images = url.split('￥');
-    if (images[0] == '') {
+    if(images[0] == ''){
       return Container();
-    } else if (images.length == 1) {
-      return ImageBuild.singlePostImage(images);
-    } else {
-      return ImageBuild.multiPostImage(images);
+    }else if(images.length == 1){
+      return ImageBuild.singlePostImage(context,widget.post!.postId!, images);
+    }else{
+      return ImageBuild.multiPostImage(context,widget.post!.postId!,images);
     }
   }
-
   _buildContent() {
     //如果不是转发，则显示文本和图片
     if (widget.post?.forwardId == null) {
@@ -207,8 +204,8 @@ class _PostCardState extends State<PostCard> {
                   vertical: ScreenUtil().setHeight(10)),
               decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.06),
-                  borderRadius:
-                  BorderRadius.circular(ScreenUtil().setWidth(21))),
+                  borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21)),
+              ),
               child: _buildForward(),
             ),
           ),
@@ -305,6 +302,9 @@ class _PostCardState extends State<PostCard> {
 
           TextButton(
             onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) =>
+                      SendPostPage(type: 2,post: widget.post,text: textSend,)));
             },
             style: TextButton.styleFrom(
               // padding: EdgeInsets.all(0),
@@ -349,7 +349,7 @@ class _PostCardState extends State<PostCard> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _postText('@${widget.post!.forwardName} ：${widget.post!.forwardText}' ?? ''),
+          _postText('@${widget.post!.forwardName} ：${widget.post!.forwardText}'),
           _buildImage(),
         ],
       );
