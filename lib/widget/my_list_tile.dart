@@ -104,7 +104,7 @@ class _MyListTileState extends State<MyListTile> {
             Row(
               //垂直方向：居中对齐
               crossAxisAlignment: widget.crossAxis ?? CrossAxisAlignment.center,
-              //水平方向：居中对齐
+              //水平方向：两端对齐
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 //如果leading不为空，则创建一个容器，并添加leading
@@ -114,8 +114,7 @@ class _MyListTileState extends State<MyListTile> {
                   SizedBox(
                     width: (widget.useScreenUtil ?? false)
                         ? ScreenUtil().setWidth(
-                        widget.betweenLeadingAndCenter ??
-                            0) // 使用 ScreenUtil 进行宽度转换
+                        widget.betweenLeadingAndCenter ?? 0) // 使用 ScreenUtil 进行宽度转换
                         : widget.betweenLeadingAndCenter ?? 0,
                   ),
                 //如果center不为空，则创建一个容器，并添加center

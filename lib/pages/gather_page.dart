@@ -1,8 +1,6 @@
 import 'package:client/util/app_bar/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
-import '../core/net/net.dart';
-import '../core/net/net_request.dart';
 
 class GatherPage extends StatefulWidget {
   const GatherPage({super.key});

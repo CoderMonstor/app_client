@@ -57,7 +57,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   late TabController _tabController;
   late PageController _pageController;
   final ScrollController _scrollController = ScrollController();
-  final ScrollController _gridController = ScrollController();
+  // final ScrollController _gridController = ScrollController();
   late UserRepository _userRepository;
   late PostRepository _postRepository;
   late CommentRepository _commentRepository;
@@ -84,7 +84,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
     if (res['code'] == '1' && res['data'] != null) {
       _post = Post.fromJson(res['data']);
       // 确保 likeNum 有默认值
-      print(_post);
+      // print(_post);
       _post.likeNum ??= 0;
       _userRepository = UserRepository(_post.postId, 3);
       _postRepository = PostRepository(_post.postId!, 4);
@@ -144,7 +144,8 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
             LoadingMoreList(
               ListConfig<User>(
                   itemBuilder: (BuildContext context, User user, int index) {
-                    return UserCard(user:  user, list: _userRepository,index: index,);
+                    // return UserCard(user:  user, list: _userRepository,index: index,);
+                    return ItemBuilder.buildUserRow(context, user, 3);
                   },
                   sourceList: _userRepository,
                   indicatorBuilder: _buildIndicator,
@@ -405,83 +406,36 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
       );
     }
   }
-
   _buildInputBar() {
     return Positioned(
       bottom: 0,
-      child: SizedBox(
-        // height: 120.h,
-        width: ScreenUtil().setWidth(1080),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: TextButton.icon(
-                onPressed: () {
-                  showDialog(context: context,
-                      builder: (context){
-                        return CommentDialog(postId: _post.postId,list: _commentRepository);
-                      }
-                  );
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey,
-                ),
-                icon: const Icon(MyIcons.share, color: Colors.grey, size: 15),
-                label: Text(
-                  '说点什么吧...                             ',
-                  style: TextStyle(fontSize: ScreenUtil().setSp(20)),
-                ),
-              ),
+      right: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.grey.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        // width: double.infinity,
+        width: ScreenUtil().setWidth(700),
+        child: TextButton(onPressed: (){
+          showDialog(context: context,
+              builder: (context){
+                return CommentDialog(postId: _post.postId,list: _commentRepository);
+              }
+          );
+        },
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(
+              color: Colors.grey,
             ),
-            SizedBox(
-              width: ScreenUtil().setWidth(160),
-              child: TextButton(
-                  onPressed: () async {
-                    if (_post.isLiked == 0) {
-                      var res = await NetRequester.request(Apis.likePost(_post.postId!));
-                      if (res['code'] == '1') {
-                        setState(() {
-                          _post.isLiked = 1;
-                          _post.likeNum = (_post.likeNum ?? 0) + 1;
-                        });
-                      }
-                    } else {
-                      var res = await NetRequester.request(Apis.cancelLikePost(_post.postId!));
-                      if (res['code'] == '1') {
-                        setState(() {
-                          _post.isLiked = 0;
-                          _post.likeNum = (_post.likeNum ?? 0) - 1;
-                        });
-                      }
-                    }
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                ),
-                child: Icon(
-                  _post.isLiked == 1 ? MyIcons.like_fill : MyIcons.like,
-                  color: _post.isLiked == 1
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey,
-                ),
-              ),
-            ),
-            SizedBox(
-              width: ScreenUtil().setWidth(160),
-              child: TextButton(
-                onPressed: () {
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                ),
-                child: const Icon(MyIcons.retweet, color: Colors.grey),
-              ),
-            ),
-          ],
+          ),
+            child: const Text(
+                "     说点什么吧……"),
         ),
       ),
     );
   }
-
 }

@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/global.dart';
-import '../../core/net/net.dart';
 import '../../util/my_icon/my_icon.dart';
 import '../fans_page.dart';
 import '../follow_page.dart';

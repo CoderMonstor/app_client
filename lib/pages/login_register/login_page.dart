@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 
 
 import '../../core/global.dart';
 import '../../core/model/user.dart';
-import '../../core/model/user_model.dart';
 import '../../core/net/my_api.dart';
 import '../../core/net/net_request.dart';
 import '../../util/toast.dart';

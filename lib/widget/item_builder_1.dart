@@ -158,7 +158,7 @@ class ItemBuilder {
       child: MyListTile(
         onTap: () async {
           try {
-            await _showDialog(context,
+            _showDialog(context,
                 buildCommentDialogCard(context, comment, list, index), comment.userId!);
           } catch (e) {
             // Handle dialog error
@@ -361,7 +361,7 @@ class ItemBuilder {
       child: MyListTile(
         onTap: () async {
           try {
-            await _showDialog(context,
+            _showDialog(context,
                 buildReplyDialogCard(context, reply, list, index), reply.userId!);
           } catch (e) {
             // Handle dialog error
@@ -480,7 +480,7 @@ class ItemBuilder {
                             border: Border.all(
                                 color: Colors.black12, width: 0.5),
                             borderRadius: BorderRadius.circular(
-                                ScreenUtil().setWidth(21))))))
+                                ScreenUtil().setWidth(21)))))),
             Container(
               width: ScreenUtil().setWidth(800),
               margin: EdgeInsets.only(top: ScreenUtil().setHeight(15)),

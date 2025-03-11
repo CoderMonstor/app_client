@@ -31,7 +31,7 @@ class ItemBuilder {
   static Widget buildUserRow(BuildContext context, User user, int type) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       child: MyListTile(
           onTap: () {
@@ -40,32 +40,39 @@ class ItemBuilder {
                 CupertinoPageRoute(
                     builder: (context) => ProfilePage(userId: user.userId)));
           },
-          left: 40,
-          leading: SizedBox(
-            height: ScreenUtil().setHeight(110),
-            child: user.avatarUrl == '' || user.avatarUrl == null
-                ? Image.asset("images/flutter_logo.png")
-                : ClipOval(
-              child: ExtendedImage.network('${NetConfig.ip}/images/${user.avatarUrl}', cache: true),
-            ),
+          left: 20,
+          betweenLeadingAndCenter: 10,
+          crossAxis: CrossAxisAlignment.start,
+          leading: Column(
+            children: [
+              SizedBox(height: ScreenUtil().setHeight(10),),
+              SizedBox(
+                height: ScreenUtil().setHeight(50),
+                child: user.avatarUrl == '' || user.avatarUrl == null
+                    ? Image.asset("images/flutter_logo.png")
+                    : ClipOval(
+                      child: ExtendedImage.network('${NetConfig.ip}/images/${user.avatarUrl}', cache: true),
+                ),
+              ),
+            ],
           ),
           center: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(user.username ?? '用户${user.userId}',
-                  style: TextStyle(fontSize: ScreenUtil().setSp(48))),
+                  style: TextStyle(fontSize: ScreenUtil().setSp(24))),
               Row(
                 children: <Widget>[
                   Text('${user.followNum}关注',
                       style: TextStyle(
                           color: Colors.grey,
-                          fontSize: ScreenUtil().setSp(34))),
+                          fontSize: ScreenUtil().setSp(17))),
                   SizedBox(width: ScreenUtil().setWidth(10)),
                   Text('${user.fanNum}粉丝',
                       style: TextStyle(
                           color: Colors.grey,
-                          fontSize: ScreenUtil().setSp(34))),
+                          fontSize: ScreenUtil().setSp(17))),
                 ],
               ),
               user.bio == null || user.bio == ''
@@ -76,7 +83,7 @@ class ItemBuilder {
                   maxLines: 1,
                   style: TextStyle(
                       color: Colors.grey,
-                      fontSize: ScreenUtil().setSp(34))),
+                      fontSize: ScreenUtil().setSp(17))),
             ],
           ),
               trailing: type == 1
@@ -138,8 +145,7 @@ class ItemBuilder {
     );
   }
 
-  static buildComment(BuildContext context, Comment comment,
-      CommentRepository list, int index) {
+  static buildComment(BuildContext context, Comment comment, CommentRepository list, int index) {
     String reply='';
     if (comment.replyNum == 1) {
       reply = buildReply(comment.replyList![0], true);
@@ -148,114 +154,275 @@ class ItemBuilder {
     }
     return Card(
       elevation: 0,
-      // margin: const EdgeInsets.all(0),
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: MyListTile(
-        onTap: () {
-          _showDialog(context,
-              buildCommentDialogCard(context, comment, list, index),comment.userId!);
-        },
-        // left: 40,
-        leading: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            InkWell(
+      margin: const EdgeInsets.all(0),
+      child: Stack(
+        children: [
+          MyListTile(
+            onTap: () {
+              _showDialog(context,
+                  buildCommentDialogCard(context, comment, list, index),comment.userId!);
+            },
+            crossAxis: CrossAxisAlignment.start,
+            betweenLeadingAndCenter: 10,
+            top: 10,
+            leading: InkWell(
               onTap: () {
                 Navigator.push(context,
                     CupertinoPageRoute(
                         builder: (context) => ProfilePage(userId: comment.userId)));
               },
-              child: SizedBox(
-                height: ScreenUtil().setHeight(50),
-                child: comment.avatarUrl == '' || comment.avatarUrl == null
-                    ? Image.asset("images/flutter_logo.png")
-                    : ClipOval(
-                      child: ExtendedImage.network('${NetConfig.ip}/images/${comment.avatarUrl!}', cache: true),
-                ),
-              ),
-            ),
-          ],
-        ),
-        center: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(comment.username ?? '用户${comment.userId}',
-                    style: TextStyle(fontSize: ScreenUtil().setSp(24))),
-                SizedBox(width: ScreenUtil().setWidth(200),),
-                SizedBox(
-                  height: ScreenUtil().setHeight(60),
-                  width: ScreenUtil().setWidth(150),
-                  child: TextButton.icon(
-                    onPressed: () async {
-                      var url = comment.isLiked == 1
-                          ? Apis.cancelLikeComment(comment.commentId!)
-                          : Apis.likeComment(comment.commentId!);
-                      var res = await NetRequester.request(url);
-                      if (res['code'] == '1') {
-                          if (comment.isLiked == 1) {
-                            comment.isLiked = 0;
-                            comment.likeNum = (comment.likeNum ?? 0) - 1;
-                          } else {
-                            comment.isLiked = 1;
-                            comment.likeNum = (comment.likeNum ?? 0) + 1;
-                          }
-                          list.setState();
-                      }
-                    },
-                    icon: Icon(
-                      comment.isLiked == 1 ? MyIcons.like_fill : MyIcons.like,
-                      color: comment.isLiked == 1
-                          ? Theme.of(context).colorScheme.secondary
-                          : Colors.grey,
-                      size: ScreenUtil().setHeight(25),
-                    ),
-                    label: Text(comment.likeNum.toString()),
-                    style: TextButton.styleFrom(
-                      foregroundColor: comment.isLiked == 1
-                          ? Theme.of(context).colorScheme.secondary
-                          : Colors.grey,
+              child: Column(
+                children: [
+                  SizedBox(height: ScreenUtil().setHeight(10)),
+                  SizedBox(
+                    height: ScreenUtil().setHeight(50),
+                    child: comment.avatarUrl == '' || comment.avatarUrl == null
+                        ? Image.asset("images/flutter_logo.png")
+                        : ClipOval(
+                          child: ExtendedImage.network('${NetConfig.ip}/images/${comment.avatarUrl!}', cache: true),
                     ),
                   ),
-                )
+                ],
+              ),
+            ),
+            center: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(comment.username ?? '用户${comment.userId}',
+                            style: TextStyle(fontSize: ScreenUtil().setSp(24))),
+                        Text(buildDate(comment.date!),
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: ScreenUtil().setSp(17))),
+                      ],
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(150),),
+                  ],
+                ),
+                SizedBox(height: ScreenUtil().setHeight(10)),
+                ExtendedText(
+                  comment.text!,
+                  style: TextStyle(fontSize: ScreenUtil().setSp(23)),
+                  specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                ),
+                SizedBox(height: ScreenUtil().setHeight(10)),
+                comment.imageUrl != ''
+                    ? SizedBox(
+                      height: ScreenUtil().setHeight(200),
+                      width: ScreenUtil().setWidth(200),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ViewImgPage(
+                                          images: [comment.imageUrl],
+                                          index: 0,
+                                          postId: comment.commentId.toString())));
+                        },
+                          child: Hero(
+                              tag: '${comment.commentId}${comment.imageUrl}0',
+                              child: Container(
+                                  constraints: BoxConstraints(
+                                      maxHeight: ScreenUtil().setHeight(600),
+                                      maxWidth: ScreenUtil().setWidth(600)),
+                                  child: ExtendedImage.network(
+                                      NetConfig.ip + comment.imageUrl!,
+                                      cache: true,
+                                      fit: BoxFit.cover,
+                                      shape: BoxShape.rectangle,
+                                      border: Border.all(
+                                          color: Colors.black12, width: 0.5),
+                                      borderRadius: BorderRadius.circular(
+                                          ScreenUtil().setWidth(21))
+                                  )
+                              )
+                          )
+                      ),
+                    )
+                    : const SizedBox(height: 0),
+                SizedBox(height: ScreenUtil().setHeight(10)),
+                comment.replyNum! > 0
+                    ? InkWell(
+                      onTap: () {
+                        Navigator.push(context,
+                            CupertinoPageRoute(
+                                builder: (context) => ReplyPage(comment: comment,)));
+                      },
+                          child: Container(
+                            width: ScreenUtil().setWidth(350),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: ScreenUtil().setWidth(20),
+                                vertical: ScreenUtil().setHeight(10)),
+                            margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(15)),
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.06),
+                                borderRadius:
+                                BorderRadius.circular(ScreenUtil().setWidth(21))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                ExtendedText(
+                                  reply,
+                                  specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                                  style: TextStyle(
+                                      fontSize: ScreenUtil().setSp(23)
+                                  ),
+                                ),
+                                comment.replyNum! > 2
+                                    ? Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: ScreenUtil().setHeight(15)),
+                                      child: Text(
+                                        '共${comment.replyNum}条回复',
+                                        style: TextStyle(color: Theme
+                                            .of(context)
+                                            .colorScheme.secondary),
+                                      ),
+                                    )
+                                    : const SizedBox(height: 0),
+                              ],
+                            ),
+                          ),
+                        )
+                    : const SizedBox(height: 0),
               ],
             ),
-            Text(buildDate(comment.date!),
-                style: TextStyle(
-                    color: Colors.grey, fontSize: ScreenUtil().setSp(17))),
-            SizedBox(height: ScreenUtil().setHeight(20)),
-            ExtendedText(
-              comment.text!,
-              style: TextStyle(fontSize: ScreenUtil().setSp(23)),
-              specialTextSpanBuilder:
-              MySpecialTextSpanBuilder(context: context),
+          ),
+          Positioned(
+            top: ScreenUtil().setHeight(20),
+            right: ScreenUtil().setWidth(00),
+              child:SizedBox(
+                height: ScreenUtil().setHeight(60),
+                width: ScreenUtil().setWidth(100),
+                child: TextButton.icon(
+                  onPressed: () async {
+                    var url = comment.isLiked == 1
+                        ? Apis.cancelLikeComment(comment.commentId!)
+                        : Apis.likeComment(comment.commentId!);
+                    var res = await NetRequester.request(url);
+                    if (res['code'] == '1') {
+                      if (comment.isLiked == 1) {
+                        comment.isLiked = 0;
+                        comment.likeNum = (comment.likeNum ?? 0) - 1;
+                      } else {
+                        comment.isLiked = 1;
+                        comment.likeNum = (comment.likeNum ?? 0) + 1;
+                      }
+                      list.setState();
+                    }
+                  },
+                  icon: Icon(
+                    comment.isLiked == 1 ? MyIcons.like_fill : MyIcons.like,
+                    color: comment.isLiked == 1
+                        ? Theme.of(context).colorScheme.secondary
+                        : Colors.grey,
+                    size: ScreenUtil().setHeight(25),
+                  ),
+                  label: Text(comment.likeNum.toString()),
+                  style: TextButton.styleFrom(
+                    foregroundColor: comment.isLiked == 1
+                        ? Theme.of(context).colorScheme.secondary
+                        : Colors.grey,
+                  ),
+                ),
+              ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static buildReplyRow(BuildContext context, Reply reply, ReplyRepository list, int index) {
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.all(0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+      child: Stack(
+        children: [
+          MyListTile(
+            onTap: () {
+              _showDialog(context,
+                  buildReplyDialogCard(context,reply,list,index),reply.userId!);
+            },
+            crossAxis: CrossAxisAlignment.start,
+            betweenLeadingAndCenter: 10,
+            left: 20,
+            leading: InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    CupertinoPageRoute(
+                        builder: (context) => ProfilePage(userId: reply.userId)));
+              },
+              child: Column(
+                children: [
+                  SizedBox(height: ScreenUtil().setHeight(10)),
+                  SizedBox(
+                    height: ScreenUtil().setHeight(60),
+                    child: reply.avatarUrl == '' || reply.avatarUrl == null
+                        ? Image.asset("images/flutter_logo.png")
+                        : ClipOval(
+                          child: ExtendedImage.network('${NetConfig.ip}/images/${reply.avatarUrl!}', cache: true),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: ScreenUtil().setHeight(15)),
-            comment.imageUrl != ''
-                ? SizedBox(
-                  height: ScreenUtil().setHeight(200),
-                  width: ScreenUtil().setWidth(200),
-                  child: InkWell(
+            center: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(reply.username ?? '用户${reply.userId}',
+                            style: TextStyle(fontSize: ScreenUtil().setSp(24))),
+                        Text(buildDate(reply.date!),
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: ScreenUtil().setSp(17))),
+                      ],
+                    ),
+                    SizedBox(width: ScreenUtil().setWidth(90),),
+                  ],
+                ),
+                SizedBox(height: ScreenUtil().setHeight(10)),
+                SizedBox(
+                  width: ScreenUtil().setWidth(300),
+                  child: ExtendedText(
+                    buildReply(reply, false),
+                    style: TextStyle(fontSize: ScreenUtil().setSp(23)),
+                    specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                  ),
+                ),
+                SizedBox(height: ScreenUtil().setHeight(15)),
+                reply.imageUrl != ''
+                    ? InkWell(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
                                   ViewImgPage(
-                                      images: [comment.imageUrl],
+                                      images: [reply.imageUrl],
                                       index: 0,
-                                      postId: comment.commentId.toString())));
-                    },
+                                      postId: reply.commentId.toString())));
+                      },
                       child: Hero(
-                          tag: '${comment.commentId}${comment.imageUrl}0',
+                          tag: '${reply.commentId}${reply.imageUrl}0',
                           child: Container(
                               constraints: BoxConstraints(
-                                  maxHeight: ScreenUtil().setHeight(600),
-                                  maxWidth: ScreenUtil().setWidth(600)),
+                                  maxHeight: ScreenUtil().setHeight(300),
+                                  maxWidth: ScreenUtil().setWidth(300)),
                               child: ExtendedImage.network(
-                                  NetConfig.ip + comment.imageUrl!,
+                                  NetConfig.ip + reply.imageUrl!,
                                   cache: true,
                                   fit: BoxFit.cover,
                                   shape: BoxShape.rectangle,
@@ -266,187 +433,50 @@ class ItemBuilder {
                               )
                           )
                       )
-                  ),
                 )
-                : const SizedBox(height: 0),
-            SizedBox(height: ScreenUtil().setHeight(10)),
-            comment.replyNum! > 0
-                ? InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        CupertinoPageRoute(
-                            builder: (context) => ReplyPage(comment: comment,)));
-                  },
-                      child: Container(
-                        width: ScreenUtil().setWidth(820),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(20),
-                            vertical: ScreenUtil().setHeight(10)),
-                        margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(15)),
-                        decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.06),
-                            borderRadius:
-                            BorderRadius.circular(ScreenUtil().setWidth(21))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            ExtendedText(
-                              reply,
-                              specialTextSpanBuilder: MySpecialTextSpanBuilder(
-                                  context: context),
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(46)
-                              ),
-                            ),
-                            comment.replyNum! > 2
-                                ? Container(
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: ScreenUtil().setHeight(15)),
-                                  child: Text(
-                                    '共${comment.replyNum}条回复',
-                                    style: TextStyle(color: Theme
-                                        .of(context)
-                                        .colorScheme.secondary),
-                                  ),
-                                )
-                                : const SizedBox(height: 0),
-                          ],
-                        ),
-                      ),
-                    )
-                : const SizedBox(height: 0),
-            Container(
-              width: ScreenUtil().setWidth(800),
-              decoration: BoxDecoration(
-                  border: Border.all(width: 0.3, color: Colors.grey[200]!)
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  static buildReplyRow(BuildContext context, Reply reply, ReplyRepository list,
-      int index) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: MyListTile(
-        onTap: () {
-          _showDialog(context,
-              buildReplyDialogCard(context,reply,list,index),reply.userId!);
-        },
-        left: 40,
-        leading: InkWell(
-          onTap: () {
-            Navigator.push(context,
-                CupertinoPageRoute(
-                    builder: (context) => ProfilePage(userId: reply.userId)));
-          },
-          child: Container(
-            height: ScreenUtil().setHeight(110),
-            child: reply.avatarUrl == '' || reply.avatarUrl == null
-                ? Image.asset("images/flutter_logo.png")
-                : ClipOval(
-                  child: ExtendedImage.network(reply.avatarUrl!, cache: true),
-            ),
-          ),
-        ),
-        center: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(reply.username ?? '用户${reply.userId}',
-                    style: TextStyle(fontSize: ScreenUtil().setSp(48))),
-                SizedBox(width: ScreenUtil().setWidth(610),),
-                SizedBox(height: ScreenUtil().setHeight(60),
-                  width: ScreenUtil().setWidth(150),
-                  child:
-                  TextButton.icon(onPressed: () async {
-                    var url = reply.isLiked == 1
-                        ? Apis.cancelLikeReply(reply.replyId!)
-                        : Apis.likeReply(reply.replyId!);
-                    var res = await NetRequester.request(url);
-                    if (res['code'] == '1') {
-                      if (reply.isLiked == 1) {
-                        reply.isLiked = 0;
-                        reply.likeNum=reply.likeNum!-1;
-                      } else {
-                        reply.isLiked = 1;
-                        reply.likeNum=reply.likeNum!+1;
-                      }
-                      list.setState();
-                    }
-                  },
-                      icon: Icon(
-                        reply.isLiked == 1 ? MyIcons.like_fill : MyIcons.like,
-                        color: reply.isLiked == 1
-                            ? Theme
-                            .of(context)
-                            .colorScheme.secondary : Colors.grey,
-                        size: ScreenUtil().setHeight(50),),
-                      style: TextButton.styleFrom(
-                        foregroundColor: reply.isLiked == 1
-                            ? Theme.of(context).colorScheme.secondary
-                            : Colors.grey,
-                      ),
-                      label: Text(reply.likeNum.toString())
-                  ),
-                )
+                    : const SizedBox(height: 0),
               ],
             ),
-            Text(buildDate(reply.date!),
-                style: TextStyle(
-                    color: Colors.grey, fontSize: ScreenUtil().setSp(34))),
-            SizedBox(height: ScreenUtil().setHeight(20)),
-            ExtendedText(
-              buildReply(reply, false),
-              style: TextStyle(fontSize: ScreenUtil().setSp(46)),
-              specialTextSpanBuilder:
-              MySpecialTextSpanBuilder(context: context),
-            ),
-            SizedBox(height: ScreenUtil().setHeight(15)),
-            reply.imageUrl != ''
-                ? InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              ViewImgPage(
-                                  images: [reply.imageUrl],
-                                  index: 0,
-                                  postId: reply.commentId.toString())));
+          ),
+          Positioned(
+              right: ScreenUtil().setWidth(0),
+              top: ScreenUtil().setHeight(0),
+              child: SizedBox(
+                height: ScreenUtil().setHeight(60),
+                width: ScreenUtil().setWidth(100),
+                child: TextButton.icon(onPressed: () async {
+                  var url = reply.isLiked == 1
+                      ? Apis.cancelLikeReply(reply.replyId!)
+                      : Apis.likeReply(reply.replyId!);
+                  var res = await NetRequester.request(url);
+                  if (res['code'] == '1') {
+                    if (reply.isLiked == 1) {
+                      reply.isLiked = 0;
+                      reply.likeNum=reply.likeNum!-1;
+                    } else {
+                      reply.isLiked = 1;
+                      reply.likeNum=reply.likeNum!+1;
+                    }
+                    list.setState();
+                  }
                 },
-                child: Hero(
-                    tag: '${reply.commentId}${reply.imageUrl}0',
-                    child: Container(
-                        constraints: BoxConstraints(
-                            maxHeight: ScreenUtil().setHeight(600),
-                            maxWidth: ScreenUtil().setWidth(500)),
-                        child: ExtendedImage.network(
-                            NetConfig.ip + reply.imageUrl!,
-                            cache: true,
-                            fit: BoxFit.cover,
-                            shape: BoxShape.rectangle,
-                            border: Border.all(
-                                color: Colors.black12, width: 0.5),
-                            borderRadius: BorderRadius.circular(
-                                ScreenUtil().setWidth(21))))))
-                : const SizedBox(height: 0),
-            Container(
-              width: ScreenUtil().setWidth(800),
-              margin: EdgeInsets.only(top: ScreenUtil().setHeight(15)),
-              decoration: BoxDecoration(
-                  border: Border.all(width: 0.3, color: Colors.grey[200]!)
+                    icon: Icon(
+                      reply.isLiked == 1 ? MyIcons.like_fill : MyIcons.like,
+                      color: reply.isLiked == 1
+                          ? Theme
+                          .of(context)
+                          .colorScheme.secondary : Colors.grey,
+                      size: ScreenUtil().setHeight(25),),
+                    style: TextButton.styleFrom(
+                      foregroundColor: reply.isLiked == 1
+                          ? Theme.of(context).colorScheme.secondary
+                          : Colors.grey,
+                    ),
+                    label: Text(reply.likeNum.toString())
+                ),
               ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
@@ -457,7 +487,7 @@ class ItemBuilder {
       center = '回复@${reply.beReplyName} ';
     }
     if (showUsername) {
-      return '@${reply.username} $center:${reply.text}';
+      return '${reply.username} $center:${reply.text}';
     }
     return '$center${reply.text}';
   }
@@ -466,66 +496,56 @@ class ItemBuilder {
     showDialog(
         context: context,
         builder: (context) {
-          return Container(
-            child: Material(
-              textStyle: TextStyle(fontSize: ScreenUtil().setSp(24),
-                  color: Colors.black),
-              color: Colors.black12,
-              child: Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      color: Colors.transparent,
-                      width: ScreenUtil().setWidth(1080),
-                      height: ScreenUtil().setHeight(1920),),
+          return Material(
+            textStyle: TextStyle(fontSize: ScreenUtil().setSp(24),
+                color: Colors.black),
+            color: Colors.black12,
+            child: Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    color: Colors.transparent,
+                    width: ScreenUtil().setWidth(1080),
+                    height: ScreenUtil().setHeight(1920),
                   ),
-                  Center(
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21)),),
-                      child: Container(
-                        width: ScreenUtil().setWidth(740),
-                        height: ScreenUtil().setHeight(
-                            userId != Global.profile.user?.userId ? 300 : 400),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(60),
-                            vertical: ScreenUtil().setHeight(40)
-                        ),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: card
-                        ),
+                ),
+                Center(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21)),),
+                    child: Container(
+                      width: ScreenUtil().setWidth(300),
+                      height: ScreenUtil().setHeight(userId != Global.profile.user?.userId ? 105 : 150),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(60),
+                          vertical: ScreenUtil().setHeight(40)
+                      ),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: card
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         }
     );
   }
 
-  static buildCommentDialogCard(BuildContext context, Comment comment,
-      LoadingMoreBase list, int index) {
+  static buildCommentDialogCard(BuildContext context, Comment comment, LoadingMoreBase list, int index) {
     return <Widget>[
-      MyListTile(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        leading: const Text('复制'),
-      ),
       MyListTile(
         onTap: () {
           Navigator.pop(context);
           showDialog(context: context,
               builder: (context) {
-                return CommentDialog(
-                    commentId: comment.commentId, list: list);
+                return CommentDialog(commentId: comment.commentId, list: list);
               }
           );
         },
@@ -536,8 +556,7 @@ class ItemBuilder {
         child: MyListTile(
           onTap: () async {
             Navigator.pop(context);
-            var res = await NetRequester.request(
-                Apis.deleteComment(comment.commentId!));
+            var res = await NetRequester.request(Apis.deleteComment(comment.commentId!));
             if (res['code'] == '1') {
               list.removeAt(index);
               list.setState();
@@ -550,8 +569,7 @@ class ItemBuilder {
     ];
   }
 
-  static List<Widget> buildReplyDialogCard(BuildContext context, Reply reply,
-      LoadingMoreBase list, int index) {
+  static List<Widget> buildReplyDialogCard(BuildContext context, Reply reply, LoadingMoreBase list, int index) {
     return <Widget>[
       MyListTile(
         onTap: () {
@@ -585,7 +603,7 @@ class ItemBuilder {
               Toast.popToast('已删除');
             }
           },
-          leading: Text('删除'),
+          leading: const Text('删除'),
         ),
       ),
     ];
@@ -605,7 +623,7 @@ class FollowButton extends StatefulWidget {
 class _FollowButtonState extends State<FollowButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: ScreenUtil().setWidth(180),
       height: ScreenUtil().setHeight(70),
       child: OutlinedButton(

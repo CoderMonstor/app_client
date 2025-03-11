@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../../util/toast.dart';
-import '../global.dart';
 import 'net.dart';
 
 class NetRequester {

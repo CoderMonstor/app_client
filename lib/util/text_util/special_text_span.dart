@@ -24,19 +24,29 @@ class MySpecialTextSpanBuilder extends SpecialTextSpanBuilder {
 
     ///index is end index of start flag, so text start index should be index-(flag.length-1)
     if (isStart(flag, AtText.flag)) {
+      // 检查并处理可能导致 null 的情况
+      if (textStyle == null || onTap == null) {
+        return null; // 或者返回一个默认的 SpecialText 实例
+      }
       return AtText(
-        textStyle!,
-        onTap!,
+        textStyle,
+        onTap,
         start: index! - (AtText.flag.length - 1),
         showAtBackground: showAtBackground,
       );
     } else if (isStart(flag, EmojiText.flag)) {
-      return EmojiText(textStyle!, start: index! - (EmojiText.flag.length - 1));
-    }else if (isStart(flag, ViewImgText.flag)) {
+      if (textStyle == null) {
+        return null; // 或者返回一个默认的 SpecialText 实例
+      }
+      return EmojiText(textStyle, start: index! - (EmojiText.flag.length - 1));
+    } else if (isStart(flag, ViewImgText.flag)) {
+      if (textStyle == null || onTap == null) {
+        return null; // 或者返回一个默认的 SpecialText 实例
+      }
       return ViewImgText(
-          textStyle!,
-          onTap!,
-          color:Theme.of(context).primaryColor,
+          textStyle,
+          onTap,
+          color: Theme.of(context).primaryColor,
           start: index! - (ViewImgText.flag.length - 1)
       );
     }
