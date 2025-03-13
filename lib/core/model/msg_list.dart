@@ -14,8 +14,9 @@ class MsgModel {
     return MsgModel(
       imageUrl: item['imageUrl'],
       name: item['name'],
-      msg: item['msg'],
+      msg: item['msg']??'',
       time: item['time'],
     );
   }
 }
+

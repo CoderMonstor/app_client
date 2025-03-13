@@ -189,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage>
             child: const Icon(MyIcons.setting, color: Colors.white),
             onPressed: () {
               Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => SettingPage()));
+                  CupertinoPageRoute(builder: (context) => const SettingPage()));
             },
           ),
         ),
@@ -452,7 +452,6 @@ class _ProfilePageState extends State<ProfilePage>
       res = await NetRequester.request(Apis.findUserById(askId, widget.userId!));
     }
     else{
-      // print('------------------------- widget.userId == null and username=${widget.username}----------------------------------------');
       res = await NetRequester.request(Apis.findUserByName(askId, widget.username!));
     }
     if(res['code'] == '0'){

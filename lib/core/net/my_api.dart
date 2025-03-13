@@ -37,7 +37,6 @@ class Apis {
   //修改用户信息
   static String updateUserProperty(String property, value) {
     int? userId = Global.profile.user?.userId;
-    print("------------------now ,we well going to update User Property,and userId is $userId-- value is $value------");
     return '/user/updateUserProperty?userId=$userId&property=$property&value=$value';
   }
 
@@ -201,7 +200,8 @@ class Apis {
     return '/user/checkUpdate';
   }
   //查询消息列表
-  static String getMsgListById(int userId) {
-    return '/msg/getMsgListById?userId=$userId';
+  static String getMsgUserList(int userId,int page) {
+    int? userId = Global.profile.user?.userId;
+    return '/msg/getMsgUserList?userId=$userId&page=$page';
   }
 }

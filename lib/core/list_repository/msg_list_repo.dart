@@ -1,4 +1,4 @@
-import 'package:client/core/model/msg_model.dart';
+import 'package:client/core/model/msg_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
@@ -32,7 +32,7 @@ class MsgListRepository extends LoadingMoreBase<MsgModel> {
     bool isSuccess = false;
 
     try {
-      var result = await NetRequester.request(Apis.getMsgListById(userId));
+      var result = await NetRequester.request(Apis.getMsgUserList(userId, _pageIndex));
       if(result.containsKey('data')){
         if (_pageIndex == 1) {
           clear();

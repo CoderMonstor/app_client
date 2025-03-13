@@ -1,10 +1,19 @@
 
+import 'package:client/core/net/net.dart';
+import 'package:client/util/build_date.dart';
+import 'package:client/widget/my_card/msg_list_card.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:loading_more_list/loading_more_list.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../core/model/msg_model.dart';
+import '../../core/global.dart';
+import '../../core/list_repository/msg_list_repo.dart';
+import '../../core/model/msg_list.dart';
+import '../../widget/build_indicator.dart';
+import '../../widget/my_card/post_card.dart';
 import 'message_details_page.dart';
 
 class MessageList extends StatefulWidget {
@@ -14,147 +23,47 @@ class MessageList extends StatefulWidget {
   State<MessageList> createState() => _MessageListState();
 }
 
-class _MessageListState extends State<MessageList> with AutomaticKeepAliveClientMixin {
-  List<MsgModel> data = [];
-  bool loading = false;
 
+class _MessageListState extends State<MessageList> {
+
+  // late PostRepository _postRepository;
+  late MsgListRepository _msgListRepository;
   @override
   void initState() {
     super.initState();
-    initData();
+    // _postRepository =  PostRepository(Global.profile.user!.userId!, widget.type!,widget.str,widget.orderBy);
+    _msgListRepository = MsgListRepository(Global.profile.user!.userId!);
   }
 
-  void initData() async {
-    // 模拟异步数据加载
-    // await Future.delayed(const Duration(seconds: 1)); // 模拟网络请求延迟
-    setState(() {
-      data.addAll([
-        MsgModel(
-          imageUrl: 'https://w.wallhaven.cc/full/jx/wallhaven-jxl31y.png',
-          msg: '所以，这也仅仅是无用的令戒：🐮🐎',
-          name: '造物主动态桌面Ⅰ群',
-          time: '下午4:20',
-        ),
-        MsgModel(
-          imageUrl: 'https://w.wallhaven.cc/full/jx/wallhaven-jxl31y.png',
-          msg: '所以，这也仅仅是无用的令戒：🐮🐎',
-          name: '造物主动态桌面Ⅰ群',
-          time: '下午4:20',
-        ),
-        // 其他数据...
-      ]);
-      loading = true;
-    });
+  @override
+  void dispose() {
+    // _postRepository.dispose();
+    _msgListRepository.dispose();
+    super.dispose();
   }
-
-
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Expanded(
-            child: loading
-                ? ListView.separated(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Get.to(MessageDetailsPage(msgModel: data[index]),
-                            transition: Transition.rightToLeft);
-                      },
-                      child: msgItem(data[index]),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(height: 15);
-                  },
-                  itemCount: data.length,
-                )
-                : const Center(child: CircularProgressIndicator()), // 显示加载指示器
+    return Scaffold(
+      body: RefreshIndicator(
+        // onRefresh: _postRepository.refresh,
+        onRefresh: _msgListRepository.refresh,
+        child: LoadingMoreList(
+          ListConfig<MsgModel>(
+            itemBuilder: (BuildContext context, MsgModel item, int index){
+              // return PostCard(post: item,list: _msgListRepository,index: index);
+              return MsgListCard(msg:item,list: _msgListRepository,index: index,);
+            },
+            // sourceList: _postRepository,
+            sourceList: _msgListRepository,
+            indicatorBuilder: _buildIndicator,
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget msgItem(MsgModel model) {
-    return Container(
-      color: Colors.transparent,
-      child: Row(
-        children: [
-          ClipOval(
-            child: ExtendedImage.network(
-              model.imageUrl, // 添加默认图片
-              cache: true,
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-              loadStateChanged: (state) {
-                if (state.extendedImageLoadState == LoadState.loading ||
-                    state.extendedImageLoadState == LoadState.failed) {
-                  return Shimmer.fromColors(
-                    baseColor: Colors.red,
-                    highlightColor: const Color.fromARGB(255, 240, 240, 240),
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      color: Colors.white,
-                    ),
-                  );
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        model.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        model.msg,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.grey, fontSize: 15),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      model.time,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+  Widget _buildIndicator(BuildContext context, IndicatorStatus status) {
+    return buildIndicator(context, status, _msgListRepository);
   }
 
-  @override
-  bool get wantKeepAlive => true;
 }
-

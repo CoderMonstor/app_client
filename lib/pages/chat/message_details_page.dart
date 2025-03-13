@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../core/model/msg_model.dart';
+import '../../core/model/msg_list.dart';
 import '../../core/model/send_msg_model.dart';
 
 class MessageDetailsPage extends StatefulWidget {
