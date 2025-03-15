@@ -121,7 +121,7 @@ class Apis {
   //转发记录
   static String getForwardPost(int postId, int page) {
     return '/post/getForwardPost?postId=$postId&page=$page';
-  } //转发记录
+  }
 
   static String getAllPostsByDate(int userId, int page) {
     return '/post/getAllPostsByDate?userId=$userId&page=$page';
@@ -200,8 +200,19 @@ class Apis {
     return '/user/checkUpdate';
   }
   //查询消息列表
-  static String getMsgUserList(int userId,int page) {
+  static String getMsgUserList(int page) {
     int? userId = Global.profile.user?.userId;
-    return '/msg/getMsgUserList?userId=$userId&page=$page';
+    return '/msg/getUserMsgList?userId=$userId&page=$page';
+  }
+
+  //根据用户查询消息
+  static String getMsg(int sender,int receiver) {
+    int? sender = Global.profile.user?.userId;
+    return '/msg/getMsg?sender=$sender&receiver=$receiver';
+  }
+
+  static String getAllProduct(int page){
+    int? userId = Global.profile.user?.userId;
+    return '/product/getAllProduct?userId=$userId&page=$page';
   }
 }

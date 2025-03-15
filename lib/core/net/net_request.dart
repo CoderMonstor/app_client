@@ -36,10 +36,6 @@ class NetRequester {
     try {
       if (kDebugMode) {
         print('Full URL: ${options.baseUrl}$url'); // 打印完整 URL
-/*
-        print('Global profile ip: ${Global.profile.ip}');
-        print('NetConfig ip: ${NetConfig.ip}');
- */
       }
       if (data != null) {
         _response = await dio.post(url, data: data);

@@ -45,7 +45,7 @@ class _MsgListCardState extends State<MsgListCard> {
           }
           Navigator.push(context,CupertinoPageRoute(builder: (context)=>ChatPage(user: _user)));
         },
-        left: 30,
+        left: 20,
         right: 20,
         top: 10,
         bottom: 10,
@@ -68,7 +68,15 @@ class _MsgListCardState extends State<MsgListCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.msg!.name,style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                Text(widget.msg!.msg,style: const TextStyle(color: Colors.grey, fontSize: 15)),
+                SizedBox(
+                  width: 200, // 设置最大宽度
+                  child: Text(
+                    widget.msg!.msg,
+                    style: const TextStyle(color: Colors.grey, fontSize: 15),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
               ],
             ),
           ],

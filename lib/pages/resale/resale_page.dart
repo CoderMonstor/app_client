@@ -1,10 +1,11 @@
-import 'package:amap_flutter_map/amap_flutter_map.dart';
-import 'package:amap_flutter_base/amap_flutter_base.dart';
+
+import 'package:client/util/app_bar/my_app_bar.dart';
+import 'package:client/widget/my_card/product_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:ui' as ui;
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-
+import '../../core/model/product_list.dart';
+import '../../widget/send_button.dart';
 class ResalePage extends StatefulWidget {
   const ResalePage({super.key});
 
@@ -13,146 +14,74 @@ class ResalePage extends StatefulWidget {
 }
 
 class _ResalePageState extends State<ResalePage> {
-  late AMapController _mapController;
-  late Map<String, Marker> markerMap;
-  late double nowLatitude;
-  late double nowLongitude;
-  late AMapApiKey aMapApiKey;
-  late AMapPrivacyStatement aMapPrivacyStatement;
+  bool _isFabExpanded = false;
+  final GlobalKey _fabKey = GlobalKey();
 
-  @override
-  void initState() {
-    markerMap = {};
-    nowLatitude = 39.906217;
-    nowLongitude = 116.3912757;
-    aMapApiKey = const AMapApiKey(
-      androidKey: "8eebe9156478a3d3a0a30c6442faf969",
-    );
-    aMapPrivacyStatement = const AMapPrivacyStatement(
-      hasContains: true,
-      hasShow: true,
-      hasAgree: true,
-    );
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+  List<ProductList> products=[
+    ProductList(
+      productId: 1,
+      productImage: '0_1741706055897.jpg',
+      productName: 'product_name_1,',
+      description: 'description_1',
+      price: 100.0,
+    ),
+    ProductList(
+      productId: 2,
+      productImage: '12_1741705822432.jpeg',
+      productName: 'product_name_2',
+      description: 'description_2',
+      price: 200,
+    ),
+    ProductList(
+      productId: 3,
+      productImage: '12_1741705822605.jpg',
+      productName: 'product_name_3',
+      description: 'description_3',
+      price: 300,
+    ),
+    ProductList(
+      productId: 4,
+      productImage: '0_1741705892868.jpeg',
+      productName: 'product_name_4',
+      description: 'description_4:this is the description of product_name_4,this product is very good and very cheap',
+      price: 400,
+    ),
+    ProductList(
+      productId: 5,
+      productImage: '0_1741706055897.jpg',
+      productName: 'product_name_5',
+      description: 'description_5',
+      price: 50,
+    ),
+    ProductList(
+      productId: 6,
+      productImage: '0_1741706055897.jpg',
+      productName: 'product_name_6',
+      description: 'description_6',
+      price: 60000,
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: [
-            AMapWidget(
-              apiKey: aMapApiKey,
-              privacyStatement: aMapPrivacyStatement,
-              onMapCreated: onMapCreated,
-              markers: Set.of(markerMap.values),
-            ),
-            Positioned(
-              right: 10,
-              bottom: 10,
-              child: FutureBuilder<String?>(
-                future: getApprovalNumber(),
-                builder: (ctx, snapshot) {
-                  return Column(
-                    children: [
-                      Text("${snapshot.data}"),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+      appBar: MyAppbar.buildNormalAppbar(context, false, true, null, null),
+      body: MasonryGridView.count(
+          crossAxisCount: 2,
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+          return ProductCard(
+            productList: products[index],
+          );
+        },
+      ),
+      floatingActionButton: SendButton(
+        key: _fabKey, // 绑定GlobalKey
+        isExpanded: _isFabExpanded,
+        onToggle: (value) => setState(() => _isFabExpanded = value),
       ),
     );
-  }
-
-  void onMapCreated(AMapController controller) {
-    CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(
-      CameraPosition(
-        target: LatLng(nowLatitude, nowLongitude),
-        zoom: 10,
-        tilt: 30,
-        bearing: 0,
-      ),
-    );
-    controller.moveCamera(cameraUpdate);
-    setState(() {
-      _mapController = controller;
-    });
-    getMarker(
-      nowLatitude,
-      nowLongitude,
-      // image: "assets/images/my_position.png",
-      image: "assets/images/location.png",
-      title: "我",
-    );
-  }
-
-  Future<String?> getApprovalNumber() async {
-    // 普通地图审图号
-    String? mapContentApprovalNumber =
-    await _mapController.getMapContentApprovalNumber();
-    // // 卫星地图审图号
-    // String? satelliteImageApprovalNumber =
-    //     await _mapController.getSatelliteImageApprovalNumber();
-    return mapContentApprovalNumber;
-  }
-
-  Future<void> getMarker(
-      double latitude,
-      double longitude, {
-        String? image,
-        String? title,
-        String? snippet,
-      }) async {
-    LatLng position = LatLng(latitude, longitude);
-    Marker marker = Marker(
-      onTap: (s) {
-        print(s);
-      },
-      infoWindow: InfoWindow(
-        title: title,
-        snippet: snippet,
-      ),
-      position: position,
-      icon: image != null
-          ? await getBitmapDescriptorFromAssetBytes(image, 100, 100)
-          : BitmapDescriptor.defaultMarker,
-    );
-    markerMap[marker.id] = marker;
-    setState(() {});
-  }
-
-  Future<BitmapDescriptor> getBitmapDescriptorFromAssetBytes(
-      String path,
-      double width,
-      double height,
-      ) async {
-    var imageFile = await rootBundle.load(path);
-    var pictureRecorder = ui.PictureRecorder();
-    var canvas = Canvas(pictureRecorder);
-    var imageUint8List = imageFile.buffer.asUint8List();
-    var codec = await ui.instantiateImageCodec(imageUint8List);
-    var imageFI = await codec.getNextFrame();
-    paintImage(
-      canvas: canvas,
-      rect: Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()),
-      image: imageFI.image,
-      filterQuality: FilterQuality.medium,
-    );
-    var image = await pictureRecorder
-        .endRecording()
-        .toImage(width.toInt(), height.toInt());
-    var data = await image.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 }
+

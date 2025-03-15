@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:bubble_box/bubble_box.dart';
+import 'package:client/core/net/net_request.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_list/extended_list.dart';
 import 'package:extended_text_field/extended_text_field.dart';
@@ -13,9 +13,9 @@ import '../../core/global.dart';
 import '../../core/model/message.dart';
 import '../../core/model/receive_msg.dart';
 import '../../core/model/user.dart';
+import '../../core/net/my_api.dart';
 import '../../core/net/net.dart';
 import '../../util/my_icon/my_icon.dart';
-import '../../util/text_util/emoji_text.dart';
 import '../../util/text_util/special_text_span.dart';
 
 class ChatPage extends StatefulWidget {
@@ -30,36 +30,63 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = TextEditingController();
-  double _keyboardHeight=0;
-  late bool _showEmoji;
   final FocusNode _focusNode = FocusNode();
   final List<Message> _messageList = [];
+  late List<Message> _historyMessageList = [];
   late WebSocketChannel channel ;
+
+  int get sender => Global.profile.user!.userId!;
+  int get receiver => widget.user!.userId!;
   @override
   void initState() {
+    super.initState();
+    // 调用独立的异步方法
+    initializeAsyncTask();
+  }
+
+  // 定义异步方法
+  Future<void> initializeAsyncTask() async {
+    print("======================获取数据===========================】");
+    var res = await NetRequester.request(Apis.getMsg(sender, receiver));
+    if (res['code'] == '1') {
+      print("=========================插入数据=============${res['data']}==============");
+
+      // _messageList.addAll(res['data'].toList());
+      var messages = (res['data'] as List).map((item) {
+        return Message(item['message'], item['senderType']);
+      }).toList();
+
+      _historyMessageList.addAll(messages);
+      //把_historyMessageList顺序反转，message.messageType保持不变
+      _historyMessageList = _historyMessageList.reversed.toList();
+    }
+
     // channel = IOWebSocketChannel.connect("ws://47.109.108.66:8003");
     channel = IOWebSocketChannel.connect("ws://192.168.1.108:8003");
     var data = {
-      "userId" : Global.profile.user?.userId.toString(),
-      "type" : "REGISTER"
+      "userId": Global.profile.user?.userId.toString(),
+      "type": "REGISTER"
     };
-    //注册登录
+    // 注册登录
     channel.sink.add(const JsonEncoder().convert(data));
-    channel.stream.listen((data){
+    channel.stream.listen((data) {
       Map res = jsonDecode(data);
       print(res);
-      if(res['status']!=-1){
+      if (res['status'] != -1) {
         var receive = ReceiveMsg.fromJson(res['data']);
-        if(receive.fromUserId
-            !=null&&receive.fromUserId==widget.user?.userId.toString()){
-          _messageList.insert(0, Message(receive.content!,2));
+        if (receive.fromUserId != null &&
+            receive.fromUserId == widget.user?.userId.toString()) {
+          _messageList.insert(0, Message(receive.content!, 2));
           setState(() {});
         }
       }
-
     });
-    _showEmoji = false;
-    super.initState();
+
+
+    // 把_historyMessageList加到_messageList后面
+    _messageList.addAll(_historyMessageList);
+    print("-------------------------------_messageList :${_messageList}");
+    setState(() {}); // 通知框架更新UI
   }
 
   @override
@@ -75,8 +102,6 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     if (keyboardHeight > 0) {
-      _keyboardHeight = keyboardHeight;
-      _showEmoji = false;
     }
     return Scaffold(
       appBar: AppBar(
@@ -84,6 +109,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: <Widget>[
+          // _historyMessage(),
           Expanded(
             child:ExtendedListView.builder(
               padding: EdgeInsets.symmetric(
@@ -93,50 +119,79 @@ class _ChatPageState extends State<ChatPage> {
               extendedListDelegate: const ExtendedListDelegate(closeToTrailing: true),
               itemBuilder: (context, index) {
                 var msg = _messageList[index];
-                return _buildMessage(msg);
+                // return _buildMessage(msg);
+                return item(msg);
               },
               itemCount: _messageList.length,
             ),
           ),
           _inputBar(),
-          emoticonPad(context),
+          // emoticonPad(context),
         ],
       ),
     );
   }
 
-  Widget _buildMessage(Message msg) {
+
+  Widget item(Message message) {
+    // double width = MediaQuery.sizeOf(Get.context!).width * .7;
+    double width = MediaQuery.of(context).size.width * .7;
     return Container(
-      margin: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(6)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: msg.sender == 1 ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: <Widget>[
-          if (msg.sender == 2) _buildAvatar(msg.sender),
-          BubbleBox(
-            maxWidth: MediaQuery.of(context).size.width * 0.8,
-            shape: BubbleShapeBorder(
-              // border: BubbleBoxBorder(
-              //   width: 3
-              // ),
-              position: const BubblePosition.start(3),
-              direction:msg.sender==1? BubbleDirection.right:BubbleDirection.left,
-            ),
-            backgroundColor: msg.sender == 1? Colors.green.withOpacity(0.8):Colors.white,
-            child: Text(
-              msg.text,
-            ),
-          ),
-          if (msg.sender == 1) _buildAvatar(msg.sender)
-        ],
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: message.senderType == 1
+              ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                      constraints: BoxConstraints(maxWidth: width),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Text(
+                        message.text,
+                        style: const TextStyle(color: Colors.white),
+                      )),
+                  const SizedBox(width: 10),
+                  _buildAvatar(message.senderType),
+                ],
+          )
+          : Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildAvatar(message.senderType),
+              const SizedBox(width: 10),
+              Container(
+                  constraints: BoxConstraints(maxWidth: width),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Text(
+                    message.text,
+                    style: const TextStyle(color: Colors.black),
+                  )),
+            ],
       ),
     );
   }
-
+  _buildAvatar(int type) {
+    var avatar =
+    type == 1 ? Global.profile.user?.avatarUrl : widget.user?.avatarUrl;
+    return SizedBox(
+      width: ScreenUtil().setWidth(35),
+      height: ScreenUtil().setHeight(35),
+      child: avatar == ''
+          ? Image.asset("images/app_logo.png")
+          : ClipOval(
+            child: ExtendedImage.network('${NetConfig.ip}/images/$avatar', cache: true),
+      ),
+    );
+  }
   _inputBar() {
     return Card(
-      // margin: const EdgeInsets.all(0),
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       child: Container(
         padding: EdgeInsets.only(
             top: ScreenUtil().setHeight(5),
@@ -181,18 +236,9 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget emoticonPad(context) {
-    return EmotionPad(
-      active: _showEmoji,
-      height: _keyboardHeight,
-      controller: _textController,
-    );
-  }
-
   void _changeRow() {
     _textController.text += '\n';
   }
-
 
   _sendHandler() {
     if (_textController.text.isNotEmpty) {
@@ -211,16 +257,16 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  _buildAvatar(int type) {
-    var avatar =
-    type == 1 ? Global.profile.user?.avatarUrl : widget.user?.avatarUrl;
-    return SizedBox(
-      height: ScreenUtil().setHeight(40),
-      child: avatar == ''
-          ? Image.asset("images/app_logo.png")
-          : ClipOval(
-            child: ExtendedImage.network('${NetConfig.ip}/images/$avatar', cache: true),
-      ),
-    );
-  }
+  // _buildAvatar(int type) {
+  //   var avatar =
+  //   type == 1 ? Global.profile.user?.avatarUrl : widget.user?.avatarUrl;
+  //   return SizedBox(
+  //     height: ScreenUtil().setHeight(40),
+  //     child: avatar == ''
+  //         ? Image.asset("images/app_logo.png")
+  //         : ClipOval(
+  //           child: ExtendedImage.network('${NetConfig.ip}/images/$avatar', cache: true),
+  //     ),
+  //   );
+  // }
 }

@@ -1,7 +1,7 @@
 class Message{
   String text;
   //1:发送2：接受
-  int sender;
-  Message(this.text, this.sender);
+  int senderType;
+  Message(this.text, this.senderType);
 
 }

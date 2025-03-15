@@ -1,20 +1,13 @@
-
-import 'package:client/core/net/net.dart';
-import 'package:client/util/build_date.dart';
 import 'package:client/widget/my_card/msg_list_card.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:loading_more_list/loading_more_list.dart';
-import 'package:shimmer/shimmer.dart';
+
 
 import '../../core/global.dart';
 import '../../core/list_repository/msg_list_repo.dart';
 import '../../core/model/msg_list.dart';
 import '../../widget/build_indicator.dart';
-import '../../widget/my_card/post_card.dart';
-import 'message_details_page.dart';
+
 
 class MessageList extends StatefulWidget {
   const MessageList({super.key});

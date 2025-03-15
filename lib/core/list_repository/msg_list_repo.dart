@@ -32,7 +32,7 @@ class MsgListRepository extends LoadingMoreBase<MsgModel> {
     bool isSuccess = false;
 
     try {
-      var result = await NetRequester.request(Apis.getMsgUserList(userId, _pageIndex));
+      var result = await NetRequester.request(Apis.getMsgUserList(_pageIndex));
       if(result.containsKey('data')){
         if (_pageIndex == 1) {
           clear();
