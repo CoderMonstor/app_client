@@ -23,8 +23,6 @@ import '../dialog_build.dart';
 import '../my_list_tile.dart';
 
 
-
-
 class PostCard extends StatefulWidget {
   final Post? post;
   final PostRepository? list;

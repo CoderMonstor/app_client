@@ -4,6 +4,7 @@ import 'package:client/widget/my_card/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '../../core/list_repository/product_repo.dart';
 import '../../core/model/product_list.dart';
 import '../../widget/send_button.dart';
 class ResalePage extends StatefulWidget {
@@ -61,20 +62,42 @@ class _ResalePageState extends State<ResalePage> {
       price: 60000,
     ),
   ];
+
+
+  Future<void> _refreshProducts() async {
+    try {
+      ProductRepository productRepo = ProductRepository(0, 1); // 假设我们想要获取所有产品，type 为 1
+      await productRepo.refresh();
+      setState(() {
+        products = productRepo.toList(); // 更新产品列表
+        print(products);
+      });
+    } catch (e) {
+      // 处理错误
+      print('Error refreshing products: $e');
+    }
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppbar.buildNormalAppbar(context, false, true, null, null),
-      body: MasonryGridView.count(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _refreshProducts();
+        },
+        child: MasonryGridView.count(
           crossAxisCount: 2,
           mainAxisSpacing: 4,
           crossAxisSpacing: 4,
           itemCount: products.length,
           itemBuilder: (context, index) {
-          return ProductCard(
-            productList: products[index],
-          );
-        },
+            return ProductCard(
+              productList: products[index],
+            );
+          },
+        ),
       ),
       floatingActionButton: SendButton(
         key: _fabKey, // 绑定GlobalKey

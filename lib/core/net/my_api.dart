@@ -215,4 +215,15 @@ class Apis {
     int? userId = Global.profile.user?.userId;
     return '/product/getAllProduct?userId=$userId&page=$page';
   }
+
+  static String getProductByProductId(int productId) {
+    int? userId = Global.profile.user?.userId;
+    return '/product/getProductDetail?userId=$userId&productId=$productId';
+  }
+
+  static String getProductByCategory(int category, int pageIndex) {
+    return '/product/getProductByCategory?productId=$category&pageIndex=$pageIndex';
+  }
+
+
 }

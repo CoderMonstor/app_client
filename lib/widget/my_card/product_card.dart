@@ -45,15 +45,7 @@ class _ProductCardState extends State<ProductCard> {
               left: 4,
               right: 8,
               betweenLeadingAndCenter: 4,
-              // leading: CircleAvatar(
-              //       radius: 15,
-              //       backgroundImage: NetworkImage('${NetConfig.ip}/images/${widget.productList.userAvatar}'),
-              //     ),
-              // center: Text(
-              //       widget.productList.userName!,
-              //       style: const TextStyle(fontSize: 14, color: Colors.grey),
-              //     ),
-              center: Container(
+              center: SizedBox(
                 width: 110,
                 child: Text(
                 widget.productList.productName!,
