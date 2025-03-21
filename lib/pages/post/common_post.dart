@@ -47,14 +47,13 @@ class _CommonPostPageState extends State<CommonPostPage> {
         child: LoadingMoreList(
           ListConfig<Post>(
             itemBuilder: (BuildContext context, Post item, int index){
-              return PostCard(post: item,list: _postRepository,index: index);
+              // return PostCard(post: item,list: _postRepository,index: index);
+              return PostCard(post: item,index: index);
             },
             sourceList: _postRepository,
             indicatorBuilder: _buildIndicator,
             padding: EdgeInsets.only(
                 top:ScreenUtil().setWidth(20),
-                // left: ScreenUtil().setWidth(20),
-                // right: ScreenUtil().setWidth(20)
             ),
           ),
         ),

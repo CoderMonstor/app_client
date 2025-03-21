@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../core/list_repository/post_repo.dart';
 import '../../core/model/post.dart';
 import '../../core/net/my_api.dart';
 import '../../core/net/net.dart';
@@ -25,10 +24,11 @@ import '../my_list_tile.dart';
 
 class PostCard extends StatefulWidget {
   final Post? post;
-  final PostRepository? list;
+  // final PostRepository? list;
   final int? index;
 
-  const PostCard({this.post, this.list, this.index, super.key});
+  // const PostCard({this.post, this.list, this.index, super.key});
+  const PostCard({this.post, this.index, super.key});
   @override
   State<StatefulWidget> createState() => _PostCardState();
 }

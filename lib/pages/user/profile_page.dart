@@ -137,7 +137,8 @@ class _ProfilePageState extends State<ProfilePage>
           LoadingMoreList(
             ListConfig<Post>(
               itemBuilder: (BuildContext context, Post item, int index){
-                return PostCard(post: item,list: _postRepository,index: index);
+                // return PostCard(post: item,list: _postRepository,index: index);
+                return PostCard(post: item,index: index);
               },
               sourceList: _postRepository,
               indicatorBuilder: _buildIndicator,
@@ -147,7 +148,8 @@ class _ProfilePageState extends State<ProfilePage>
           LoadingMoreList(
             ListConfig<Post>(
               itemBuilder: (BuildContext context, Post item, int index){
-                return PostCard(post: item,list: _postRepository,index: index);
+                // return PostCard(post: item,list: _postRepository,index: index);
+                return PostCard(post: item,index: index);
               },
               sourceList: _postRepository,
               indicatorBuilder: _buildIndicator,

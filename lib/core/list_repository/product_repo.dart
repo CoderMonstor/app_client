@@ -2,21 +2,22 @@ import 'package:flutter/foundation.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../util/toast.dart';
+import '../model/product.dart';
 import '../model/product_list.dart';
 import '../net/my_api.dart';
 import '../net/net_request.dart';
 
-class ProductRepository extends LoadingMoreBase<ProductList> {
+class ProductRepository extends LoadingMoreBase<Product> {
   int pageIndex = 1;
   bool _hasMore = true;
   bool forceRefresh = false;
 
-  int productId;
   int type;
+  int? productId;
   String? key;
   String? orderBy;
   int? category;
-  ProductRepository(this.productId, this.type, [this.key, this.orderBy, this.category]);
+  ProductRepository(this.type, [this.productId, this.key, this.orderBy, this.category]);
 
 
   @override
@@ -43,7 +44,7 @@ class ProductRepository extends LoadingMoreBase<ProductList> {
         url = Apis.getAllProduct(pageIndex);
         break;
       case 2:
-        url = Apis.getProductByProductId(productId);
+        url = Apis.getProductByProductId(productId!);
         break;
       case 3:
         url = Apis.getProductByCategory(category!, pageIndex);
@@ -64,7 +65,7 @@ class ProductRepository extends LoadingMoreBase<ProductList> {
         List source = result['data'];
         if (source.isNotEmpty) {
           for (var item in source) {
-            var product = ProductList.fromJson(item);
+            var product = Product.fromJson(item);
             if (!contains(product) && hasMore) add(product);
           }
         }
