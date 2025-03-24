@@ -9,7 +9,7 @@ import '../pages/login_register/register_page.dart';
 import '../pages/first_lunch.dart';
 import '../pages/login_register/login_page.dart';
 import '../pages/post/post_page.dart';
-import '../pages/resale/send_resale.dart';
+import '../pages/resale/post_resale.dart';
 import '../pages/resale/resale_page.dart';
 import '../pages/user/about_me_page.dart';
 import '../pages/root_route.dart';

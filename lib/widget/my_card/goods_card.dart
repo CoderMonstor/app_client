@@ -1,19 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../core/model/product.dart';
+import '../../core/model/goods.dart';
 import '../../core/net/net.dart';
-import '../../pages/resale/product_detail_page.dart';
+import '../../pages/resale/goods_detail_page.dart';
 
-class ProductCard extends StatefulWidget {
-  final Product product;
-  const ProductCard({super.key, required this.product});
+class GoodsCard extends StatefulWidget {
+  final Goods goods;
+  const GoodsCard({super.key, required this.goods});
 
   @override
-  State<ProductCard> createState() => _ProductCardState();
+  State<GoodsCard> createState() => _GoodsCardState();
 }
 
-class _ProductCardState extends State<ProductCard> {
+class _GoodsCardState extends State<GoodsCard> {
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +23,12 @@ class _ProductCardState extends State<ProductCard> {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: _navigateToDetail,
-        child: Column(  // 关键点1：使用Column作为根布局
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 关键点2：图片区域用Expanded占据剩余空间
             Expanded(
               child: _buildImageSection(),
             ),
-            // 关键点3：内容区域设置固定高度
             _buildContentSection(),
           ],
         ),
@@ -43,7 +41,7 @@ class _ProductCardState extends State<ProductCard> {
       borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
       child: Image.network(
         _getImageUrl(),
-        fit: BoxFit.cover,  // 关键点4：确保图片填充整个区域
+        fit: BoxFit.cover,
         loadingBuilder: (context, child, progress) {
           if (progress == null) return child;
           return _buildLoadingPlaceholder();
@@ -57,7 +55,6 @@ class _ProductCardState extends State<ProductCard> {
     return SizedBox(
       height: 90.h,
       child: Container(
-
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -74,23 +71,23 @@ class _ProductCardState extends State<ProductCard> {
 
   Widget _buildPriceRow() {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
         Flexible(
-        child: Text(
-        widget.product.title ?? '未命名商品',
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600)),),
-          _buildPriceTag(),
+          child: Text(
+              widget.goods.goodsName ?? '未命名商品',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600)),),
+        _buildPriceTag(),
 
-    ],
+      ],
     );
   }
 
   Widget _buildDescriptionText() {
     return Flexible(
       child: Text(
-        widget.product.description ?? '暂无描述',
+        widget.goods.goodsDesc ?? '暂无描述',
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(fontSize: 13.sp, color: Colors.grey[600]),
@@ -117,7 +114,7 @@ class _ProductCardState extends State<ProductCard> {
               ),
             ),
             TextSpan(
-              text: widget.product.price?.toStringAsFixed(2) ?? '0.00',
+              text: widget.goods.goodsPrice?.toStringAsFixed(2) ?? '0.00',
               style: TextStyle(
                 fontSize: 16.sp,
                 color: Colors.red,
@@ -152,7 +149,7 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   String _getImageUrl() {
-    final imagePath = widget.product.images?.split('￥').first ?? '';
+    final imagePath = widget.goods.image?.split('￥').first ?? '';
     return '${NetConfig.ip}/images/$imagePath';
   }
 
@@ -160,8 +157,8 @@ class _ProductCardState extends State<ProductCard> {
     Navigator.push(
       context,
       CupertinoPageRoute(
-        builder: (context) => ProductDetailPage(
-          productId: widget.product.productId!,
+        builder: (context) => GoodsDetailPage(
+          goodsId: widget.goods.goodsId!,
         ),
       ),
     );

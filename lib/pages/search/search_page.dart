@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/global.dart';
 import '../../util/my_icon/my_icon.dart';
 import '../post/common_post.dart';
+import '../resale/common_goods.dart';
 import '../user/common_user_page.dart';
 
 class SearchPage extends StatefulWidget{
@@ -55,7 +56,7 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
                   tabs: const <Widget>[
                     Tab(text: '帖子'),
                     Tab(text: '用户'),
-                    // Tab(text: '关注'),
+                    Tab(text: '交易'),
                     // Tab(text: '实时'),
                   ],
                 ))
@@ -70,6 +71,7 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
         children: <Widget>[
           CommonPostPage(type: 7,orderBy: 'hot',str: str),
           CommonUserPage(str: str),
+          CommonGoodsPage(str:str),
           // CommonPostPage(type: 8,str: str),
           // CommonPostPage(type: 7,orderBy: 'postId',str: str),
         ],

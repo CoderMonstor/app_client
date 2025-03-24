@@ -1,7 +1,7 @@
 import 'package:client/pages/gather/send_gather.dart';
 import 'package:client/pages/post/send_post.dart';
 import 'package:client/pages/resale/buying_request_page.dart';
-import 'package:client/pages/resale/send_resale.dart';
+import 'package:client/pages/resale/post_resale.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,4 +1,6 @@
 
+import 'package:client/core/model/goods.dart';
+
 import '../global.dart';
 
 class Apis {
@@ -217,13 +219,85 @@ class Apis {
   }
 
   static String getProductByProductId(int productId) {
-    int? userId = Global.profile.user?.userId;
-    return '/product/getProductDetail?userId=$userId&productId=$productId';
+    return '/product/getProductByProductId?productId=$productId';
   }
 
   static String getProductByCategory(int category, int pageIndex) {
     return '/product/getProductByCategory?productId=$category&pageIndex=$pageIndex';
   }
 
+  /*
+    @RequestMapping("/addResale")
+    @RequestMapping("/upOrDown")
+    @RequestMapping("/updateSaleOrNot")
+    @RequestMapping("/searchGoods")
+    @RequestMapping("/getGoodsByGoodsId")
+    @RequestMapping("/deleteGoods")
+    @RequestMapping("/getResaleList")
+    @RequestMapping("/getBuyList")
+    @RequestMapping("/getMyResaleList")
+    @RequestMapping("/getMyBuyList")
+    @RequestMapping("/edit")
+    @RequestMapping("/getCollectedGoodsByUserId")
+    @RequestMapping("/collectGoods")
+    @RequestMapping("/cancelCollectGoods")
+    @RequestMapping("/getMyOrder")
+    @RequestMapping("/getSellOrder")
+    @RequestMapping("/addOrder")
 
+   */
+
+  static String addResale(Goods goods) {
+    return '/goods/addResale?goods=$goods';
+  }
+  static String upOrDown(int goodsId) {
+    return '/goods/upOrDown?goodsId=$goodsId';
+  }
+  static String updateSaleOrNot(int goodsId) {
+    return '/goods/updateSaleOrNot?goodsId=$goodsId';
+  }
+  static String searchGoods(String key, int page) {
+    int? askId = Global.profile.user?.userId;
+    return '/goods/searchGoods?askId=$askId&key=$key&page=$page';
+  }
+  static String getGoodsByGoodsId(int goodsId) {
+    return '/goods/getGoodsByGoodsId?goodsId=$goodsId';
+  }
+  static String deleteGoods(int goodsId) {
+    return '/goods/deleteGoods?goodsId=$goodsId';
+  }
+  static String getResaleList(int page) {
+    int? userId = Global.profile.user?.userId;
+    return '/goods/getResaleList?userId=$userId&page=$page';
+  }
+  static String getBuyList(int page) {
+    int? userId = Global.profile.user?.userId;
+    return '/goods/getBuyList?userId=$userId&page=$page';
+  }
+  static String getMyResaleList(int page) {
+    int? userId = Global.profile.user?.userId;
+    return '/goods/getMyResaleList?userId=$userId&page=$page';
+  }
+  static String getMyBuyList(int page) {
+    int? userId = Global.profile.user?.userId;
+    return '/goods/getMyBuyList?userId=$userId&page=$page';
+  }
+  static String edit(Goods goods) {
+    return '/goods/edit?goods=$goods';
+  }
+  static String getCollectedGoodsByUserId(int userId, int page) {
+    return '/goods/getCollectedGoodsByUserId?userId=$userId&page=$page';
+  }
+  static String collectGoods(int goodsId) {
+    int? userId = Global.profile.user?.userId;
+    return '/goods/collectGoods?userId=$userId&goodsId=$goodsId';
+  }
+  static String cancelCollectGoods(int goodsId) {
+    int? userId = Global.profile.user?.userId;
+    return '/goods/cancelCollectGoods?userId=$userId&goodsId=$goodsId';
+  }
+  static String getMyOrder(int page) {
+    int? userId = Global.profile.user?.userId;
+    return '/order/getMyOrder?userId=$userId&page=$page';
+  }
 }

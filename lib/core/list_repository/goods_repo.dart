@@ -1,31 +1,28 @@
+import 'package:client/core/net/net_request.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../util/toast.dart';
-import '../model/product.dart';
+import '../model/goods.dart';
 import '../net/my_api.dart';
-import '../net/net_request.dart';
 
-class ProductRepository extends LoadingMoreBase<Product> {
+class GoodsRepository  extends LoadingMoreBase<Goods>{
   int pageIndex = 1;
   bool _hasMore = true;
   bool forceRefresh = false;
+  int userId;
 
   int type;
-  int? productId;
   String? key;
-  String? orderBy;
-  int? category;
-  ProductRepository(this.type, [this.productId, this.key, this.orderBy, this.category]);
-
-
+  GoodsRepository(this.userId, this.type, [this.key]);
   @override
   bool get hasMore => _hasMore || forceRefresh;
-
   @override
-  Future<bool> refresh([bool clearBeforeRequest = false]) async {
+  Future<bool> refresh([bool clearBeforeRequest = false]) async{
     _hasMore = true;
     pageIndex = 1;
+    //force to refresh list when you don't want clear list before request
+    //for the case, if your list already has 20 items.
     forceRefresh = !clearBeforeRequest;
     var result = await super.refresh(clearBeforeRequest);
     if(result){
@@ -34,54 +31,61 @@ class ProductRepository extends LoadingMoreBase<Product> {
     forceRefresh = false;
     return result;
   }
-
+//searchGoods
+//
   @override
   Future<bool> loadData([bool isloadMoreAction = false]) async {
     String url = '';
     switch (type) {
       case 1:
-        url = Apis.getAllProduct(pageIndex);
+        url=Apis.getResaleList(pageIndex);
         break;
       case 2:
-        url = Apis.getProductByProductId(productId!);
+        url=Apis.getBuyList(pageIndex);
         break;
       case 3:
-        url = Apis.getProductByCategory(category!, pageIndex);
+        url=Apis.getMyResaleList(pageIndex);
         break;
-      // case 4:
-        // url = Apis.getProductByKey(key!, orderBy!, pageIndex);
-        // break;
+      case 4:
+        url=Apis.getBuyList(pageIndex);
+        break;
+      case 5:
+        url=Apis.getCollectedGoodsByUserId(userId, pageIndex);
+        break;
+      case 6:
+        url=Apis.searchGoods(key!, pageIndex);
+        break;
       default:
-        throw Exception("Unsupported post type: $type");
+        throw Exception('Unsupported goods type : $type');
     }
     bool isSuccess = false;
-    try {
+    try{
       Map result = await NetRequester.request(url);
-      if (result.containsKey('data')) {
-        if (pageIndex == 1) {
+      if(result.containsKey('data')){
+        if(pageIndex==1){
           clear();
         }
         List source = result['data'];
-        if (source.isNotEmpty) {
-          for (var item in source) {
-            var product = Product.fromJson(item);
-            if (!contains(product) && hasMore) add(product);
+        if(source.isNotEmpty){
+          for(var item in source){
+            var goods = Goods.fromJson(item);
+            if(!contains(goods)&&hasMore)add(goods);
           }
         }
         _hasMore = pageIndex < result['totalPage'];
         pageIndex++;
         isSuccess = true;
       }
-    } catch (exception, stack) {
+    }catch(exception,stack){
       isSuccess = false;
-      if (kDebugMode) {
+      if(kDebugMode){
         print(exception);
       }
-      if (kDebugMode) {
+      if(kDebugMode){
         print(stack.toString());
       }
     }
     return isSuccess;
-
   }
+
 }
