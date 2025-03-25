@@ -231,7 +231,7 @@ class ItemBuilder {
                                       ViewImgPage(
                                           images: [comment.imageUrl],
                                           index: 0,
-                                          postId: comment.commentId.toString())));
+                                          id: comment.commentId.toString())));
                         },
                           child: Hero(
                               tag: '${comment.commentId}${comment.imageUrl}0',
@@ -420,7 +420,7 @@ class ItemBuilder {
                                   ViewImgPage(
                                       images: [reply.imageUrl],
                                       index: 0,
-                                      postId: reply.commentId.toString())));
+                                      id: reply.commentId.toString())));
                       },
                       child: Hero(
                           tag: '${reply.commentId}${reply.imageUrl}0',

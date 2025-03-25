@@ -265,7 +265,7 @@ class ItemBuilder {
                                   ViewImgPage(
                                       images: [comment.imageUrl],
                                       index: 0,
-                                      postId: comment.commentId.toString())));
+                                      id: comment.commentId.toString())));
                     } catch (e) {
                       // Handle navigation error
                       print('Navigation error: $e');
@@ -460,7 +460,7 @@ class ItemBuilder {
                                 ViewImgPage(
                                     images: [reply.imageUrl],
                                     index: 0,
-                                    postId: reply.commentId.toString())));
+                                    id: reply.commentId.toString())));
                   } catch (e) {
                     // Handle navigation error
                     print('Navigation error: $e');

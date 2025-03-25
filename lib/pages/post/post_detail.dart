@@ -176,12 +176,10 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
         ));
   }
 
-  List<Widget> _headerSliverBuilder(
-      BuildContext context, bool innerBoxIsScrolled) {
+  List<Widget> _headerSliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
     return <Widget>[
       const SliverAppBar(
         pinned: true,
-        // elevation: 0,
         title: Text('动态'),
       ),
       _postInfo(),
@@ -357,7 +355,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
           Navigator.push(context,
               MaterialPageRoute(builder: (context) =>
                   ViewImgPage(images: [str.substring(2,str.length-3)],
-                    index: 0,postId: _post.postId.toString(),)));
+                    index: 0,id: _post.postId.toString(),)));
         }
       },
     );

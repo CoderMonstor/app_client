@@ -8,8 +8,8 @@ import '../core/net/net.dart';
 class ViewImgPage extends StatefulWidget{
   final List? images;
   final int? index;
-  final String? postId;
-  const ViewImgPage({super.key, this.images, this.index, this.postId});
+  final String? id;
+  const ViewImgPage({super.key, this.images, this.index, this.id});
   @override
   State<StatefulWidget> createState() {
     return _ViewImgPageState();
@@ -42,7 +42,7 @@ class _ViewImgPageState extends State<ViewImgPage> {
               itemBuilder: (BuildContext context, int index) {
                 var item = widget.images?[index];
                 Widget image = ExtendedImage.network(
-                  NetConfig.ip+item,
+                  NetConfig.ip+'/images/'+item,
                   fit: BoxFit.contain,
                   mode: ExtendedImageMode.gesture,
                 );
@@ -56,7 +56,7 @@ class _ViewImgPageState extends State<ViewImgPage> {
                     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
                   },
                   child: Hero(
-                    tag: widget.postId! +item + index.toString(),
+                    tag: widget.id! +item + index.toString(),
                     child: image,
                   ),
                 );
@@ -78,8 +78,8 @@ class _ViewImgPageState extends State<ViewImgPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text((currentIndex+1).toString()+"/"+widget.images!.length.toString(),
-                    style: TextStyle(color: Colors.white),),
+                  Text("${currentIndex+1}/${widget.images!.length}",
+                    style: const TextStyle(color: Colors.white),),
                 ],
               ),
             )
