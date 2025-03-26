@@ -1,31 +1,31 @@
+import 'package:client/widget/item_builder_goods.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
-import '../../core/list_repository/reply_repo.dart';
-import '../../core/model/comment.dart';
-import '../../core/model/reply.dart';
+import '../../core/list_repository/goods_reply_repo.dart';
+import '../../core/model/goods_comment.dart';
+import '../../core/model/goods_reply.dart';
 import '../../util/app_bar/my_app_bar.dart';
 import '../../widget/build_indicator.dart';
-import '../../widget/item_builder_post.dart';
 
-class ReplyPage extends StatefulWidget{
+class GoodsReplyPage extends StatefulWidget{
 
-  final Comment? comment;
+  final GoodsComment? comment;
 
-  const ReplyPage({super.key, this.comment});
+  const GoodsReplyPage({super.key, this.comment});
   @override
   State<StatefulWidget> createState() {
-    return _ReplyPageState();
+    return _GoodsReplyPageState();
   }
 }
 
-class _ReplyPageState extends State<ReplyPage> {
+class _GoodsReplyPageState extends State<GoodsReplyPage> {
 
-  late ReplyRepository _replyRepository;
+  late GoodsReplyRepository _replyRepository;
   @override
   void initState() {
     super.initState();
-    _replyRepository =  ReplyRepository(widget.comment!.commentId!);
+    _replyRepository =  GoodsReplyRepository(widget.comment!.commentId!);
   }
 
   @override
@@ -38,9 +38,9 @@ class _ReplyPageState extends State<ReplyPage> {
     return Scaffold(
       appBar: MyAppbar.simpleAppbar('共${widget.comment?.replyNum}条回复'),
       body: LoadingMoreList(
-        ListConfig<Reply>(
-          itemBuilder: (BuildContext context, Reply reply, int index){
-            return ItemBuilderPost.buildReplyRow(context, reply, _replyRepository, index);
+        ListConfig<GoodsReply>(
+          itemBuilder: (BuildContext context, GoodsReply reply, int index){
+            return ItemBuilderGoods.buildGoodsReplyRow(context, reply, _replyRepository, index);
           },
           sourceList: _replyRepository,
           indicatorBuilder: _buildIndicator,

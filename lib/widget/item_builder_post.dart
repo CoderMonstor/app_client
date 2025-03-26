@@ -7,8 +7,11 @@ import 'package:loading_more_list/loading_more_list.dart';
 
 import '../core/global.dart';
 import '../core/list_repository/comment_repo.dart';
+import '../core/list_repository/goods_comment_repo.dart';
 import '../core/list_repository/reply_repo.dart';
 import '../core/model/comment.dart';
+import '../core/model/goods_comment.dart';
+import '../core/model/goods_reply.dart';
 import '../core/model/post.dart';
 import '../core/model/reply.dart';
 import '../core/model/user.dart';
@@ -17,8 +20,9 @@ import '../core/net/my_api.dart';
 import '../core/net/net.dart';
 import '../core/net/net_request.dart';
 import '../pages/chat/chat_page.dart';
-import '../pages/post/common_dialog.dart';
+import '../pages/post/post_common_dialog.dart';
 import '../pages/post/reply_page.dart';
+import '../pages/resale/resale_common_dialog.dart';
 import '../pages/user/profile_page.dart';
 import '../pages/view_images.dart';
 import '../util/build_date.dart';
@@ -27,7 +31,7 @@ import '../util/text_util/special_text_span.dart';
 import '../util/toast.dart';
 import 'my_list_tile.dart';
 
-class ItemBuilder {
+class ItemBuilderPost {
   static Widget buildUserRow(BuildContext context, User user, int type) {
     return Card(
       elevation: 0,
@@ -212,10 +216,26 @@ class ItemBuilder {
                   ],
                 ),
                 SizedBox(height: ScreenUtil().setHeight(10)),
+                // ExtendedText(
+                //   comment.text!,
+                //   style: TextStyle(fontSize: ScreenUtil().setSp(23)),
+                //   specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                // ),
                 ExtendedText(
                   comment.text!,
-                  style: TextStyle(fontSize: ScreenUtil().setSp(23)),
+                  style: TextStyle(
+                    fontSize: ScreenUtil().setSp(23),
+                    height: 1.4, // 推荐设置行高
+                  ),
                   specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                  maxLines: null,
+                  overflow: TextOverflow.clip, // 安全选项：确保内容不会溢出父容器
+                  textAlign: TextAlign.start, // 明确对齐方式
+                  strutStyle: StrutStyle(
+                    fontSize: ScreenUtil().setSp(23), // 保持与文字大小一致
+                    height: 1.4,
+                    forceStrutHeight: true, // 强制统一行高
+                  ),
                 ),
                 SizedBox(height: ScreenUtil().setHeight(10)),
                 comment.imageUrl != ''
@@ -552,7 +572,7 @@ class ItemBuilder {
           Navigator.pop(context);
           showDialog(context: context,
               builder: (context) {
-                return CommentDialog(commentId: comment.commentId, list: list);
+                return PostCommentDialog(commentId: comment.commentId, list: list);
               }
           );
         },
@@ -589,7 +609,7 @@ class ItemBuilder {
           Navigator.pop(context);
           showDialog(context: context,
               builder: (context) {
-                return CommentDialog(
+                return PostCommentDialog(
                     commentId: reply.commentId,beReplyName: reply.username,
                     list: list);
               }
@@ -615,6 +635,8 @@ class ItemBuilder {
       ),
     ];
   }
+
+
 }
 
 class FollowButton extends StatefulWidget {

@@ -12,20 +12,19 @@ import '../../util/text_util/special_text_span.dart';
 import '../../util/toast.dart';
 import '../../util/upload.dart';
 
-class CommentDialog extends StatefulWidget{
+class ResaleCommentDialog extends StatefulWidget{
 
-  final int? postId;
+  final int? goodsId;
   final int? commentId;
   final String? beReplyName;
   final LoadingMoreBase? list;
-  const CommentDialog({super.key, this.postId, this.commentId, this.list, this.beReplyName});
+  const ResaleCommentDialog({super.key, this.goodsId, this.commentId, this.list, this.beReplyName});
   @override
-  State<StatefulWidget> createState() => _CommentDialogState();
+  State<StatefulWidget> createState() => _ResaleCommentDialogState();
 }
 
-class _CommentDialogState extends State<CommentDialog> {
+class _ResaleCommentDialogState extends State<ResaleCommentDialog> {
   final TextEditingController _textController = TextEditingController();
-  late double _keyboardHeight;
   late bool _showEmoji;
   final FocusNode _focusNode = FocusNode();
   List<AssetEntity> images = [];
@@ -47,7 +46,6 @@ class _CommentDialogState extends State<CommentDialog> {
   Widget build(BuildContext context) {
     var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     if (keyboardHeight > 0) {
-      _keyboardHeight = keyboardHeight;
       _showEmoji = false;
     }
     return Scaffold(
@@ -97,16 +95,6 @@ class _CommentDialogState extends State<CommentDialog> {
                       color: Color(0xff757575),
                     ),
                   ),
-                  // TextButton(
-                  //   style: TextButton.styleFrom(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 0),
-                  //   ),
-                  //   onPressed: () {},
-                  //   child: const Icon(
-                  //     MyIcons.at,
-                  //     color: Color(0xff757575),
-                  //   ),
-                  // ),
                   TextButton(
                     onPressed: () {
                       _sendHandler();
@@ -148,13 +136,6 @@ class _CommentDialogState extends State<CommentDialog> {
       }
     }
   }
-  // Widget emoticonPad(context) {
-  //   return EmotionPad(
-  //     active: _showEmoji,
-  //     height: _keyboardHeight??0,
-  //     controller: _textController,
-  //   );
-  // }
 
   _buildTextFiled() {
     return Card(
@@ -198,7 +179,6 @@ class _CommentDialogState extends State<CommentDialog> {
     final ThemeData theme = Theme.of(context);
 
     try {
-      // 核心变化：MultiImagePicker.pickImages → AssetPicker.pickAssets
       resultList = await AssetPicker.pickAssets(
         context,
         pickerConfig: AssetPickerConfig(
@@ -264,14 +244,14 @@ class _CommentDialogState extends State<CommentDialog> {
           '${Global.profile.user!.userId}$timeStamp${type ?? '.jpg'}'; // 处理可能的空类型
 
       // 获取图片二进制数据
-      final Uint8List? imageData = await asset.originBytes; // ✅ 直接获取 Uint8List?
+      final Uint8List? imageData = await asset.originBytes; //  直接获取 Uint8List?
       if (imageData == null) {
         Toast.popToast('图片数据读取失败');
         return;
       }
 
       try {
-        final int res = await UpLoad.upLoad(imageData, filename); // ✅ 直接传递 Uint8List
+        final int res = await UpLoad.upLoad(imageData, filename); //  直接传递 Uint8List
         if (res == 0) {
           Toast.popToast('上传失败请重试');
           return; // 提前返回，避免后续使用未赋值的 imageUrl
@@ -294,15 +274,15 @@ class _CommentDialogState extends State<CommentDialog> {
     final String url;
 
     final now = DateTime.now().toString().substring(0, 19);
-    if (widget.postId != null) {
+    if (widget.goodsId != null) {
       map = {
         'userId': Global.profile.user?.userId,
         'text': text,
         'imageUrl': imageUrl ?? '', // 处理可能的空值
         'date': now,
-        'postId': widget.postId,
+        'goodsId': widget.goodsId,
       };
-      url = '/comment/addComment';
+      url = '/goodsComment/addComment';
     } else {
       map = {
         'userId': Global.profile.user?.userId,
@@ -312,7 +292,7 @@ class _CommentDialogState extends State<CommentDialog> {
         'beReplyName': widget.beReplyName,
         'commentId': widget.commentId,
       };
-      url = '/reply/addReply';
+      url = '/goodsReply/addReply';
     }
 
     try {

@@ -451,7 +451,7 @@ class _ProfilePageState extends State<ProfilePage>
     int askId = _localUser!.userId!;
     var res;
     if(widget.userId != null){
-      res = await NetRequester.request(Apis.findUserById(askId, widget.userId!));
+      res = await NetRequester.request(Apis.findUserById(widget.userId!));
     }
     else{
       res = await NetRequester.request(Apis.findUserByName(askId, widget.username!));

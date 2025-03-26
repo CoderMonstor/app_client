@@ -30,11 +30,11 @@ import '../../util/my_icon/my_icon.dart';
 import '../../util/text_util/special_text_span.dart';
 import '../../util/toast.dart';
 import '../../widget/build_indicator.dart';
-import '../../widget/item_builder.dart';
+import '../../widget/item_builder_post.dart';
 import '../../widget/my_list_tile.dart';
 import '../user/profile_page.dart';
 import '../view_images.dart';
-import 'common_dialog.dart';
+import 'post_common_dialog.dart';
 
 
 class PostDetailPage extends StatefulWidget {
@@ -143,7 +143,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
               ListConfig<User>(
                   itemBuilder: (BuildContext context, User user, int index) {
                     // return UserCard(user:  user, list: _userRepository,index: index,);
-                    return ItemBuilder.buildUserRow(context, user, 3);
+                    return ItemBuilderPost.buildUserRow(context, user, 3);
                   },
                   sourceList: _userRepository,
                   indicatorBuilder: _buildIndicator,
@@ -154,7 +154,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
             LoadingMoreList(
               ListConfig<Comment>(
                   itemBuilder: (BuildContext context, Comment comment, int index) {
-                    return ItemBuilder.buildComment(context, comment, _commentRepository, index);
+                    return ItemBuilderPost.buildComment(context, comment, _commentRepository, index);
                   },
                   sourceList: _commentRepository,
                   indicatorBuilder: _buildIndicator,
@@ -165,7 +165,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
             LoadingMoreList(
               ListConfig<Post>(
                   itemBuilder: (BuildContext context, Post post, int index) {
-                    return ItemBuilder.buildForwardRow(context, post);
+                    return ItemBuilderPost.buildForwardRow(context, post);
                   },
                   sourceList: _postRepository,
                   indicatorBuilder: _buildIndicator,
@@ -399,11 +399,14 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
       );
     }
   }
+
   _buildInputBar() {
     return Positioned(
       bottom: 0,
-      right: 0,
+      left: 0,  // 新增左侧约束
+      right: 0, // 保持右侧约束
       child: Container(
+        width: double.infinity, // 强制占满宽度
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
@@ -411,24 +414,41 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
             width: 1,
           ),
         ),
-        // width: double.infinity,
-        width: ScreenUtil().setWidth(700),
-        child: TextButton(onPressed: (){
-          showDialog(context: context,
-              builder: (context){
-                return CommentDialog(postId: _post.postId,list: _commentRepository);
-              }
-          );
-        },
+        constraints: const BoxConstraints(
+          minHeight: 48, // 最小高度保证点击区域
+        ),
+        child: TextButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => PostCommentDialog(
+                postId: _post.postId,
+                list: _commentRepository,
+              ),
+            );
+          },
           style: TextButton.styleFrom(
-            textStyle: const TextStyle(
-              color: Colors.grey,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12, // 增加垂直间距
+            ),
+            minimumSize: const Size(double.infinity, 48), // 宽度强制撑满
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "说点什么吧……",
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 16,
+                height: 1.2, // 优化文字行高
+              ),
             ),
           ),
-            child: const Text(
-                "     说点什么吧……"),
         ),
       ),
     );
   }
+
 }

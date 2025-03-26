@@ -28,7 +28,8 @@ class Apis {
   }
 
   //根据ID查询用户
-  static String findUserById(int askId, int userId) {
+  static String findUserById(int userId) {
+    int? askId = Global.profile.user?.userId;
     return '/user/findUserById?askId=$askId&userId=$userId';
   }
 
@@ -299,5 +300,23 @@ class Apis {
   static String getMyOrder(int page) {
     int? userId = Global.profile.user?.userId;
     return '/order/getMyOrder?userId=$userId&page=$page';
+  }
+
+  static String getGoodsCommentByGoodsId(int goodsId, int pageIndex) {
+    int? userId = Global.profile.user?.userId;
+    return '/goodsComment/getCommentByGoodsId?askId=${userId}&goodsId=${goodsId}&page=${pageIndex}';
+  }
+
+  static String deleteGoodsComment(int i) {
+    return '/goodsComment/deleteComment?commentId=$i';
+  }
+
+  static String getGoodsReplyByCommentId(int commentId, int pageIndex) {
+    int? userId = Global.profile.user?.userId;
+    return '/goodsReply/getReplyByCommentId?askId=$userId&commentId=$commentId&page=$pageIndex';
+  }
+
+  static String deleteGoodsReply(int i) {
+    return '/goodsReply/deleteReply?replyId=$i';
   }
 }
