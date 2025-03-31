@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/global.dart';
+import '../core/model/goods.dart';
 import '../core/model/post.dart';
 import '../core/net/my_api.dart';
 import '../core/net/net_request.dart';
@@ -123,6 +124,73 @@ class DialogBuild {
             ],
           );
         });
+  }
+
+  static Future showGoodsDialog(BuildContext context,int? goodsId) async {
+    bool isCurrentUser=false;
+    var res = await NetRequester.request(Apis.getGoodsByGoodsId(goodsId!));
+    Goods goods= Goods.fromJson(res['data']);
+    if(Global.profile.user!.userId==goods.userId) {
+      isCurrentUser=true;
+    }
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Material(
+          textStyle: TextStyle(fontSize: ScreenUtil().setSp(48), color: Colors.black),
+          color: Colors.black12,
+          child: Stack(
+            children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  width: ScreenUtil().setWidth(1080),
+                  height:ScreenUtil().setHeight(1920),
+                )
+              ),
+              Center(
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(ScreenUtil().setWidth(21)),
+                  ),
+                  child: Container(
+                    width: ScreenUtil().setWidth(300),
+                    height: ScreenUtil().setHeight(isCurrentUser?160:130),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setWidth(60),
+                        vertical: ScreenUtil().setHeight(40)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        MyListTile(
+                          onTap: () async {
+                          },
+                          leading:
+                          Text( '收藏'),
+                        ),
+                        MyListTile(
+                          onTap: () {},
+                          leading: const Text('举报'),
+                        ),
+                        Offstage(
+                          //当isCurrentUser为false时，不显示
+                          offstage:!isCurrentUser,
+                        )
+                      ]
+                    )
+                  )
+                )
+              )
+            ]
+          )
+        );
+      },
+    );
   }
 }
 

@@ -64,7 +64,7 @@ class ImageBuild {
   }
 // 轮播图展示
   static Widget goodsImages(BuildContext context, int id, List images) {
-    String baseUrl = "${NetConfig.ip}/images/";
+    String baseUrl = NetConfig.ip;
     return CarouselSlider(
       options: CarouselOptions(
         height: 300.w,
@@ -74,7 +74,6 @@ class ImageBuild {
         enableInfiniteScroll: false, // 禁用无限滚动
       ),
       items: images.map((img) {
-        String imageUrl = "$baseUrl/$img";
         return Builder(
           builder: (BuildContext context) {
             return GestureDetector(
@@ -94,7 +93,8 @@ class ImageBuild {
                 // tag: id.toString() + img + images.indexOf(img).toString(),
                 tag: 'imagesId_${images.indexOf(img).toString()}',
                 child: Image.network(
-                  imageUrl,
+                  // imageUrl,
+                  NetConfig.ip+img,
                   fit: BoxFit.cover,
                   width: double.infinity,
                   errorBuilder: (context, error, stackTrace) {

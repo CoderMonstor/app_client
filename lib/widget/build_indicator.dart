@@ -66,7 +66,7 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
       // 加载更多失败
     case IndicatorStatus.error:
       widget = const Text(
-        "好像出现了问题呢？",
+        "什么也没找到",
       );
       widget = _setBackground(context, false, widget, 35.0);
 
@@ -81,7 +81,7 @@ Widget buildIndicator(BuildContext context, IndicatorStatus status, LoadingMoreB
       // 全屏加载更多失败
     case IndicatorStatus.fullScreenError:
       widget = const Text(
-        "好像出现了问题呢？",
+        "什么也没找到",
       );
       widget = _setBackground(context, true, widget, double.infinity);
       widget = GestureDetector(

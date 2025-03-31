@@ -62,7 +62,7 @@ class _ResaleCommentDialogState extends State<ResaleCommentDialog> {
             ),
           ),
           _buildTextFiled(),
-          _inputBar(),
+          // _inputBar(),
           // emoticonPad(context)
         ],
       ),
@@ -146,27 +146,62 @@ class _ResaleCommentDialogState extends State<ResaleCommentDialog> {
         topRight: Radius.circular(ScreenUtil().setWidth(0)),
       )),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(42),
+        padding: EdgeInsets.symmetric(
+            horizontal: ScreenUtil().setWidth(20),
             vertical: ScreenUtil().setHeight(15)
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text('发评论',style: TextStyle(color: Colors.grey)),
-            const Divider(color: Colors.grey),
-            ExtendedTextField(
-              specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-              focusNode: _focusNode,
-              controller: _textController,
-              autofocus: true,
-              style: TextStyle(fontSize: ScreenUtil().setSp(23)),
-              keyboardType: TextInputType.multiline,
-              onEditingComplete: _changeRow,
-              // maxLines: 5,
-              decoration: const InputDecoration.collapsed(hintText: "说点什么吧..."),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              flex: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Text('发评论',style: TextStyle(color: Colors.grey)),
+                  const Divider(color: Colors.grey),
+                  ExtendedTextField(
+                    specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                    focusNode: _focusNode,
+                    controller: _textController,
+                    autofocus: true,
+                    style: TextStyle(fontSize: ScreenUtil().setSp(23)),
+                    keyboardType: TextInputType.multiline,
+                    onEditingComplete: _changeRow,
+                    // maxLines: 5,
+                    decoration: const InputDecoration.collapsed(hintText: "说点什么吧..."),
+                  ),
+                  // SizedBox(height: ScreenUtil().setHeight(10)),
+                  _buildImage(),
+                ],
+              ),
             ),
-            // SizedBox(height: ScreenUtil().setHeight(10)),
-            _buildImage(),
+            const Expanded(flex: 1,child: SizedBox(),),
+            Expanded(
+              flex: 1,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                ),
+                onPressed: loadAssets,
+                child: const Icon(
+                  MyIcons.image,
+                  color: Color(0xff757575),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: TextButton(
+                onPressed: () {
+                  _sendHandler();
+                },
+                child: const Icon(
+                  MyIcons.send,
+                  color: Color(0xff757575),
+                ),
+              ),
+            ),
           ],
         ),
 
@@ -208,9 +243,6 @@ class _ResaleCommentDialogState extends State<ResaleCommentDialog> {
         ),
         child: GridView.count(
           physics: const NeverScrollableScrollPhysics(),
-          // padding: const EdgeInsets.all(0),
-          // mainAxisSpacing: ScreenUtil().setWidth(18),
-          // crossAxisSpacing: ScreenUtil().setWidth(18),
           crossAxisCount: 3,
           children: <Widget>[
             AssetEntityImage(

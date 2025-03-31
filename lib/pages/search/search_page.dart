@@ -1,3 +1,5 @@
+import 'package:client/core/list_repository/goods_repo.dart';
+import 'package:client/pages/resale/common_goods_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/global.dart';
 import '../../util/my_icon/my_icon.dart';
 import '../post/common_post.dart';
-import '../resale/common_goods.dart';
 import '../user/common_user_page.dart';
 
 class SearchPage extends StatefulWidget{
@@ -26,8 +27,7 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
 
   @override
   void initState() {
-    _tabController = TabController(length: 4, vsync: this);
-
+    _tabController = TabController(length: 3, vsync: this);
     _showTabBar=false;
     super.initState();
   }
@@ -71,7 +71,8 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
         children: <Widget>[
           CommonPostPage(type: 7,orderBy: 'hot',str: str),
           CommonUserPage(str: str),
-          CommonGoodsPage(str:str),
+          CommonGoodsPage(type: 5,str: str)
+          // SearchGoods(str: str),
           // CommonPostPage(type: 8,str: str),
           // CommonPostPage(type: 7,orderBy: 'postId',str: str),
         ],
@@ -209,7 +210,6 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
           Global.profile.searchList?.removeAt(index);
           Global.profile.searchList?.insert(0, str);
           Global.saveProfile();
-          print(Global.profile.searchList);
         });
       },
     );

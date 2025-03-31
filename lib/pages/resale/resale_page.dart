@@ -1,4 +1,4 @@
-import 'package:client/pages/resale/common_goods.dart';
+import 'package:client/pages/resale/quilted_goods.dart';
 import 'package:client/util/app_bar/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import '../../widget/send_button.dart';
@@ -19,8 +19,8 @@ class _ResalePageState extends State<ResalePage> with TickerProviderStateMixin {
   @override
   initState() {
     super.initState();
-    _pageList..add(const CommonGoodsPage(type: 1,))
-             ..add(const CommonGoodsPage(type: 2,));
+    _pageList..add(const QuiltedGoods(type: 1,))
+             ..add(const QuiltedGoods(type: 2,));
     _tabController = TabController(length: 2, vsync: this);
     _pageController = PageController();
   }
@@ -78,59 +78,3 @@ class _ResalePageState extends State<ResalePage> with TickerProviderStateMixin {
 
 }
 
-// class ResalePage extends StatefulWidget {
-//   const ResalePage({super.key});
-//
-//   @override
-//   State<ResalePage> createState() => _ResalePageState();
-// }
-//
-// class _ResalePageState extends State<ResalePage> {
-//   bool _isFabExpanded = false;
-//   late ProductRepository _productRepository;
-//   final GlobalKey _fabKey = GlobalKey();
-//
-//   @override
-//   initState() {
-//     super.initState();
-//     _productRepository= ProductRepository(1);
-//   }
-
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     _productRepository.loadData();
-//     return Scaffold(
-//       appBar: MyAppbar.buildNormalAppbar(context, false, true, null, null),
-//       body: RefreshIndicator(
-//         onRefresh: _productRepository.refresh,
-//         child: LoadingMoreList(
-//           ListConfig<Product>(
-//             itemBuilder: (BuildContext context, Product item, int index) {
-//               // return ProductCard(
-//               //   product: item,
-//               // );
-//               return ProductCard(
-//                 product: item,
-//               );
-//             },
-//             sourceList: _productRepository,
-//             gridDelegate: SliverQuiltedGridDelegate(
-//               crossAxisCount: 2, // 列数
-//               repeatPattern: QuiltedGridRepeatPattern.inverted,
-//               pattern: const [
-//                 QuiltedGridTile(2, 1),
-//                 QuiltedGridTile(1, 1),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//       floatingActionButton: SendButton(
-//         key: _fabKey, // 绑定GlobalKey
-//         isExpanded: _isFabExpanded,
-//         onToggle: (value) => setState(() => _isFabExpanded = value),
-//       ),
-//     );
-//   }
-// }

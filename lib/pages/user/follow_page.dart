@@ -2,11 +2,11 @@ import 'package:client/widget/my_card/user_card.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
-import '../core/global.dart';
-import '../core/list_repository/user_repo.dart';
-import '../core/model/user.dart';
-import '../util/app_bar/my_app_bar.dart';
-import '../widget/build_indicator.dart';
+import '../../core/global.dart';
+import '../../core/list_repository/user_repo.dart';
+import '../../core/model/user.dart';
+import '../../util/app_bar/my_app_bar.dart';
+import '../../widget/build_indicator.dart';
 
 class FollowPage extends StatefulWidget{
   const FollowPage({super.key});

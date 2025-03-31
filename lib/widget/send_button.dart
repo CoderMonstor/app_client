@@ -1,10 +1,11 @@
-import 'package:client/pages/gather/send_gather.dart';
 import 'package:client/pages/post/send_post.dart';
-import 'package:client/pages/resale/buying_request_page.dart';
+import 'package:client/pages/resale/goods_post.dart';
 import 'package:client/pages/resale/post_resale.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../pages/activity/post_activity.dart';
 
 class SendButton extends StatefulWidget {
   final ValueChanged<bool> onToggle;
@@ -55,7 +56,7 @@ class _SendButtonState extends State<SendButton>
   }
 
   void _navigateToPage(int index) {
-    const pages = [SendResalePage(), BuyingRequestPage(), SendGatherPage()];
+    const pages = [SendResalePage(), BuyingRequestPage(), PostActivityPage()];
     Navigator.push(
       context,
       CupertinoPageRoute(builder: (context) => pages[index]),

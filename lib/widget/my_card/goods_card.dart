@@ -8,13 +8,10 @@ import '../../pages/resale/goods_detail_page.dart';
 class GoodsCard extends StatefulWidget {
   final Goods goods;
   const GoodsCard({super.key, required this.goods});
-
   @override
   State<GoodsCard> createState() => _GoodsCardState();
 }
-
 class _GoodsCardState extends State<GoodsCard> {
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -35,7 +32,6 @@ class _GoodsCardState extends State<GoodsCard> {
       ),
     );
   }
-
   Widget _buildImageSection() {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
@@ -150,7 +146,7 @@ class _GoodsCardState extends State<GoodsCard> {
 
   String _getImageUrl() {
     final imagePath = widget.goods.image?.split('￥').first ?? '';
-    return '${NetConfig.ip}/images/$imagePath';
+    return '${NetConfig.ip}$imagePath';
   }
 
   void _navigateToDetail() {

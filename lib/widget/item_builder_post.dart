@@ -196,130 +196,117 @@ class ItemBuilderPost {
                 ],
               ),
             ),
-            center: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(comment.username ?? '用户${comment.userId}',
-                            style: TextStyle(fontSize: ScreenUtil().setSp(24))),
-                        Text(buildDate(comment.date!),
-                            style: TextStyle(
-                                color: Colors.grey, fontSize: ScreenUtil().setSp(17))),
-                      ],
-                    ),
-                    SizedBox(width: ScreenUtil().setWidth(150),),
-                  ],
-                ),
-                SizedBox(height: ScreenUtil().setHeight(10)),
-                // ExtendedText(
-                //   comment.text!,
-                //   style: TextStyle(fontSize: ScreenUtil().setSp(23)),
-                //   specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-                // ),
-                ExtendedText(
-                  comment.text!,
-                  style: TextStyle(
-                    fontSize: ScreenUtil().setSp(23),
-                    height: 1.4, // 推荐设置行高
-                  ),
-                  specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-                  maxLines: null,
-                  overflow: TextOverflow.clip, // 安全选项：确保内容不会溢出父容器
-                  textAlign: TextAlign.start, // 明确对齐方式
-                  strutStyle: StrutStyle(
-                    fontSize: ScreenUtil().setSp(23), // 保持与文字大小一致
-                    height: 1.4,
-                    forceStrutHeight: true, // 强制统一行高
-                  ),
-                ),
-                SizedBox(height: ScreenUtil().setHeight(10)),
-                comment.imageUrl != ''
-                    ? SizedBox(
-                      height: ScreenUtil().setHeight(200),
-                      width: ScreenUtil().setWidth(200),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ViewImgPage(
-                                          images: [comment.imageUrl],
-                                          index: 0,
-                                          id: comment.commentId.toString())));
-                        },
-                          child: Hero(
-                              tag: '${comment.commentId}${comment.imageUrl}0',
-                              child: Container(
-                                  constraints: BoxConstraints(
-                                      maxHeight: ScreenUtil().setHeight(600),
-                                      maxWidth: ScreenUtil().setWidth(600)),
-                                  child: ExtendedImage.network(
-                                      NetConfig.ip + comment.imageUrl!,
-                                      cache: true,
-                                      fit: BoxFit.cover,
-                                      shape: BoxShape.rectangle,
-                                      border: Border.all(
-                                          color: Colors.black12, width: 0.5),
-                                      borderRadius: BorderRadius.circular(
-                                          ScreenUtil().setWidth(21))
-                                  )
-                              )
-                          )
+            center: SizedBox(
+              width: 350,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(comment.username ?? '用户${comment.userId}',
+                              style: TextStyle(fontSize: ScreenUtil().setSp(24))),
+                          Text(buildDate(comment.date!),
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: ScreenUtil().setSp(17))),
+                        ],
                       ),
-                    )
-                    : const SizedBox(height: 0),
-                SizedBox(height: ScreenUtil().setHeight(10)),
-                comment.replyNum! > 0
-                    ? InkWell(
-                      onTap: () {
-                        Navigator.push(context,
-                            CupertinoPageRoute(
-                                builder: (context) => ReplyPage(comment: comment,)));
-                      },
-                          child: Container(
-                            width: ScreenUtil().setWidth(350),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: ScreenUtil().setWidth(20),
-                                vertical: ScreenUtil().setHeight(10)),
-                            margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(15)),
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.06),
-                                borderRadius:
-                                BorderRadius.circular(ScreenUtil().setWidth(21))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                ExtendedText(
-                                  reply,
-                                  specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-                                  style: TextStyle(
-                                      fontSize: ScreenUtil().setSp(23)
-                                  ),
-                                ),
-                                comment.replyNum! > 2
-                                    ? Container(
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: ScreenUtil().setHeight(15)),
-                                      child: Text(
-                                        '共${comment.replyNum}条回复',
-                                        style: TextStyle(color: Theme
-                                            .of(context)
-                                            .colorScheme.secondary),
-                                      ),
+                      SizedBox(width: ScreenUtil().setWidth(150),),
+                    ],
+                  ),
+                  SizedBox(height: ScreenUtil().setHeight(10)),
+                  ExtendedText(
+                    comment.text!,
+                    style: TextStyle(fontSize: ScreenUtil().setSp(20)),
+                    specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                  ),
+                  SizedBox(height: ScreenUtil().setHeight(10)),
+                  comment.imageUrl != ''
+                      ? SizedBox(
+                        height: ScreenUtil().setHeight(200),
+                        width: ScreenUtil().setWidth(200),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ViewImgPage(
+                                            images: [comment.imageUrl],
+                                            index: 0,
+                                            id: comment.commentId.toString())));
+                          },
+                            child: Hero(
+                                tag: '${comment.commentId}${comment.imageUrl}0',
+                                child: Container(
+                                    constraints: BoxConstraints(
+                                        maxHeight: ScreenUtil().setHeight(600),
+                                        maxWidth: ScreenUtil().setWidth(600)),
+                                    child: ExtendedImage.network(
+                                        NetConfig.ip + comment.imageUrl!,
+                                        cache: true,
+                                        fit: BoxFit.cover,
+                                        shape: BoxShape.rectangle,
+                                        border: Border.all(
+                                            color: Colors.black12, width: 0.5),
+                                        borderRadius: BorderRadius.circular(
+                                            ScreenUtil().setWidth(21))
                                     )
-                                    : const SizedBox(height: 0),
-                              ],
+                                )
+                            )
+                        ),
+                      )
+                      : const SizedBox(height: 0),
+                  SizedBox(height: ScreenUtil().setHeight(10)),
+                  comment.replyNum! > 0
+                      ? InkWell(
+                        onTap: () {
+                          Navigator.push(context,
+                              CupertinoPageRoute(
+                                  builder: (context) => ReplyPage(comment: comment,)));
+                        },
+                            child: Container(
+                              width: ScreenUtil().setWidth(350),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtil().setWidth(20),
+                                  vertical: ScreenUtil().setHeight(10)),
+                              margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(15)),
+                              decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.06),
+                                  borderRadius:
+                                  BorderRadius.circular(ScreenUtil().setWidth(21))),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  ExtendedText(
+                                    reply,
+                                    specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                                    style: TextStyle(
+                                        fontSize: ScreenUtil().setSp(23)
+                                    ),
+                                  ),
+                                  comment.replyNum! > 2
+                                      ? Container(
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: ScreenUtil().setHeight(15)),
+                                        child: Text(
+                                          '共${comment.replyNum}条回复',
+                                          style: TextStyle(color: Theme
+                                              .of(context)
+                                              .colorScheme.secondary),
+                                        ),
+                                      )
+                                      : const SizedBox(height: 0),
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                    : const SizedBox(height: 0),
-              ],
+                          )
+                      : const SizedBox(height: 0),
+                ],
+              ),
             ),
           ),
           Positioned(

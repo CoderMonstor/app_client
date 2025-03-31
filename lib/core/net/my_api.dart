@@ -262,7 +262,8 @@ class Apis {
     return '/goods/searchGoods?askId=$askId&key=$key&page=$page';
   }
   static String getGoodsByGoodsId(int goodsId) {
-    return '/goods/getGoodsByGoodsId?goodsId=$goodsId';
+    int? askId = Global.profile.user?.userId;
+    return '/goods/getGoodsByGoodsId?askId=$askId&goodsId=$goodsId';
   }
   static String deleteGoods(int goodsId) {
     return '/goods/deleteGoods?goodsId=$goodsId';
@@ -275,14 +276,20 @@ class Apis {
     int? userId = Global.profile.user?.userId;
     return '/goods/getBuyList?userId=$userId&page=$page';
   }
-  static String getMyResaleList(int page) {
+  // static String getMyResaleList(int page) {
+  //   int? userId = Global.profile.user?.userId;
+  //   return '/goods/getMyResaleList?userId=$userId&page=$page';
+  // }
+  // static String getMyBuyList(int page) {
+  //   int? userId = Global.profile.user?.userId;
+  //   return '/goods/getMyBuyList?userId=$userId&page=$page';
+  // }
+
+  static String getMyGoods(int page){
     int? userId = Global.profile.user?.userId;
-    return '/goods/getMyResaleList?userId=$userId&page=$page';
+    return '/goods/getMyGoods?userId=$userId&page=$page';
   }
-  static String getMyBuyList(int page) {
-    int? userId = Global.profile.user?.userId;
-    return '/goods/getMyBuyList?userId=$userId&page=$page';
-  }
+
   static String edit(Goods goods) {
     return '/goods/edit?goods=$goods';
   }

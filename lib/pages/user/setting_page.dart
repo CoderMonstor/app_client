@@ -1,5 +1,6 @@
-import 'package:client/pages/fans_page.dart';
-import 'package:client/pages/follow_page.dart';
+import 'package:client/pages/resale/goods_collect.dart';
+import 'package:client/pages/user/fans_page.dart';
+import 'package:client/pages/user/follow_page.dart';
 import 'package:client/pages/user/update_user_detail_page.dart';
 import 'package:client/widget/setting_tail.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-import 'about_page.dart';
+import '../about_page.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -23,7 +24,7 @@ class SettingPage extends StatelessWidget {
           const SettingTail(title: '编辑资料',page: UpdateUserDetailPage(), ),
           const SettingTail(title: '我的关注',page: FollowPage(),),
           const SettingTail(title: '我的粉丝',page: FansPage(),),
-          SettingTail(title: '我的关注',page: AboutPage(),),
+          const SettingTail(title: '我的收藏',page: GoodsCollectPage(),),
           SettingTail(title: '主题肤色', page: AboutPage(),),
           SettingTail(title: '我的粉丝',page: AboutPage(),),
           SizedBox(height: ScreenUtil().setHeight(100)),

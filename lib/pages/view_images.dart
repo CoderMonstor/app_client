@@ -42,7 +42,7 @@ class _ViewImgPageState extends State<ViewImgPage> {
               itemBuilder: (BuildContext context, int index) {
                 var item = widget.images?[index];
                 Widget image = ExtendedImage.network(
-                  NetConfig.ip+'/images/'+item,
+                  NetConfig.ip+item,
                   fit: BoxFit.contain,
                   mode: ExtendedImageMode.gesture,
                 );

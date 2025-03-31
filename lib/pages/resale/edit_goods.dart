@@ -1,64 +1,50 @@
 import 'dart:io';
 
-import 'package:client/core/global.dart';
 import 'package:client/core/model/goods.dart';
-import 'package:client/util/my_icon/my_icon.dart';
+import 'package:client/util/toast.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-import '../../core/model/user_model.dart';
+import '../../core/global.dart';
+import '../../core/net/my_api.dart';
+import '../../core/net/net.dart';
 import '../../core/net/net_request.dart';
+import '../../util/my_icon/my_icon.dart';
 import '../../util/permission_request.dart';
-import '../../util/toast.dart';
 import '../../util/upload.dart';
-class SendResalePage extends StatefulWidget {
-
-  const SendResalePage({super.key});
+class EditGoods extends StatefulWidget {
+  final int goodsId;
+  const EditGoods({super.key, required this.goodsId});
 
   @override
-  State<SendResalePage> createState() => _SendResalePageState();
+  State<EditGoods> createState() => _EditGoodsState();
 }
 
-class _SendResalePageState extends State<SendResalePage> {
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
+class _EditGoodsState extends State<EditGoods> {
+  late Goods _goods;
+  List<AssetEntity> images = [];
+  final int _maxImgNum=9;
+  late final TextEditingController _priceController ;
+  late final TextEditingController _nameController;
+  late final TextEditingController _descController;
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _priceFocusNode = FocusNode();
-  late final Goods? goods;
-
   String? _selectedType;
-  List<AssetEntity> images = [];
-   int _maxImgNum=9;
   late PermissionUtil _permissionUtil;
+  late Future<void> _initialEditFuture;
   @override
   void initState() {
     super.initState();
-    goods = Goods();
-    _selectedType = goods?.type ?? GoodsType.idle;
-    goods?.type ??= GoodsType.idle;
-    _initializePermissionUtil();
-    _priceFocusNode.addListener(() {
-      if (!_priceFocusNode.hasFocus) _autoCompleteDecimal();
-    });
-  }
+    _initialEditFuture = _initialEdit();
 
-  @override
-  void dispose() {
-    _priceController.dispose();
-    _nameController.dispose();
-    _descController.dispose();
-    _nameFocusNode.dispose();
-    _priceFocusNode.dispose();
-    super.dispose();
   }
-
-  Future<void> _initializePermissionUtil() async {
+  Future<void> _initialEdit() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         _permissionUtil = PermissionUtil(context);
@@ -66,48 +52,72 @@ class _SendResalePageState extends State<SendResalePage> {
         print('初始化权限工具失败: $e');
       }
     });
-  }
-  // 自动补全小数点后两位
-  void _autoCompleteDecimal() {
-    String text = _priceController.text;
-    if (text.isEmpty) return;
-
-    if (!text.contains('.')) {
-      _priceController.text = '$text.00';
-    } else {
-      List<String> parts = text.split('.');
-      if (parts[1].length == 1) {
-        _priceController.text = '${parts[0]}.${parts[1]}0';
-      } else if (parts[1].isEmpty) {
-        _priceController.text = '${parts[0]}.00';
-      }
+    var resGoods = await NetRequester.request(Apis.getGoodsByGoodsId(widget.goodsId));
+    if (resGoods['code'] == '1'&& resGoods['data'] != null) {
+      _goods = Goods.fromJson(resGoods['data']);
+      _selectedType = _goods.type ?? GoodsType.idle;
+      _nameController = TextEditingController(text: _goods.goodsName);
+      _descController = TextEditingController(text: _goods.goodsDesc);
+      _priceController = TextEditingController(
+        text: _formatPrice(_goods.goodsPrice!),
+      );
+    }else{
+      Toast.popToast('商品不存在！');
+      Navigator.of(context).pop();
+      throw '内容已经不在了';
     }
+  }
+  // 格式化价格（处理科学计数法、补全小数位）
+  String _formatPrice(double price) {
+    return price.toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('发布交易'),
-        actions: <Widget>[
-          Consumer<UserModel>(builder: (BuildContext context, model, _) {
-            return IconButton(
-              icon: const Icon(MyIcons.send),
-              onPressed: () {
-                _sendHandler(model);
-              },
-            );
-          })
+        title: const Text('编辑商品'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              _sendHandler();
+            },
+            child: const Text('保存'),
+          ),
         ],
       ),
-      body: _buildResaleBody(),
+      body: FutureBuilder(
+        future: _initialEditFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('加载失败'),
+              );
+            } else {
+              return Stack(
+                children: <Widget>[
+                  _buildEditBody(),
+                ],
+              );
+            }
+          } else {
+            return const Center(
+              child: SpinKitRing(
+                lineWidth: 3,
+                color: Colors.blue,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
-  Widget _buildResaleBody() {
+  Widget _buildEditBody() {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(10),
       child: Column(
-        children: <Widget>[
+        children: [
           _buildGoodsType(),
           _buildGoodsName(),
           _buildGoodsDesc(),
@@ -143,7 +153,7 @@ class _SendResalePageState extends State<SendResalePage> {
           labelText: '商品名称',
           hintText: '例: 九成新 iPhone 13 Pro',
           prefixIcon: const Icon(Icons.title),
-          counterText: ' ', // 预留空间给错误提示
+          counterText: ' ',
           suffixIcon: _buildClearButton(), // 清空按钮
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -174,7 +184,6 @@ class _SendResalePageState extends State<SendResalePage> {
       ),
     );
   }
-
   Widget _buildGoodsDesc() {
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10),
@@ -219,7 +228,6 @@ class _SendResalePageState extends State<SendResalePage> {
       ),
     );
   }
-
   Widget _buildGoodsPrice() {
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10),
@@ -263,7 +271,7 @@ class _SendResalePageState extends State<SendResalePage> {
           if (numValue <= 0) return '价格必须大于0元';
           return null;
         },
-        autovalidateMode: AutovalidateMode.onUserInteraction, // 实时验证
+        autovalidateMode: AutovalidateMode.onUserInteraction,
       ),
     );
   }
@@ -333,7 +341,7 @@ class _SendResalePageState extends State<SendResalePage> {
       onChanged: (String? selectedValue) {
         setState(() {
           _selectedType = selectedValue; // 更新选中状态
-          goods?.type = selectedValue; // 直接更新商品对象的 type 字段
+          _goods.type = selectedValue; // 直接更新商品对象的 type 字段
         });
       },
     );
@@ -365,44 +373,85 @@ class _SendResalePageState extends State<SendResalePage> {
     ),
   );
   Widget buildGridView() {
+    final imageList = _buildImageList();
     return Container(
-      constraints: BoxConstraints(
-          maxHeight: ScreenUtil().setWidth(_getHeight(images.length))
-      ),
+        constraints: BoxConstraints(
+            maxHeight: ScreenUtil().setWidth(_getHeight(imageList.length))
+        ),
       child: GridView.count(
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(20)),
         mainAxisSpacing: ScreenUtil().setWidth(18),
         crossAxisSpacing: ScreenUtil().setWidth(18),
         crossAxisCount: 3,
-        children:
-        List.generate(images.length < 9 ? images.length + 1 : 9, (index) {
-          if (images.length < 9 && index == images.length) {
+        children: List.generate(imageList.length, (index) {
+          final item = imageList[index];
+          if (item.isAddButton) {
             return _buildAdd();
-          } else {
-            AssetEntity asset = images[index];
-            return Stack(
-              children: <Widget>[
-                FutureBuilder<Uint8List?>(
-                  future: asset.thumbnailDataWithSize(
-                    const ThumbnailSize(300, 300),
-                    quality: 80,
-                  ),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                      return Image.memory(snapshot.data!);
-                    } else {
-                      return const SizedBox(height: 300, width: 300);
-                    }
-                  },
-                ),
-                deleteButton(index)
-              ],
-            );
           }
+          return Stack(
+            children: [
+              _buildImageWidget(item),
+              _buildDeleteButton(index),
+            ],
+          );
         }),
+      )
+    );
+  }
+  Widget _buildDeleteButton(int index) {
+    return Positioned(
+      right: 0,
+      top: 0,
+      child: GestureDetector(
+        onTap: () => _handleDeleteImage(index),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.all(4),
+          child: const Icon(Icons.close,
+              color: Colors.white,
+              size: 16
+          ),
+        ),
       ),
     );
+  }
+  void _handleDeleteImage(int index) {
+    final imageList = _buildImageList();
+    final item = imageList[index];
+    setState(() {
+      if (item.isNetwork) {
+        _deleteNetworkImage(item.networkUrl!);
+      } else {
+        final networkCount = (_goods.image?.split('￥').length ?? 0);
+        final localIndex = index - networkCount;
+        if (localIndex >= 0 && localIndex < images.length) {
+          images.removeAt(localIndex);
+        }
+      }
+    });
+  }
+  void _deleteNetworkImage(String url) {
+    final currentImages = _goods.image!.split('￥');
+    currentImages.remove(url);
+    _goods.image = currentImages.join('￥');
+  }
+  List<ImageItem> _buildImageList() {
+    final List<ImageItem> result = [];
+
+    final rawImages = _goods.image?.split('￥') ?? [];
+    result.addAll(rawImages.where((e) => e.isNotEmpty).map(ImageItem.network));
+
+    result.addAll(images.map((asset) => ImageItem.local(asset)));
+
+    if (result.length < _maxImgNum) {
+      result.add(ImageItem.addButton());
+    }
+
+    return result;
   }
   Widget _buildAdd() {
     return Container(
@@ -417,6 +466,7 @@ class _SendResalePageState extends State<SendResalePage> {
       ),
     );
   }
+  //相册获取图片
   Future<void> loadAssets() async {
     try {
       // 检查并请求权限
@@ -428,12 +478,12 @@ class _SendResalePageState extends State<SendResalePage> {
         permission = Permission.photos;
       }
       await _permissionUtil.checkPermission(permission);
-
-      // 如果权限已授予，继续选择图片
+      final currentCount = _buildImageList().where((e) => !e.isAddButton).length;
+      final remaining = _maxImgNum - currentCount;
       List<AssetEntity>? resultList = await AssetPicker.pickAssets(
         context,
         pickerConfig: AssetPickerConfig(
-          maxAssets: _maxImgNum,
+          maxAssets: remaining,
           selectedAssets: images,
           requestType: RequestType.image,
           gridThumbnailSize: const ThumbnailSize.square(80),
@@ -448,27 +498,27 @@ class _SendResalePageState extends State<SendResalePage> {
       Toast.popToast('图片选择错误，请重试');
     }
   }
-
-  Future<void> _sendHandler(UserModel model) async {
-    if(images.isEmpty){
-      Toast.popToast('请选择图片');
-      return;
-    }
+  Future<void> _sendHandler() async {
+    var model=Global.profile;
     if (images.isNotEmpty) {
       Toast.popLoading('上传中...',20);
     }
     var flag = 1;
     String imageUrl='';
+    _buildImageList().forEach((element) {
+      if(element.isNetwork){
+        imageUrl+='${element.networkUrl!}￥';
+      }
+    });
     for (final asset in images) {
       try {
-        final String? fileName = asset.title; // 获取带扩展名的文件名（如 "IMG_1234.JPG"）
+        final String? fileName = asset.title;
         final String extension = fileName != null && fileName.contains('.')
             ? '.${fileName.split('.').last}' // 提取扩展名（如 ".JPG"）
             : '.jpg'; // 默认扩展名
         final String timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-        final String filename = '${model.user.userId}_$timeStamp$extension';
-        // 3. 获取文件二进制数据
-        final File? file = await asset.file; // 获取原图文件
+        final String filename = '${model.user?.userId}_$timeStamp$extension';
+        final File? file = await asset.file;
         if (file == null) {
           Toast.popToast('文件读取失败');
           flag = 0;
@@ -484,7 +534,9 @@ class _SendResalePageState extends State<SendResalePage> {
           Toast.popToast('上传失败请重试');
           flag = 0;
         } else {
-          imageUrl += "/images/$filename￥";
+          // imageUrl += "/images/$filename￥";
+          imageUrl+='/images/$filename￥';
+          print(imageUrl);
         }
       } catch (e) {
         flag = 0;
@@ -492,32 +544,87 @@ class _SendResalePageState extends State<SendResalePage> {
       }
     }
     if(flag == 1){
-      var now = DateTime.now();
       var result;
-
-      goods?.goodsName=_nameController.text;
-      goods?.goodsDesc=_descController.text;
-      goods?.goodsPrice=double.parse(_priceController.text);
-      if(images.isNotEmpty){
-        imageUrl=imageUrl.substring(0,imageUrl.length-1);
-      }
+      //去除最后的￥
+      imageUrl = imageUrl.substring(0,imageUrl.length-1);
+      _goods.goodsName=_nameController.text;
+      _goods.goodsDesc=_descController.text;
+      _goods.goodsPrice=double.parse(_priceController.text);
       var map={
         'userId':Global.profile.user?.userId,
         'type':_selectedType,
-        'goodsName':goods?.goodsName,
-        'goodsDesc':goods?.goodsDesc,
-        'goodsPrice':goods?.goodsPrice,
+        'goodsName':_goods.goodsName,
+        'goodsDesc':_goods.goodsDesc,
+        'goodsPrice':_goods.goodsPrice,
         'image':imageUrl,
-        'date':now.toString().substring(0,19),
+        'goodsId':_goods.goodsId,
       };
-      result = await NetRequester.request('/goods/addResale',data: map);
-      // result = await NetRequester.request('/goods/addResale',data: map1);
+      result = await NetRequester.request('/goods/edit',data: map);
       if(result['code'] =='1'){
-        Toast.popToast('发布成功');
+        Toast.popToast('修改成功');
         Navigator.pop(context);
       }else{
         Toast.popToast('发布失败，请检查网络重试');
       }
     }
   }
+
+  Widget _buildImageWidget(ImageItem item) {
+    if (item.isNetwork) {
+      return _buildNetworkImage(item.networkUrl!);
+    } else {
+      return _buildLocalImage(item.localAsset!);
+    }
+  }
+  Widget _buildNetworkImage(String url) {
+    return ExtendedImage.network(
+      NetConfig.ip + url,
+      fit: BoxFit.cover,
+      shape: BoxShape.rectangle,
+      border: Border.all(color: Colors.black12, width: 1),
+      cache: true,
+    );
+  }
+  Widget _buildLocalImage(AssetEntity asset) {
+    return FutureBuilder<Uint8List?>(
+      future: asset.thumbnailDataWithSize(const ThumbnailSize(300, 300)),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return snapshot.hasData
+              ? Image.memory(snapshot.data!, fit: BoxFit.cover)
+              : _buildErrorPlaceholder();
+        }
+        return _buildLoadingPlaceholder();
+      },
+    );
+  }
+  Widget _buildLoadingPlaceholder() => Container(
+    color: Colors.grey[200],
+    child: const Center(child: CircularProgressIndicator()),
+  );
+
+  Widget _buildErrorPlaceholder() => Container(
+    color: Colors.red[50],
+    child: const Icon(Icons.error_outline, color: Colors.red),
+  );
+}
+class ImageItem {
+  final String? networkUrl; // 网络图片URL
+  final AssetEntity? localAsset; // 本地相册资源
+  final bool isAddButton; // 是否是添加按钮
+
+  ImageItem.network(this.networkUrl)
+      : localAsset = null,
+        isAddButton = false;
+
+  ImageItem.local(this.localAsset)
+      : networkUrl = null,
+        isAddButton = false;
+
+  ImageItem.addButton()
+      : networkUrl = null,
+        localAsset = null,
+        isAddButton = true;
+
+  bool get isNetwork => networkUrl != null;
 }

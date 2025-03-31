@@ -5,18 +5,19 @@ import 'package:loading_more_list/loading_more_list.dart';
 import '../../core/global.dart';
 import '../../core/list_repository/goods_repo.dart';
 import '../../core/model/goods.dart';
+import '../../widget/build_indicator.dart';
 import '../../widget/my_card/goods_card.dart';
 
-class CommonGoodsPage extends StatefulWidget {
+class QuiltedGoods extends StatefulWidget {
   final int? type;
   final String? str;
-  const CommonGoodsPage({super.key, this.str, this.type});
+  const QuiltedGoods({super.key, this.str, this.type});
 
   @override
-  State<CommonGoodsPage> createState() => _CommonGoodsPageState();
+  State<QuiltedGoods> createState() => _QuiltedGoodsState();
 }
 
-class _CommonGoodsPageState extends State<CommonGoodsPage> {
+class _QuiltedGoodsState extends State<QuiltedGoods> {
   late GoodsRepository _goodsRepository;
 
   @override
@@ -49,10 +50,14 @@ class _CommonGoodsPageState extends State<CommonGoodsPage> {
                 QuiltedGridTile(1, 1),
               ],
             ),
+            indicatorBuilder: _buildIndicator,
           ),
         ),
       ),
     );
+  }
+  Widget _buildIndicator(BuildContext context, IndicatorStatus status){
+    return buildIndicator(context, status,_goodsRepository);
   }
 }
 

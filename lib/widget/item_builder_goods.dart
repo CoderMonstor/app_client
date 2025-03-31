@@ -273,147 +273,140 @@ class ItemBuilderGoods {
     return Card(
       elevation: 0,
       margin: const EdgeInsets.all(0),
-      child: Stack(
-        children: [
-          MyListTile(
-            onTap: () {
-              _showDialog(context,
-                  buildGoodsCommentDialogCard(context, comment, list, index),comment.userId!);
-            },
-            crossAxis: CrossAxisAlignment.start,
-            betweenLeadingAndCenter: 10,
-            top: 10,
-            leading: InkWell(
-              onTap: () {
-                Navigator.push(context,
-                    CupertinoPageRoute(
-                        builder: (context) => ProfilePage(userId: comment.userId)));
-              },
-              child: Column(
-                children: [
-                  SizedBox(height: ScreenUtil().setHeight(10)),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(50),
-                    child: comment.avatarUrl == '' || comment.avatarUrl == null
-                        ? Image.asset("images/flutter_logo.png")
-                        : ClipOval(
+      child: MyListTile(
+        onTap: () {
+          _showDialog(context,
+              buildGoodsCommentDialogCard(context, comment, list, index),comment.userId!);
+        },
+        crossAxis: CrossAxisAlignment.start,
+        betweenLeadingAndCenter: 10,
+        top: 10,
+        leading: InkWell(
+          onTap: () {
+            Navigator.push(context,
+                CupertinoPageRoute(
+                    builder: (context) => ProfilePage(userId: comment.userId)));
+          },
+          child: Column(
+            children: [
+              SizedBox(height: ScreenUtil().setHeight(10)),
+              SizedBox(
+                height: ScreenUtil().setHeight(50),
+                child: comment.avatarUrl == '' || comment.avatarUrl == null
+                    ? Image.asset("images/flutter_logo.png")
+                    : ClipOval(
                       child: ExtendedImage.network('${NetConfig.ip}/images/${comment.avatarUrl!}', cache: true),
-                    ),
-                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        center: SizedBox(
+          width: 350,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(comment.username ?? '用户${comment.userId}',
+                      style: TextStyle(fontSize: ScreenUtil().setSp(24))),
+                  Text(buildDate(comment.date!),
+                      style: TextStyle(
+                          color: Colors.grey, fontSize: ScreenUtil().setSp(17))),
                 ],
               ),
-            ),
-            center: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(comment.username ?? '用户${comment.userId}',
-                            style: TextStyle(fontSize: ScreenUtil().setSp(24))),
-                        Text(buildDate(comment.date!),
-                            style: TextStyle(
-                                color: Colors.grey, fontSize: ScreenUtil().setSp(17))),
-                      ],
-                    ),
-                    SizedBox(width: ScreenUtil().setWidth(150),),
-                  ],
-                ),
-                SizedBox(height: ScreenUtil().setHeight(10)),
-                ExtendedText(
-                  comment.text!,
-                  style: TextStyle(fontSize: ScreenUtil().setSp(23)),
-                  specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-                ),
-                SizedBox(height: ScreenUtil().setHeight(10)),
-                comment.imageUrl != ''
-                    ? SizedBox(
-                  height: ScreenUtil().setHeight(200),
-                  width: ScreenUtil().setWidth(200),
-                  child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ViewImgPage(
-                                        images: [comment.imageUrl],
-                                        index: 0,
-                                        id: comment.commentId.toString())));
-                      },
-                      child: Hero(
-                          tag: '${comment.commentId}${comment.imageUrl}0',
-                          child: Container(
-                              constraints: BoxConstraints(
-                                  maxHeight: ScreenUtil().setHeight(600),
-                                  maxWidth: ScreenUtil().setWidth(600)),
-                              child: ExtendedImage.network(
-                                  NetConfig.ip + comment.imageUrl!,
-                                  cache: true,
-                                  fit: BoxFit.cover,
-                                  shape: BoxShape.rectangle,
-                                  border: Border.all(
-                                      color: Colors.black12, width: 0.5),
-                                  borderRadius: BorderRadius.circular(
-                                      ScreenUtil().setWidth(21))
-                              )
-                          )
-                      )
-                  ),
-                )
-                    : const SizedBox(height: 0),
-                SizedBox(height: ScreenUtil().setHeight(10)),
-                comment.replyNum! > 0
-                    ? InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        CupertinoPageRoute(
-                            builder: (context) => GoodsReplyPage(comment: comment,)));
-                  },
-                      child: Container(
-                        width: ScreenUtil().setWidth(350),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setWidth(20),
-                            vertical: ScreenUtil().setHeight(10)),
-                        margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(15)),
-                        decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.06),
-                            borderRadius:
-                            BorderRadius.circular(ScreenUtil().setWidth(21))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            ExtendedText(
-                              reply,
-                              specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(23)
-                              ),
-                            ),
-                            comment.replyNum! > 2
-                                ? Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: ScreenUtil().setHeight(15)),
-                              child: Text(
-                                '共${comment.replyNum}条回复',
-                                style: TextStyle(color: Theme
-                                    .of(context)
-                                    .colorScheme.secondary),
-                              ),
+              SizedBox(height: ScreenUtil().setHeight(10)),
+              ExtendedText(
+                comment.text!,
+                style: TextStyle(fontSize: ScreenUtil().setSp(20)),
+                specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+              ),
+              SizedBox(height: ScreenUtil().setHeight(10)),
+              comment.imageUrl != ''
+                  ? SizedBox(
+                height: ScreenUtil().setHeight(200),
+                width: ScreenUtil().setWidth(200),
+                    child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ViewImgPage(
+                                          images: [comment.imageUrl],
+                                          index: 0,
+                                          id: comment.commentId.toString())));
+                        },
+                        child: Hero(
+                            tag: '${comment.commentId}${comment.imageUrl}0',
+                            child: Container(
+                                constraints: BoxConstraints(
+                                    maxHeight: ScreenUtil().setHeight(600),
+                                    maxWidth: ScreenUtil().setWidth(600)),
+                                child: ExtendedImage.network(
+                                    NetConfig.ip + comment.imageUrl!,
+                                    cache: true,
+                                    fit: BoxFit.cover,
+                                    shape: BoxShape.rectangle,
+                                    border: Border.all(
+                                        color: Colors.black12, width: 0.5),
+                                    borderRadius: BorderRadius.circular(
+                                        ScreenUtil().setWidth(21))
+                                )
                             )
-                                : const SizedBox(height: 0),
-                          ],
-                        ),
+                        )
+                ),
+              )
+                  : const SizedBox(height: 0),
+              SizedBox(height: ScreenUtil().setHeight(10)),
+              comment.replyNum! > 0
+                  ? InkWell(
+                onTap: () {
+                  Navigator.push(context,
+                      CupertinoPageRoute(
+                          builder: (context) => GoodsReplyPage(comment: comment,)));
+                },
+                    child: Container(
+                      width: ScreenUtil().setWidth(350),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil().setWidth(20),
+                          vertical: ScreenUtil().setHeight(10)),
+                      margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(15)),
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.06),
+                          borderRadius:
+                          BorderRadius.circular(ScreenUtil().setWidth(21))),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          ExtendedText(
+                            reply,
+                            specialTextSpanBuilder: MySpecialTextSpanBuilder(context: context),
+                            style: TextStyle(
+                                fontSize: ScreenUtil().setSp(23)
+                            ),
+                          ),
+                          comment.replyNum! > 2
+                              ? Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: ScreenUtil().setHeight(15)),
+                                child: Text(
+                                  '共${comment.replyNum}条回复',
+                                  style: TextStyle(color: Theme
+                                      .of(context)
+                                      .colorScheme.secondary),
+                                ),
+                              )
+                              : const SizedBox(height: 0),
+                        ],
                       ),
-                )
-                    : const SizedBox(height: 0),
-              ],
-            ),
+                    ),
+              )
+                  : const SizedBox(height: 0),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

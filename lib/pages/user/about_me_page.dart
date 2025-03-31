@@ -1,5 +1,5 @@
 import 'package:client/core/model/user_model.dart';
-import 'package:client/pages/setting_page.dart';
+import 'package:client/pages/user/setting_page.dart';
 import 'package:client/pages/user/profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../util/my_icon/my_icon.dart';
-import '../fans_page.dart';
-import '../follow_page.dart';
-import '../post/my_post_page.dart';
+import 'fans_page.dart';
+import 'follow_page.dart';
+import '../resale/common_goods_page.dart';
 
 class AboutMePage extends StatefulWidget {
   const AboutMePage({super.key});
@@ -212,8 +212,7 @@ class _AboutMePageState extends State<AboutMePage> with AutomaticKeepAliveClient
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // _buildShowNum(model.user.postNum==null?'0':model.user.postNum.toString(),'动态',MyPostPage()),
-                              _buildShowNum(model.user.postNum==null ? '0' : model.user.postNum.toString() , '动态', const MyPostPage()),
+                              _buildShowNum(model.user.postNum==null ? '0' : model.user.postNum.toString() , '动态', const CommonGoodsPage()),
                               Container(
                                 height: 40,
                                 decoration: BoxDecoration(

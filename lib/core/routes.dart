@@ -1,9 +1,8 @@
-import 'package:client/pages/gather_page.dart';
+import 'package:client/pages/activity/activity_page.dart';
 import 'package:client/pages/chat/message_page.dart';
 import 'package:client/pages/post/send_post.dart';
 import 'package:flutter/material.dart';
 
-import '../pages/gather/send_gather.dart';
 import '../pages/login_register/forget_page.dart';
 import '../pages/login_register/register_page.dart';
 import '../pages/first_lunch.dart';
@@ -29,5 +28,5 @@ final Map<String, WidgetBuilder> routes = {
   '/message': (context) => const MessagePage(),
   '/send_post': (context) => const SendPostPage(),
   '/send_resale': (context) => const SendResalePage(),
-  '/send_gather': (context) => const SendGatherPage(),
+  // '/send_gather': (context) => const SendGatherPage(),
 };

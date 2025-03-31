@@ -1,52 +1,51 @@
 //有点没用
 
-import 'package:client/util/app_bar/my_app_bar.dart';
+import 'package:client/core/list_repository/goods_repo.dart';
+import 'package:client/core/model/goods.dart';
+import 'package:client/widget/my_card/my_goods_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../core/global.dart';
-import '../../core/list_repository/post_repo.dart';
-import '../../core/model/post.dart';
 import '../../widget/build_indicator.dart';
-import '../../widget/my_card/post_card.dart';
 
-class MyPostPage extends StatefulWidget{
-  const MyPostPage({super.key});
+class CommonGoodsPage extends StatefulWidget{
+  final int? type;
+  final String? str;
+  const CommonGoodsPage({super.key, this.type, this.str});
 
   @override
   State<StatefulWidget> createState() {
-    return _MyPostPageState();
+    return _CommonGoodsPageState();
   }
 }
 
-class _MyPostPageState extends State<MyPostPage> {
+class _CommonGoodsPageState extends State<CommonGoodsPage> {
 
-  late PostRepository _postRepository;
+  late GoodsRepository _goodsRepository;
   @override
   void initState() {
     super.initState();
-    _postRepository =  PostRepository(Global.profile.user!.userId!,1);
+    _goodsRepository = GoodsRepository(Global.profile.user!.userId!, widget.type!,widget.str);
   }
 
   @override
   void dispose() {
-    _postRepository.dispose();
+    _goodsRepository.dispose();
     super.dispose();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppbar.simpleAppbar('我的动态'),
       body: RefreshIndicator(
-        onRefresh: _postRepository.refresh,
+        onRefresh: _goodsRepository.refresh,
         child: LoadingMoreList(
-          ListConfig<Post>(
-            itemBuilder: (BuildContext context, Post item, int index){
-              // return PostCard(post: item,list: _postRepository,index: index);
-              return PostCard(post: item,index: index);
+          ListConfig<Goods>(
+            itemBuilder: (BuildContext context, Goods item, int index){
+              return MyGoodsCard(goods: item);
             },
-            sourceList: _postRepository,
+            sourceList: _goodsRepository,
             indicatorBuilder: _buildIndicator,
             padding: EdgeInsets.only(
                 top:ScreenUtil().setWidth(20),
@@ -59,6 +58,6 @@ class _MyPostPageState extends State<MyPostPage> {
     );
   }
   Widget _buildIndicator(BuildContext context, IndicatorStatus status) {
-    return buildIndicator(context, status, _postRepository);
+    return buildIndicator(context, status, _goodsRepository);
   }
 }

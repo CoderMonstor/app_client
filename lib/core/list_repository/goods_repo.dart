@@ -44,15 +44,12 @@ class GoodsRepository  extends LoadingMoreBase<Goods>{
         url=Apis.getBuyList(pageIndex);
         break;
       case 3:
-        url=Apis.getMyResaleList(pageIndex);
+        url=Apis.getMyGoods(pageIndex);
         break;
       case 4:
-        url=Apis.getBuyList(pageIndex);
-        break;
-      case 5:
         url=Apis.getCollectedGoodsByUserId(userId, pageIndex);
         break;
-      case 6:
+      case 5:
         url=Apis.searchGoods(key!, pageIndex);
         break;
       default:
@@ -61,6 +58,9 @@ class GoodsRepository  extends LoadingMoreBase<Goods>{
     bool isSuccess = false;
     try{
       Map result = await NetRequester.request(url);
+      if(result['code']=='0'){
+        return false;
+      }
       if(result.containsKey('data')){
         if(pageIndex==1){
           clear();

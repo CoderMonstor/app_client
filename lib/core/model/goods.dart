@@ -9,11 +9,11 @@ class Goods {
   double? goodsPrice;
   String? username;
   double? price;
-  String? address;
   String? image;
   String? status;
   String? sellStatus;
   DateTime? createTime;
+  int? isCollected;
   int? collectId;
   DateTime? sellTime;
 
@@ -28,11 +28,11 @@ class Goods {
       this.goodsPrice,
       this.username,
       this.price,
-      this.address,
       this.image,
       this.status,
       this.sellStatus,
       this.createTime,
+      this.isCollected,
       this.collectId,
       this.sellTime,
       });
@@ -48,11 +48,11 @@ class Goods {
     goodsPrice = json['goodsPrice'],
     username = json['username'],
     price = json['price'],
-    address = json['address'],
     image = json['image'],
     status = json['status'],
     sellStatus = json['sellStatus'],
     createTime = json['createTime'] != null ? DateTime.parse(json['createTime']) : null,
+    isCollected = json['isCollected'],
     collectId = json['collectId'],
     sellTime = json['sellTime'] != null ? DateTime.parse(json['sellTime']) : null;
 
@@ -68,14 +68,19 @@ class Goods {
     data['goodsPrice'] = goodsPrice;
     data['username'] = username;
     data['price'] = price;
-    data['address'] = address;
     data['image'] = image;
     data['status'] = status;
     data['sellStatus'] = sellStatus;
     data['createTime'] = createTime?.toIso8601String();
+    data['isCollected'] = isCollected;
     data['collectId'] = collectId;
     data['sellTime'] = sellTime?.toIso8601String();
     return data;
   }
 
+}
+// 商品类型定义
+class GoodsType {
+  static const String idle = "0"; // 闲置
+  static const String wanted = "1"; // 求购
 }

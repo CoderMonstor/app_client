@@ -6,7 +6,10 @@ import 'package:client/pages/resale/resale_common_dialog.dart';
 import 'package:client/pages/user/profile_page.dart';
 import 'package:client/widget/item_builder_goods.dart';
 import 'package:client/widget/my_list_tile.dart';
+import 'package:client/widget/my_separator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart' as extended;
@@ -36,6 +39,7 @@ class GoodsDetailPage extends StatefulWidget {
 
 class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderStateMixin {
   var _future;
+  bool _isCollecting = false;
   late Goods _goods;
   late User _user;
   late TabController _tabController;
@@ -152,9 +156,9 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
         header: Consumer<ThemeModel>(
           builder: (BuildContext context, themeModel, _) {
             return Container(
-              padding: const EdgeInsets.all(16.0), // 可以根据需要调整边距
+              padding: const EdgeInsets.all(16.0),
               child: const Row(
-                mainAxisAlignment: MainAxisAlignment.start, // 将 "评论" 放在左边
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     '评论',
@@ -187,6 +191,8 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
           _buildNameAndPrice(),
           _buildSingleRow('描述'),
           _buildDesc(),
+          _buildSingleRow('交易流程'),
+          _buildExchangeWay(),
         ],
       ),
     );
@@ -271,6 +277,7 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
   Widget _buildDesc() {
     return Container(
       padding: const EdgeInsets.only(left: 32.0 , right: 32.0),
+      alignment: Alignment.centerLeft,
       child: Text(
         '${_goods.goodsDesc}',
         style: const TextStyle(
@@ -303,6 +310,59 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
       )
     );
    }
+  Widget _buildExchangeWay() {
+    return Container(
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _simpleExchange('发布信息'),
+          //一根横线
+          _buildLine(),
+          _simpleExchange('买卖沟通'),
+          //一根横线
+          _buildLine(),
+          _simpleExchange('当面交易'),
+          //一根横线
+          _buildLine(),
+          _simpleExchange('交易完成'),
+        ],
+      ),
+    );
+  }
+  Widget _buildLine() {
+    return Expanded( // 横线占据剩余空间
+      child: Container(
+        height: 1.0,
+        color: Colors.grey[300],
+        margin: const EdgeInsets.symmetric(horizontal: 4.0), // 控制横线与圆点的间距
+      ),
+    );
+  }
+  Widget _simpleExchange(String str){
+    return Column(
+      children: [
+        Container(
+          width: 35.w,
+          height: 35.w,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.w), // 关键点：圆角设为宽度的一半
+            color: Colors.pink,
+          ),
+          alignment: Alignment.center, // 关键点：让文本居中
+          child: Text(
+            '√',
+            style: TextStyle(
+              fontSize: 18.w, // 根据需求调整对勾大小
+              color: Colors.white, // 确保对勾颜色可见
+            ),
+          ),
+        ),
+        SizedBox(height: 8.w),
+        Text(str),
+      ],
+    );
+  }
   Widget _buildImage() {
     if (_goods.image == null || _goods.image!.isEmpty) {
       return Container(
@@ -312,6 +372,7 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
       );
     }
     List<String> images = _goods.image!.split('￥'); // 解析图片路径列表
+    print(images);
     return ImageBuild.goodsImages(context, _goods.goodsId!, images);
   }
   Widget _buildSingleRow(String str) {
@@ -345,7 +406,6 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
       ),
     );
   }
-
   Widget _buildIndicator(BuildContext context, IndicatorStatus status) {
     return buildIndicator(context, status, _goodsCommentRepository);
   }
@@ -365,7 +425,7 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
                     color: Colors.grey.withOpacity(0.2),
                     width: 1,
                   ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                 ),
                 child: TextButton(
                   onPressed: () {
@@ -395,6 +455,38 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
                 ),
               ),
           SizedBox(
+            child: TextButton(
+              onPressed:  () async {
+                try {
+                  final isCollect = _goods.isCollected != 1;
+                  final api = isCollect ? Apis.collectGoods : Apis.cancelCollectGoods;
+
+                  final response = await NetRequester.request(api(widget.goodsId));
+
+                  if (response['code'] == '1') {
+                    setState(() {
+                      _goods.isCollected = isCollect ? 1 : 0;
+                    });
+
+                    Toast.popToast(isCollect ? '收藏成功' : '取消收藏');
+                  }
+                } finally {
+                  setState(() => _isCollecting = false);
+                }
+              },
+              child: Column(
+                children: [
+                  _isCollecting
+                      ? const CircularProgressIndicator()
+                      : Icon(_goods.isCollected == 1
+                      ? Icons.star
+                      : Icons.star_border),
+                  Text(_isCollecting ? '处理中...' : '收藏'),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
             // width: 100,
             child: ElevatedButton(
               onPressed: () {
@@ -412,17 +504,41 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
                 }
               },
               style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0.0),
                 ),
               ),
-              child: Text('联系买家'),
+              child: const Text('联系买家'),
             ),
           )
         ]
     ),
+    );
+  }
+  Widget _buildCollectIcon() {
+    if (_isCollecting) {
+      return const SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      );
+    }
+    return Icon(
+      _goods.isCollected == 1 ? Icons.star : Icons.star_border,
+      color: _goods.isCollected == 1 ? Colors.red : Colors.grey[600],
+    );
+  }
+
+  Text _buildCollectText() {
+    return Text(
+      _isCollecting ? '处理中...' : '收藏',
+      style: TextStyle(
+        color: _goods.isCollected == 1 ? Colors.red : Colors.grey[600],
+        fontSize: 14,
+      ),
     );
   }
 }

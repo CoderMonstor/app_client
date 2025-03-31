@@ -120,8 +120,6 @@ class _SendPostPageState extends State<SendPostPage> {
               ],
             ),
           ),
-          _inputBar(),
-          emoticonPad(context),
         ],
       ),
 
@@ -226,7 +224,6 @@ class _SendPostPageState extends State<SendPostPage> {
   Widget _buildAdd() {
     return Container(
       color: Colors.black.withOpacity(0.05),
-
       child: InkWell(
         onTap: loadAssets,
         child: Icon(
@@ -321,83 +318,14 @@ class _SendPostPageState extends State<SendPostPage> {
       }
     }
   }
-
-  _inputBar() {
-    return Card(
-      elevation: 0,
-      // margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: SizedBox(
-        height: ScreenUtil().setHeight(50),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                SizedBox(
-                  // width: ScreenUtil().setWidth(160),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                    ),
-                    onPressed: loadAssets,
-                    child: const Icon(MyIcons.image, color: Color(0xff757575)),
-                  ),
-                ),
-                SizedBox(
-                  // width: ScreenUtil().setWidth(160),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                    ),
-                    onPressed: () {},
-                    child: const Icon(MyIcons.at, color: Color(0xff757575)),
-                  ),
-                ),
-              ],
-            ),
-
-          ],
-        ),
-      ),
-    );
-  }
-
   num _getHeight(int length) {
     if(length<3){
-      return 365;
+      return 130;
     }else if(length <6){
-      return 705;
+      return 240;
     }else{
-      return 1040;
+      return 350;
     }
-  }
-
-  void updateEmojiStatus() {
-    change() {
-      _showEmoji = !_showEmoji;
-      if (mounted) setState(() {});
-    }
-    if (_showEmoji) {
-      change();
-    } else {
-      //if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
-      SystemChannels.textInput.invokeMethod('TextInput.hide').whenComplete(
-            () {Future.delayed(const Duration(milliseconds: 40), (){
-          change();
-        });},);
-      /*} else {
-        change();
-      }*/
-    }
-  }
-
-  Widget emoticonPad(context) {
-    return EmotionPad(
-      active: _showEmoji,
-      height: _keyboardHeight,
-      controller: _textController,
-    );
   }
 
   _buildForwardPost() {

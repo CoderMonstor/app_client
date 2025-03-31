@@ -1,4 +1,4 @@
-import 'package:client/pages/post/my_post_page.dart';
+import 'package:client/pages/resale/common_goods_page.dart';
 import 'package:client/pages/user/qr_page.dart';
 import 'package:client/util/my_icon/my_app_icons.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +26,7 @@ import '../../widget/flexible_detail_bar.dart';
 import '../../widget/my_card/post_card.dart';
 import '../../widget/my_list_tile.dart';
 import '../mobile_scan_dialog.dart';
-import '../setting_page.dart';
+import 'setting_page.dart';
 import '../chat/chat_page.dart';
 
 
@@ -144,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage>
               indicatorBuilder: _buildIndicator,
             ),
           ),
-          const MyPostPage(),
+          const CommonGoodsPage(type: 3,),
           LoadingMoreList(
             ListConfig<Post>(
               itemBuilder: (BuildContext context, Post item, int index){
@@ -474,7 +474,6 @@ class _ProfilePageState extends State<ProfilePage>
 
 
   String ageBuilder() {
-    // print('  ========================================================================================');
 
     // 默认日期，用于处理 null 或无效格式
     String defaultDate = '2024-01-01';

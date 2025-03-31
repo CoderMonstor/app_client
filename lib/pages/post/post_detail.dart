@@ -280,9 +280,6 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
           trailing: SizedBox(
             width: ScreenUtil().setWidth(40),
             child: TextButton(
-              style: TextButton.styleFrom(
-                // padding: const EdgeInsets.all(0),
-              ),
               onPressed: () {
                 DialogBuild.showPostDialog(context, widget.postId);
               },

@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 import '../core/global.dart';
 import '../util/my_icon/my_icon.dart';
-import 'gather_page.dart';
+import 'activity/activity_page.dart';
 
 
 class RootRoute extends StatefulWidget {
