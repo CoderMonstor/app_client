@@ -1,4 +1,3 @@
-import 'package:client/core/list_repository/user_repo.dart';
 import 'package:client/core/model/goods_comment.dart';
 import 'package:client/core/my_color.dart';
 import 'package:client/core/net/net.dart';
@@ -6,10 +5,7 @@ import 'package:client/pages/resale/resale_common_dialog.dart';
 import 'package:client/pages/user/profile_page.dart';
 import 'package:client/widget/item_builder_goods.dart';
 import 'package:client/widget/my_list_tile.dart';
-import 'package:client/widget/my_separator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart' as extended;
@@ -39,12 +35,10 @@ class GoodsDetailPage extends StatefulWidget {
 
 class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderStateMixin {
   var _future;
-  bool _isCollecting = false;
   late Goods _goods;
   late User _user;
   late TabController _tabController;
   late GoodsCommentRepository _goodsCommentRepository;
-  late UserRepository _userRepository;
   final ScrollController _scrollController=ScrollController();
 
 
@@ -409,24 +403,127 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
   Widget _buildIndicator(BuildContext context, IndicatorStatus status) {
     return buildIndicator(context, status, _goodsCommentRepository);
   }
+  // _buildInputBar() {
+  //   return Positioned(
+  //     bottom: 0,
+  //     left: 0,
+  //     right: 0,
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //             child: Container(
+  //               height: 42,
+  //               decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 border: Border.all(
+  //                   color: Colors.grey.withOpacity(0.2),
+  //                   width: 1,
+  //                 ),
+  //                 borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+  //               ),
+  //               child: TextButton(
+  //                 onPressed: () {
+  //                   showDialog(
+  //                       context: context,
+  //                       builder: (context) {
+  //                         return ResaleCommentDialog(
+  //                           goodsId: _goods.goodsId!,
+  //                           list: _goodsCommentRepository,
+  //                         );
+  //                       }
+  //                   );
+  //                 },
+  //                 style: TextButton.styleFrom(
+  //                   alignment: Alignment.centerLeft, // 文字左对齐
+  //                   padding: const EdgeInsets.symmetric(horizontal: 16),
+  //                   minimumSize: Size.zero, // 消除最小尺寸限制
+  //                 ),
+  //                 child: Text(
+  //                   "说点什么吧……",
+  //                   style: TextStyle(
+  //                     color: Colors.grey[600],
+  //                     fontSize: 16,
+  //                   ),
+  //                 )
+  //                 ),
+  //               ),
+  //             ),
+  //         Container(
+  //           color: Colors.white,
+  //           child: TextButton(
+  //             onPressed:  () async {
+  //               try {
+  //                 final isCollect = _goods.isCollected != 1;
+  //                 final api = isCollect ? Apis.collectGoods : Apis.cancelCollectGoods;
+  //                 final response = await NetRequester.request(api(widget.goodsId));
+  //                 if (response['code'] == '1') {
+  //                   setState(() {
+  //                     _goods.isCollected = isCollect ? 1 : 0;
+  //                   });
+  //                   Toast.popToast(isCollect ? '收藏成功' : '取消收藏');
+  //                 }
+  //               } finally {
+  //                 setState(() => _isCollecting = false);
+  //               }
+  //             },
+  //             child: Column(
+  //               children: [
+  //                 _isCollecting
+  //                     ? const CircularProgressIndicator()
+  //                     : Icon(_goods.isCollected == 1
+  //                     ? Icons.star
+  //                     : Icons.star_border),
+  //                 Text(_isCollecting ? '处理中...' : '收藏'),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           // width: 100,
+  //           child: ElevatedButton(
+  //             onPressed: () {
+  //               if(Global.profile.user?.userId!=_goods.userId){
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (context) => ChatPage(
+  //                       user:_user,
+  //                     ),
+  //                   ),
+  //                 );
+  //               }else{
+  //                 Toast.popToast('这是你的商品欸');
+  //               }
+  //             },
+  //             style: ElevatedButton.styleFrom(
+  //               padding: const EdgeInsets.symmetric(horizontal: 10),
+  //               foregroundColor: Colors.white,
+  //               backgroundColor: Colors.red,
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(0.0),
+  //               ),
+  //             ),
+  //             child: const Text('联系买家'),
+  //           ),
+  //         )
+  //       ]
+  //   ),
+  //   );
+  // }
   _buildInputBar() {
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
-      child: Row(
-        children: [
-          Expanded(
-              child: Container(
+      child: Container(
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: SizedBox(
                 height: 42,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.grey.withOpacity(0.2),
-                    width: 1,
-                  ),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                ),
                 child: TextButton(
                   onPressed: () {
                     showDialog(
@@ -440,9 +537,13 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
                     );
                   },
                   style: TextButton.styleFrom(
-                    alignment: Alignment.centerLeft, // 文字左对齐
+                    alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    minimumSize: Size.zero, // 消除最小尺寸限制
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      side: BorderSide(color: Colors.grey.withOpacity(0.2), width: 1),
+                    ),
                   ),
                   child: Text(
                     "说点什么吧……",
@@ -450,97 +551,83 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
                       color: Colors.grey[600],
                       fontSize: 16,
                     ),
-                  )
                   ),
                 ),
               ),
-          SizedBox(
-            child: TextButton(
-              onPressed:  () async {
-                try {
-                  final isCollect = _goods.isCollected != 1;
-                  final api = isCollect ? Apis.collectGoods : Apis.cancelCollectGoods;
-
-                  final response = await NetRequester.request(api(widget.goodsId));
-
-                  if (response['code'] == '1') {
-                    setState(() {
-                      _goods.isCollected = isCollect ? 1 : 0;
-                    });
-
-                    Toast.popToast(isCollect ? '收藏成功' : '取消收藏');
-                  }
-                } finally {
-                  setState(() => _isCollecting = false);
-                }
-              },
-              child: Column(
-                children: [
-                  _isCollecting
-                      ? const CircularProgressIndicator()
-                      : Icon(_goods.isCollected == 1
-                      ? Icons.star
-                      : Icons.star_border),
-                  Text(_isCollecting ? '处理中...' : '收藏'),
-                ],
-              ),
             ),
-          ),
-          SizedBox(
-            // width: 100,
-            child: ElevatedButton(
-              onPressed: () {
-                if(Global.profile.user?.userId!=_goods.userId){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatPage(
-                        user:_user,
-                      ),
+            SizedBox(
+              height: 42,
+              width: 50,
+              child: TextButton(
+                onPressed: () async {
+                  try {
+                    final isCollect = _goods.isCollected != 1;
+                    final api = isCollect ? Apis.collectGoods : Apis.cancelCollectGoods;
+                    final response = await NetRequester.request(api(widget.goodsId));
+                    if (response['code'] == '1') {
+                      setState(() {
+                        _goods.isCollected = isCollect ? 1 : 0;
+                      });
+                      Toast.popToast(isCollect ? '收藏成功' : '取消收藏');
+                    }
+                  } catch (e){
+                    Toast.popToast('收藏失败');
+                  }
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  splashFactory: NoSplash.splashFactory, // 取消水波纹
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      _goods.isCollected == 1 ? Icons.star : Icons.star_border,
+                      size: 20,
                     ),
-                  );
-                }else{
-                  Toast.popToast('这是你的商品欸');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0.0),
+                    const Text(
+                      '收藏',
+                      style: TextStyle(fontSize: 12), // 调小字体
+                    ),
+                  ],
                 ),
               ),
-              child: const Text('联系买家'),
             ),
-          )
-        ]
-    ),
-    );
-  }
-  Widget _buildCollectIcon() {
-    if (_isCollecting) {
-      return const SizedBox(
-        width: 24,
-        height: 24,
-        child: CircularProgressIndicator(strokeWidth: 2),
-      );
-    }
-    return Icon(
-      _goods.isCollected == 1 ? Icons.star : Icons.star_border,
-      color: _goods.isCollected == 1 ? Colors.red : Colors.grey[600],
-    );
-  }
-
-  Text _buildCollectText() {
-    return Text(
-      _isCollecting ? '处理中...' : '收藏',
-      style: TextStyle(
-        color: _goods.isCollected == 1 ? Colors.red : Colors.grey[600],
-        fontSize: 14,
+            SizedBox(
+              height: 42,
+              child: ElevatedButton(
+                onPressed: () {
+                  if(Global.profile.user?.userId != _goods.userId) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(user: _user),
+                      ),
+                    );
+                  } else {
+                    Toast.popToast('这是你的商品欸');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                child: const Text('联系买家'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+
 }
 
 

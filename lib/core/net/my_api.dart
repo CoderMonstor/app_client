@@ -263,7 +263,7 @@ class Apis {
   }
   static String getGoodsByGoodsId(int goodsId) {
     int? askId = Global.profile.user?.userId;
-    return '/goods/getGoodsByGoodsId?askId=$askId&goodsId=$goodsId';
+    return '/goods/getGoodsByGoodsId?userId=$askId&goodsId=$goodsId';
   }
   static String deleteGoods(int goodsId) {
     return '/goods/deleteGoods?goodsId=$goodsId';
@@ -276,14 +276,6 @@ class Apis {
     int? userId = Global.profile.user?.userId;
     return '/goods/getBuyList?userId=$userId&page=$page';
   }
-  // static String getMyResaleList(int page) {
-  //   int? userId = Global.profile.user?.userId;
-  //   return '/goods/getMyResaleList?userId=$userId&page=$page';
-  // }
-  // static String getMyBuyList(int page) {
-  //   int? userId = Global.profile.user?.userId;
-  //   return '/goods/getMyBuyList?userId=$userId&page=$page';
-  // }
 
   static String getMyGoods(int page){
     int? userId = Global.profile.user?.userId;
@@ -311,7 +303,7 @@ class Apis {
 
   static String getGoodsCommentByGoodsId(int goodsId, int pageIndex) {
     int? userId = Global.profile.user?.userId;
-    return '/goodsComment/getCommentByGoodsId?askId=${userId}&goodsId=${goodsId}&page=${pageIndex}';
+    return '/goodsComment/getCommentByGoodsId?askId=$userId&goodsId=$goodsId&page=$pageIndex';
   }
 
   static String deleteGoodsComment(int i) {
@@ -326,4 +318,27 @@ class Apis {
   static String deleteGoodsReply(int i) {
     return '/goodsReply/deleteReply?replyId=$i';
   }
+
+  static String getAllActivities(int userId, int pageIndex) {
+    return '/activity/getAllActivities?userId=$userId&page=$pageIndex';
+  }
+
+  static String getMyActivities(int userId, int pageIndex) {
+    return '/activity/getMyActivities?userId=$userId&page=$pageIndex';
+  }
+
+  static String getMyStarActivities(int userId, int pageIndex) {
+    return '/activity/getMyStarActivities?userId=$userId&page=$pageIndex';
+  }
+
+  static String searchActivity(String key, int pageIndex) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/searchActivity?userId=$userId&key=$key&page=$pageIndex';
+  }
+
+  static String getActivityDetails(int activityId) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/getActivityDetail?userId=$userId&activityId=$activityId';
+  }
+
 }

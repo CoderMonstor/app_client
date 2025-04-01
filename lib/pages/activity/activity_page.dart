@@ -2,6 +2,7 @@ import 'package:client/util/app_bar/my_app_bar.dart';
 import 'package:client/widget/my_card/activity_card.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/model/activity.dart';
 import '../../widget/send_button.dart';
 
 
@@ -78,17 +79,50 @@ class _GatherPageState extends State<GatherPage> {
       onPointerDown: _handleOutsideTap,
       child: Scaffold(
         appBar: MyAppbar.buildNormalAppbar(context, false, true, null, null),
-        body: const SingleChildScrollView(
+        body:  SingleChildScrollView(
           child: Column(
             children: [
-              ActivityCard(),
-              ActivityCard(),
-              ActivityCard(),
-              ActivityCard(),
-              ActivityCard(),
-              ActivityCard(),
-              ActivityCard(),
-              ActivityCard(),
+              ActivityCard(
+                activity: Activity(
+                  activityId: 1,
+                  status: 1,
+                  hostUserId: 1,
+                  activityName: '周末户外徒步探险之旅',
+                  activityImage: '/images/161743062993357.jpg',
+                  activityTime: '2026-08-26 09:00',
+                  location: '西湖风景区灵隐步道',
+                  maxParticipants: 5,
+                  currentParticipants: 3,
+                  content: '周末户外徒步探险之旅',
+                  details: '西湖风景区灵隐步道西湖风景区灵隐步',
+                  createTime: '2023-08-26 09:00',
+                  updateTime: '2023-08-26 09:00',
+                  isRegistered: 1,
+                ),
+              ),
+              // ActivityCard(
+              //   activity: Activity(
+              //     activityId: 1,
+              //     status: 1,
+              //     hostUserId: 1,
+              //     activityName: '周末户外徒步探险之旅',
+              //     activityImage: '/images/161743062993357.jpg',
+              //     activityTime: '2026-08-26 09:00',
+              //     location: '西湖风景区灵隐步道',
+              //     maxParticipants: 5,
+              //     currentParticipants: 3,
+              //     content: '周末户外徒步探险之旅',
+              //     details: '西湖风景区灵隐步道西湖风景区灵隐步',
+              //     createTime: '2023-08-26 09:00',
+              //     updateTime: '2023-08-26 09:00',
+              //     isRegistered: 1,
+              //   )
+              // ),
+              // ActivityCard(),
+              // ActivityCard(),
+              // ActivityCard(),
+              // ActivityCard(),
+              // ActivityCard(),
             ],
           ),
         ),

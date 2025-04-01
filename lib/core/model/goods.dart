@@ -14,7 +14,6 @@ class Goods {
   String? sellStatus;
   DateTime? createTime;
   int? isCollected;
-  int? collectId;
   DateTime? sellTime;
 
   Goods({
@@ -33,7 +32,6 @@ class Goods {
       this.sellStatus,
       this.createTime,
       this.isCollected,
-      this.collectId,
       this.sellTime,
       });
 
@@ -53,7 +51,6 @@ class Goods {
     sellStatus = json['sellStatus'],
     createTime = json['createTime'] != null ? DateTime.parse(json['createTime']) : null,
     isCollected = json['isCollected'],
-    collectId = json['collectId'],
     sellTime = json['sellTime'] != null ? DateTime.parse(json['sellTime']) : null;
 
   Map<String, dynamic> toJson() {
@@ -73,7 +70,6 @@ class Goods {
     data['sellStatus'] = sellStatus;
     data['createTime'] = createTime?.toIso8601String();
     data['isCollected'] = isCollected;
-    data['collectId'] = collectId;
     data['sellTime'] = sellTime?.toIso8601String();
     return data;
   }

@@ -1,4 +1,7 @@
 //构建日期
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart'; // 导入 intl 包
+
 String buildDate(String date) {
   var now = DateTime.now();
   var dateTime = DateTime.parse(date);
@@ -17,5 +20,23 @@ String buildDate(String date) {
     return date.substring(0,date.length-3);
   }else{
     return date.substring(5,date.length-3);
+  }
+}
+
+DateTime? parseDateTime(String? timeString) {
+  if (timeString == null || timeString.isEmpty) return null;
+
+  try {
+    // 格式1: ISO 8601（带时区）
+    if (timeString.contains('T')) {
+      return DateTime.parse(timeString).toLocal();
+    }
+
+    // 格式2: 自定义格式（"yyyy-MM-dd HH:mm"）
+    final format = DateFormat('yyyy-MM-dd HH:mm');
+    return format.parse(timeString);
+  } catch (e) {
+    debugPrint('时间解析失败: $e');
+    return null;
   }
 }
