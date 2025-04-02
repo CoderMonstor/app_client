@@ -6,26 +6,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../core/global.dart';
-import '../core/list_repository/comment_repo.dart';
 import '../core/list_repository/goods_comment_repo.dart';
 import '../core/list_repository/goods_reply_repo.dart';
-import '../core/model/comment.dart';
 import '../core/model/goods_comment.dart';
 import '../core/model/goods_reply.dart';
-import '../core/model/reply.dart';
-import '../core/model/user.dart';
-import '../core/model/user_model.dart';
 import '../core/net/my_api.dart';
 import '../core/net/net.dart';
 import '../core/net/net_request.dart';
-import '../pages/post/post_common_dialog.dart';
-import '../pages/post/reply_page.dart';
 import '../pages/resale/goods_reply_page.dart';
 import '../pages/resale/resale_common_dialog.dart';
 import '../pages/user/profile_page.dart';
 import '../pages/view_images.dart';
 import '../util/build_date.dart';
-import '../util/my_icon/my_icon.dart';
 import '../util/text_util/special_text_span.dart';
 import '../util/toast.dart';
 import 'my_list_tile.dart';
@@ -413,57 +405,5 @@ class ItemBuilderGoods {
 
 }
 
-class FollowButton extends StatefulWidget {
-  final User? user;
-
-  const FollowButton({super.key, this.user});
-  @override
-  State<StatefulWidget> createState() {
-    return _FollowButtonState();
-  }
-}
-
-class _FollowButtonState extends State<FollowButton> {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: ScreenUtil().setWidth(180),
-      height: ScreenUtil().setHeight(70),
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-          side: BorderSide(color: Theme.of(context).primaryColor),
-        ),
-        child: Text(
-          widget.user?.isFollow == 1 ? '相互关注' : '未关注',
-          style: TextStyle(fontSize: ScreenUtil().setSp(36)),
-        ),
-        onPressed: () async {
-          var fanId = Global.profile.user?.userId;
-          var res = await NetRequester.request(widget.user?.isFollow == 0
-              ? Apis.followAUser(fanId!, widget.user!.userId!)
-              : Apis.cancelFollowAUser(fanId!, widget.user!.userId!));
-          if (res['code'] == '1') {
-            setState(() {
-              widget.user?.isFollow = widget.user?.isFollow == 1 ? 0 : 1;
-            });
-            if (widget.user?.isFollow == 1) {
-              if (Global.profile.user != null) {
-                Global.profile.user!.followNum = (Global.profile.user!.followNum ?? 0) + 1;
-                UserModel().notifyListeners();
-              }
-            } else {
-              if (Global.profile.user != null && Global.profile.user!.followNum! > 0) {
-                Global.profile.user!.followNum = (Global.profile.user!.followNum ?? 0) - 1;
-                UserModel().notifyListeners();
-              }
-            }
-
-          }
-        },
-      ),
-    );
-  }
-}
 
 

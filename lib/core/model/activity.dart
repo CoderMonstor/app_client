@@ -1,4 +1,4 @@
-class Activity{
+class Activity {
   int? activityId;
   int? status;
   int? hostUserId;
@@ -30,38 +30,52 @@ class Activity{
     this.updateTime,
     this.isRegistered,
   });
-  Activity.fromJson(Map<String, dynamic> json) {
-    activityId = json['activityId'];
-    status = json['status'];
-    hostUserId = json['hostUserId'];
-    activityName = json['activityName'];
-    activityImage = json['activityImage'];
-    activityTime = json['activityTime'];
-    location = json['location'];
-    maxParticipants = json['maxParticipants'];
-    currentParticipants = json['currentParticipants'];
-    content = json['content'];
-    details = json['details'];
-    createTime = json['createTime'];
-    updateTime = json['updateTime'];
-    isRegistered = json['isRegistered'];
+
+  // 增强版解析方法
+  factory Activity.fromJson(Map<String, dynamic> json) {
+    return Activity(
+      activityId: _parseInt(json['activityId']),
+      status: _parseInt(json['status']),
+      hostUserId: _parseInt(json['hostUserId']),
+      activityName: json['activityName']?.toString(),
+      activityImage: json['activityImage']?.toString(),
+      activityTime: json['activityTime']?.toString(),
+      location: json['location']?.toString(),
+      maxParticipants: _parseInt(json['maxParticipants']),
+      currentParticipants: _parseInt(json['currentParticipants']),
+      content: json['content']?.toString(),
+      details: json['details']?.toString(),
+      createTime: json['createTime']?.toString(),
+      updateTime: json['updateTime']?.toString(),
+      isRegistered: _parseInt(json['isRegistered']),
+    );
   }
+
+  // 通用类型转换方法
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    if (value is double) return value.toInt();
+    return null;
+  }
+
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['activityId'] = activityId;
-    data['status'] = status;
-    data['hostUserId'] = hostUserId;
-    data['activityName'] = activityName;
-    data['activityImage'] = activityImage;
-    data['activityTime'] = activityTime;
-    data['location'] = location;
-    data['maxParticipants'] = maxParticipants;
-    data['currentParticipants'] = currentParticipants;
-    data['content'] = content;
-    data['details'] = details;
-    data['createTime'] = createTime;
-    data['updateTime'] = updateTime;
-    data['isRegistered'] = isRegistered;
-    return data;
+    return {
+      'activityId': activityId,
+      'status': status,
+      'hostUserId': hostUserId,
+      'activityName': activityName,
+      'activityImage': activityImage,
+      'activityTime': activityTime,
+      'location': location,
+      'maxParticipants': maxParticipants,
+      'currentParticipants': currentParticipants,
+      'content': content,
+      'details': details,
+      'createTime': createTime,
+      'updateTime': updateTime,
+      'isRegistered': isRegistered,
+    };
   }
 }
