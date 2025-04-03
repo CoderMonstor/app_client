@@ -7,7 +7,7 @@ class Discuss{
   String? content;
   String? createTime;
   String? updateTime;
-  String? nickname;
+  String? username;
   String? avatarUrl;
 
   Discuss({
@@ -19,7 +19,7 @@ class Discuss{
     this.content,
     this.createTime,
     this.updateTime,
-    this.nickname,
+    this.username,
     this.avatarUrl,
   });
   factory Discuss.fromJson(Map<String, dynamic> json) {
@@ -32,7 +32,7 @@ class Discuss{
       content: json['content'],
       createTime: json['createTime'],
       updateTime: json['updateTime'],
-      nickname: json['nickname'],
+      username: json['username'],
      avatarUrl: json['avatarUrl'],
     );
   }
@@ -46,7 +46,7 @@ class Discuss{
       'content': content,
       'createTime': createTime,
       'updateTime': updateTime,
-      'nickname': nickname,
+      'username': username,
       'avatarUrl': avatarUrl,
     };
   }

@@ -341,4 +341,8 @@ class Apis {
     return '/activity/getActivityDetail?userId=$userId&activityId=$activityId';
   }
 
+  static String getDiscussByActivityId(int activityId, int pageIndex) {
+    return '/activityComment/list?activityId=$activityId&page=$pageIndex';
+  }
+
 }

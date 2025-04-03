@@ -367,7 +367,7 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
     }
     List<String> images = _goods.image!.split('￥'); // 解析图片路径列表
     print(images);
-    return ImageBuild.goodsImages(context, _goods.goodsId!, images);
+    return ImageBuild.carouselImages(context, _goods.goodsId!, images);
   }
   Widget _buildSingleRow(String str) {
     return Container(

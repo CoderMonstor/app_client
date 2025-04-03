@@ -63,8 +63,8 @@ class ImageBuild {
     );
   }
 // 轮播图展示
-  static Widget goodsImages(BuildContext context, int id, List images) {
-    String baseUrl = NetConfig.ip;
+  static Widget carouselImages(BuildContext context, int id, List images) {
+    // String baseUrl = NetConfig.ip;
     return CarouselSlider(
       options: CarouselOptions(
         height: 300.w,

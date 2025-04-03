@@ -29,7 +29,7 @@ class _ActivityCardState extends State<ActivityCard> {
     if (active.status == 0) return ('已取消', Colors.red);
 
     // 强制结束或超时结束判断
-    final isExpired = parseDateTime(active.activityTime)?.isBefore(now) ?? false;
+    final isExpired =parseDateTime(active.activityTime)?.isBefore(now) ?? false;
     if (active.status == 2 || isExpired) return ('已结束', Colors.grey);
 
     // 报名状态判断（需确保活动未取消未结束）

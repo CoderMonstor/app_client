@@ -40,3 +40,17 @@ DateTime? parseDateTime(String? timeString) {
     return null;
   }
 }
+
+String buildActivityTime(String dateTimeStr) {
+  DateTime dateTime;
+  try {
+    dateTime = DateTime.parse(dateTimeStr); // 解析 ISO 8601 格式
+  } catch (_) {
+    try {
+      dateTime = DateFormat("yyyy-MM-dd HH:mm").parse(dateTimeStr); // 解析 "yyyy-MM-dd HH:mm"
+    } catch (_) {
+      return "Invalid date format";
+    }
+  }
+  return DateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime); // 格式化为 "yyyy-MM-dd HH:mm:ss"
+}
