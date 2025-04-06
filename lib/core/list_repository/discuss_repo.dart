@@ -39,7 +39,7 @@ class DiscussRepo extends LoadingMoreBase<Discuss> {
           var discuss = Discuss.fromJson(item);
           if(!contains(discuss)&&hasMore)add(discuss);
         }
-        _hasMore=pageIndex<result["totalPage"];
+        _hasMore=false;
         pageIndex++;
         isSuccess = true;
       }

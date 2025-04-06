@@ -78,6 +78,9 @@
             android:value="2" />
         <!-- 配置定位Service -->
         <service android:name="com.amap.api.location.APSService" />
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="8eebe9156478a3d3a0a30c6442faf969"/>
 
     </application>
     <!-- Required to query activities that can process text, see:

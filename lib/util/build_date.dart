@@ -40,7 +40,22 @@ DateTime? parseDateTime(String? timeString) {
     return null;
   }
 }
+String formatCommentTime(String timestamp) {
+  final date = DateTime.parse(timestamp);
+  final now = DateTime.now();
+  final difference = now.difference(date);
 
+  if (difference.inDays > 7) {
+    return '${date.month}/${date.day} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  } else if (difference.inDays >= 1) {
+    return '${difference.inDays}天前';
+  } else if (difference.inHours >= 1) {
+    return '${difference.inHours}小时前';
+  } else if (difference.inMinutes >= 1) {
+    return '${difference.inMinutes}分钟前';
+  }
+  return '刚刚';
+}
 String buildActivityTime(String dateTimeStr) {
   DateTime dateTime;
   try {

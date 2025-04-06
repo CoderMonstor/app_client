@@ -324,13 +324,21 @@ class Apis {
   }
 
   static String getMyActivities(int userId, int pageIndex) {
-    return '/activity/getMyActivities?userId=$userId&page=$pageIndex';
+    return '/activity/getActivitiesByUser?userId=$userId&page=$pageIndex';
   }
 
   static String getMyStarActivities(int userId, int pageIndex) {
     return '/activity/getMyStarActivities?userId=$userId&page=$pageIndex';
   }
 
+  static String collectActivity(int activityId) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/collectActivity?userId=$userId&activityId=$activityId';
+  }
+  static String cancelCollectActivity(int activityId) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/cancelCollectActivity?userId=$userId&activityId=$activityId';
+  }
   static String searchActivity(String key, int pageIndex) {
     int? userId = Global.profile.user?.userId;
     return '/activity/searchActivity?userId=$userId&key=$key&page=$pageIndex';
@@ -345,4 +353,13 @@ class Apis {
     return '/activityComment/list?activityId=$activityId&page=$pageIndex';
   }
 
+  static String registerActivity (int activityId) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/register?userId=$userId&activityId=$activityId';
+  }
+
+  static String cancelRegister(int activityId) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/cancelRegister?userId=$userId&activityId=$activityId';
+  }
 }

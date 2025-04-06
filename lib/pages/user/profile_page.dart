@@ -1,3 +1,4 @@
+import 'package:client/pages/activity/common_activity.dart';
 import 'package:client/pages/resale/common_goods_page.dart';
 import 'package:client/pages/user/qr_page.dart';
 import 'package:client/util/my_icon/my_app_icons.dart';
@@ -145,16 +146,7 @@ class _ProfilePageState extends State<ProfilePage>
             ),
           ),
           const CommonGoodsPage(type: 3,),
-          LoadingMoreList(
-            ListConfig<Post>(
-              itemBuilder: (BuildContext context, Post item, int index){
-                // return PostCard(post: item,list: _postRepository,index: index);
-                return PostCard(post: item,index: index);
-              },
-              sourceList: _postRepository,
-              indicatorBuilder: _buildIndicator,
-            ),
-          ),
+          const CommonActivity(type: 2,)
         ],
       ),
     );

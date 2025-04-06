@@ -25,16 +25,11 @@ class _ActivityCardState extends State<ActivityCard> {
   (String text, Color color) get _statusInfo {
     final now = DateTime.now();
     final active = widget.activity;
-    // 异常状态优先处理
-    if (active.status == 0) return ('已取消', Colors.red);
-
+    // 报名状态判断（需确保活动未取消未结束）
+    if (active.isRegistered == 1) return ('已报名', Colors.green);
     // 强制结束或超时结束判断
     final isExpired =parseDateTime(active.activityTime)?.isBefore(now) ?? false;
     if (active.status == 2 || isExpired) return ('已结束', Colors.grey);
-
-    // 报名状态判断（需确保活动未取消未结束）
-    if (active.isRegistered == 1) return ('已报名', Colors.green);
-
     // 时间状态判断
     final isFuture = parseDateTime(active.activityTime)?.isAfter(now) ?? false;
     return isFuture ? ('未开始', Colors.orange) : ('进行中', Colors.blue);
@@ -123,8 +118,8 @@ class _ActivityCardState extends State<ActivityCard> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        _buildInfoRow(Icons.calendar_today, active.activityTime!),
+                        const SizedBox(height: 11),
+                        _buildInfoRow(Icons.calendar_today, buildActivityTime(active.activityTime!)),
                         const SizedBox(height: 8),
                         _buildInfoRow(Icons.location_on, active.location!),
                         const SizedBox(height: 8),

@@ -1,13 +1,18 @@
+import 'package:client/core/list_repository/activity_repo.dart';
+import 'package:client/pages/activity/common_activity.dart';
 import 'package:client/util/app_bar/my_app_bar.dart';
 import 'package:client/widget/my_card/activity_card.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_more_list/loading_more_list.dart';
 
+import '../../core/global.dart';
 import '../../core/model/activity.dart';
 import '../../widget/send_button.dart';
 
 
 class GatherPage extends StatefulWidget {
   const GatherPage({super.key});
+
 
   @override
   State<GatherPage> createState() => _GatherPageState();
@@ -16,6 +21,7 @@ class GatherPage extends StatefulWidget {
 class _GatherPageState extends State<GatherPage> {
   final GlobalKey _fabKey = GlobalKey(); // 用于定位FAB位置
   bool _isFabExpanded = false;
+  late ActivityRepo _activityRepo;
   /// 处理外部点击事件，用于判断点击位置是否在Floating Action Button (FAB) 外部，
   /// 如果在外部且FAB处于展开状态，则将其收起。
   ///
@@ -49,83 +55,30 @@ class _GatherPageState extends State<GatherPage> {
         setState(() => _isFabExpanded = false);
       }
     }
-    // final RenderBox? fabRenderBox =
-    // _fabKey.currentContext?.findRenderObject() as RenderBox?;
-    //
-    // if (fabRenderBox != null && _isFabExpanded) {
-    //   final fabSize = fabRenderBox.size;
-    //   final fabOffset = fabRenderBox.localToGlobal(Offset.zero);
-    //
-    //   final tapPosition = event.position;
-    //   final isInsideFab = tapPosition.dx >= fabOffset.dx &&
-    //       tapPosition.dx <= fabOffset.dx + fabSize.width &&
-    //       tapPosition.dy >= fabOffset.dy &&
-    //       tapPosition.dy <= fabOffset.dy + fabSize.height;
-    //
-    //   if (!isInsideFab) {
-    //     setState(() => _isFabExpanded = false);
-    //   }
-    // }
   }
 
   @override
   void initState() {
     super.initState();
+    _initialData();
   }
 
+  Future<void> _initialData() async {
+    _activityRepo = ActivityRepo(Global.profile.user!.userId!,1);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _activityRepo.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Listener(
       onPointerDown: _handleOutsideTap,
       child: Scaffold(
         appBar: MyAppbar.buildNormalAppbar(context, false, true, null, null),
-        body:  SingleChildScrollView(
-          child: Column(
-            children: [
-              ActivityCard(
-                activity: Activity(
-                  activityId: 1,
-                  status: 1,
-                  hostUserId: 1,
-                  activityName: '周末户外徒步探险之旅',
-                  activityImage: '/images/161743062993357.jpg',
-                  activityTime: '2026-08-26 09:00',
-                  location: '西湖风景区灵隐步道',
-                  maxParticipants: 5,
-                  currentParticipants: 3,
-                  content: '周末户外徒步探险之旅',
-                  details: '西湖风景区灵隐步道西湖风景区灵隐步',
-                  createTime: '2023-08-26 09:00',
-                  updateTime: '2023-08-26 09:00',
-                  isRegistered: 1,
-                ),
-              ),
-              // ActivityCard(
-              //   activity: Activity(
-              //     activityId: 1,
-              //     status: 1,
-              //     hostUserId: 1,
-              //     activityName: '周末户外徒步探险之旅',
-              //     activityImage: '/images/161743062993357.jpg',
-              //     activityTime: '2026-08-26 09:00',
-              //     location: '西湖风景区灵隐步道',
-              //     maxParticipants: 5,
-              //     currentParticipants: 3,
-              //     content: '周末户外徒步探险之旅',
-              //     details: '西湖风景区灵隐步道西湖风景区灵隐步',
-              //     createTime: '2023-08-26 09:00',
-              //     updateTime: '2023-08-26 09:00',
-              //     isRegistered: 1,
-              //   )
-              // ),
-              // ActivityCard(),
-              // ActivityCard(),
-              // ActivityCard(),
-              // ActivityCard(),
-              // ActivityCard(),
-            ],
-          ),
-        ),
+        body:  const CommonActivity(type: 1),
         floatingActionButton: SendButton(
           key: _fabKey, // 绑定GlobalKey
           isExpanded: _isFabExpanded,

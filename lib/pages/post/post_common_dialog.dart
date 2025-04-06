@@ -25,14 +25,11 @@ class PostCommentDialog extends StatefulWidget{
 
 class _PostCommentDialogState extends State<PostCommentDialog> {
   final TextEditingController _textController = TextEditingController();
-  late double _keyboardHeight;
-  late bool _showEmoji;
   final FocusNode _focusNode = FocusNode();
   List<AssetEntity> images = [];
 
   @override
   void initState() {
-    _showEmoji = false;
     super.initState();
   }
   @override
@@ -47,8 +44,6 @@ class _PostCommentDialogState extends State<PostCommentDialog> {
   Widget build(BuildContext context) {
     var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     if (keyboardHeight > 0) {
-      _keyboardHeight = keyboardHeight;
-      _showEmoji = false;
     }
     return Scaffold(
       backgroundColor: Colors.black12,
@@ -64,78 +59,35 @@ class _PostCommentDialogState extends State<PostCommentDialog> {
             ),
           ),
           _buildTextFiled(),
-          // _inputBar(),
-          // emoticonPad(context)
+
         ],
       ),
 
     );
   }
 
-  _inputBar() {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: SizedBox(
-        child: Row(
-          children: [
-            const Expanded(flex:1,child: SizedBox()),
-            Expanded(
-              flex: 8,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                    ),
-                    onPressed: loadAssets,
-                    child: const Icon(
-                      MyIcons.image,
-                      color: Color(0xff757575),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      _sendHandler();
-                    },
-                    child: const Icon(
-                      MyIcons.send,
-                      color: Color(0xff757575),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Expanded(flex:1,child: SizedBox()),
-          ],
-        ),
-      ),
-    );
-  }
   void _changeRow() {
     _textController.text += '\n';
   }
 
-  void updateEmojiStatus() {
-    change() {
-      _showEmoji = !_showEmoji;
-      if (mounted) setState(() {});
-    }
-    if (_showEmoji) {
-      change();
-    } else {
-      if (MediaQuery.of(context).viewInsets.bottom != 0.0) {
-        SystemChannels.textInput.invokeMethod('TextInput.hide').whenComplete(
-              () {Future.delayed(const Duration(milliseconds: 40), (){
-            change();
-          });},);
-      } else {
-        change();
-      }
-    }
-  }
+  // void updateEmojiStatus() {
+  //   change() {
+  //     _showEmoji = !_showEmoji;
+  //     if (mounted) setState(() {});
+  //   }
+  //   if (_showEmoji) {
+  //     change();
+  //   } else {
+  //     if (MediaQuery.of(context).viewInsets.bottom != 0.0) {
+  //       SystemChannels.textInput.invokeMethod('TextInput.hide').whenComplete(
+  //             () {Future.delayed(const Duration(milliseconds: 40), (){
+  //           change();
+  //         });},);
+  //     } else {
+  //       change();
+  //     }
+  //   }
+  // }
   _buildTextFiled() {
     return Card(
       elevation: 0,
