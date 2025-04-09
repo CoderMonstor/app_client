@@ -47,7 +47,7 @@
     <application
         android:label="client"
         android:requestLegacyExternalStorage="true"
-        android:name="${applicationName}"
+        android:name=".MyApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -76,11 +76,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <!-- 配置定位Service -->
-        <service android:name="com.amap.api.location.APSService" />
         <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="8eebe9156478a3d3a0a30c6442faf969"/>
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="Iqz97wmkFTMnFOBRzjk0MGDydy0SKqfN" />
+
 
     </application>
     <!-- Required to query activities that can process text, see:

@@ -15,49 +15,28 @@ class MapChoosePage extends StatefulWidget {
 }
 
 class _MapChoosePageState extends State<MapChoosePage> {
-  // 定位相关
   final LocationFlutterPlugin _locationPlugin = LocationFlutterPlugin();
   final BaiduLocationAndroidOption _androidOption = BaiduLocationAndroidOption(
-    coordType: BMFLocationCoordType.bd09ll, // 统一坐标系
+    coordType: BMFLocationCoordType.bd09ll,
   );
   final BaiduLocationIOSOption _iosOption = BaiduLocationIOSOption(
     coordType: BMFLocationCoordType.bd09ll,
   );
   BaiduLocation _currentLocation = BaiduLocation();
 
-  // 地图相关
   late BMFMapController _mapController;
-  // final BMFMapOptions _mapOptions = BMFMapOptions(
-  //   zoomLevel: 15,
-  // );
-  final BMFMapOptions _mapOptions = BMFMapOptions(
-    center: BMFCoordinate(39.915, 116.404), // 默认北京坐标
-    zoomLevel: 15,
-    mapType: BMFMapType.Standard,
-  );
-  final List<BMFMarker> _markers = [];
+  BMFCoordinate? _initialCenter;
 
-  // 搜索相关
   final TextEditingController _searchController = TextEditingController();
   final BMFSuggestionSearch _suggestionSearch = BMFSuggestionSearch();
   List<BMFSuggestionInfo> _suggestionList = [];
   List<BMFPoiInfo> _poiList = [];
   bool _isSearch = false;
-  Timer? _debounceTimer; // 防抖计时器
-
-  bool _isMapLoaded = false;
-  bool _isLocationReceived = false;
-  BaiduLocation? _firstLocation;
-
-  // 新增地图初始化完成标记
-  bool _isMapInitialized = false;
-  // 新增定位坐标缓存
-  BMFCoordinate? _currentCoordinate;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
-    BMFMapSDK.setApiKeyAndCoordType("Iqz97wmkFTMnFOBRzjk0MGDydy0SKqfN", BMF_COORD_TYPE.BD09LL); // 必须设置
     BMFMapSDK.setAgreePrivacy(true);
     _initializeLocation();
     _searchController.addListener(_handleSearchInput);
@@ -65,7 +44,6 @@ class _MapChoosePageState extends State<MapChoosePage> {
   }
 
   void _handleSearchInput() {
-    // 添加防抖处理（500毫秒）
     if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       if (_searchController.text.isEmpty) {
@@ -84,210 +62,79 @@ class _MapChoosePageState extends State<MapChoosePage> {
     super.dispose();
   }
 
-  /// 初始化定位服务
   void _initializeLocation() async {
-    // 先设置隐私协议
     await _locationPlugin.setAgreePrivacy(true);
-
-    // 配置定位参数
     _configureLocationOptions();
 
-    // 请求权限
     if (await _requestLocationPermission()) {
       _startLocationService();
     }
   }
 
-  // Future<bool> _requestLocationPermission() async {
-  //   final status = await Permission.location.request();
-  //   if (!status.isGranted) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("需要定位权限以获取当前位置")),
-  //     );
-  //     return false;
-  //   }
-  //   return true;
-  // }
   Future<bool> _requestLocationPermission() async {
     final status = await Permission.location.request();
     if (!status.isGranted) {
-      if (mounted) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text("需要定位权限"),
-              actions: [
-                TextButton(
-                  child: const Text("去设置"),
-                  onPressed: () => openAppSettings(),
-                ),
-                TextButton(
-                  child: const Text("取消"),
-                  onPressed: () => Navigator.pop(context),
-                )
-              ],
-            ));
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("需要定位权限以获取当前位置")),
+      );
       return false;
     }
     return true;
   }
 
   void _configureLocationOptions() {
-    // Android配置
     _androidOption
       ..setCoorType("bd09ll")
       ..setIsNeedAddress(true)
       ..setOpenGps(true)
       ..setLocationMode(BMFLocationMode.hightAccuracy);
-      // ..setScanSpan(3000); // 设置定位间隔
 
     _locationPlugin.prepareLoc(_androidOption.getMap(), _iosOption.getMap());
   }
 
   void _startLocationService() {
-    try {
-      _locationPlugin.startLocation(); // 添加这行关键代码
-      _locationPlugin.seriesLocationCallback(callback: (BaiduLocation result) {
-        if (!mounted) return;
+    _locationPlugin.startLocation();
+    _locationPlugin.seriesLocationCallback(callback: (BaiduLocation result) {
+      if (!mounted || result.latitude == null) return;
 
-        // // 更严格的空值检查
-        // if (result.latitude == null || result.longitude == null) {
-        //   print("Invalid location data: $result");
-        //   return;
-        // }
-        // 增强型空值检查
-        if (result.latitude == null || result.longitude == null) {
-          print("定位数据异常: ${result}");
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("获取定位信息失败，请检查GPS设置")),
-            );
-          }
-          return;
-        }
-
-        setState(() {
-          _currentLocation = result;
-          _currentCoordinate = BMFCoordinate(
-              result.latitude!,
-              result.longitude!
-          );
-          _isLocationReceived = true;
-        });
-        if (_isMapInitialized) {
-          _mapController.updateMapOptions(BMFMapOptions(
-            center: _currentCoordinate!,
-            zoomLevel: 17,
-          ));
-        }
-        // _tryUpdateMapCenter();
+      setState(() {
+        _currentLocation = result;
+        _initialCenter ??= BMFCoordinate(result.latitude!, result.longitude!);
       });
-    }catch(e){
-      print("启动定位服务失败: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("无法启动定位服务")),
-        );
-      }
-    }
-    // try{
-    //   _locationPlugin.startLocation();
-    //   _locationPlugin.seriesLocationCallback(callback: (BaiduLocation result) {
-    //     if (!mounted || result.latitude == null) {
-    //       print("定位失败或数据不完整");
-    //       return;
-    //     }
-    //     // setState(() => _currentLocation = result);
-    //     setState(() {
-    //       _currentLocation = result;
-    //       _isLocationReceived = true;
-    //       _firstLocation = result;
-    //     });
-    //     // _updateMapToCurrentLocation();
-    //     if (_isMapLoaded) {
-    //       _updateMapToCurrentLocation();
-    //     }
-    //   });
-    // }catch(e){
-    //   print("启动定位服务失败: $e");
-    //   if (mounted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text("无法启动定位服务")),
-    //     );
-    //   }
-    // }
+
+      _updateMapToCurrentLocation();
+    });
   }
 
-
-  /// 更新地图中心到当前位置
   void _updateMapToCurrentLocation() {
-    // print("尝试更新地图中心，当前位置: ${_currentLocation}");
-    // if (_currentLocation.latitude == null || _currentLocation.longitude == null) {
-    //   print("当前位置信息不完整，无法更新地图中心");
-    //   print("错误：位置信息不完整，纬度: ${_currentLocation.latitude}, 经度: ${_currentLocation.longitude}");
-    //   return;
-    // }
-    // final coordinate = BMFCoordinate(
-    //   _currentLocation.latitude!,
-    //   _currentLocation.longitude!,
-    // );
-    //
-    // _mapController.updateMapOptions(BMFMapOptions(
-    //   center: coordinate,
-    //   zoomLevel: 17,
-    // ));
-    //
-    // _getPoiByLocation(coordinate);
-    if (_currentCoordinate != null) {
-      _mapController.updateMapOptions(BMFMapOptions(
-        center: _currentCoordinate!,
-        zoomLevel: 17,
-      ));
-    } else {
-      print("No valid coordinate available");
-      // 添加重新定位逻辑
-      _startLocationService();
-    }
+    if (_currentLocation.latitude == null || _mapController == null) return;
+
+    final coordinate = BMFCoordinate(
+      _currentLocation.latitude!,
+      _currentLocation.longitude!,
+    );
+
+    _mapController.updateMapOptions(BMFMapOptions(
+      center: coordinate,
+      zoomLevel: 17,
+    ));
+
+    _getPoiByLocation(coordinate);
   }
 
   void _onMapCreated(BMFMapController controller) {
     _mapController = controller;
-    // 显示定位图层
     _mapController.showUserLocation(true);
-    // 地图加载完成后定位到当前位置
-    // _mapController.setMapDidLoadCallback(callback: () {
-    //   // 地图加载完成后立即定位到用户当前位置
-    //   _updateMapToCurrentLocation();
-    // });
-    // _mapController.setMapDidLoadCallback(callback: () {
-    //   _isMapLoaded = true;
-    //   if (_isLocationReceived && _firstLocation != null) {
-    //     _updateMapToCurrentLocation();
-    //   }
-    // });
-    _mapController.setMapDidLoadCallback(callback: () {
-      setState(() => _isMapInitialized = true);
-      _tryUpdateMapCenter();
-    });
-    // 监听地图移动
+    _mapController.setMapDidLoadCallback(callback: _updateMapToCurrentLocation);
     _mapController.setMapRegionDidChangeWithReasonCallback(
       callback: (status, reason) => _getPoiByLocation(status.targetGeoPt!),
     );
   }
-  void _tryUpdateMapCenter() {
-    if (_isMapInitialized && _currentCoordinate != null) {
-      _mapController.updateMapOptions(BMFMapOptions(
-        center: _currentCoordinate,
-        zoomLevel: 17,
-      ));
-      _getPoiByLocation(_currentCoordinate!);
-    }
-  }
-  /// 逆地理编码获取POI
+
   void _getPoiByLocation(BMFCoordinate coordinate) async {
     final option = BMFReverseGeoCodeSearchOption(location: coordinate);
     final search = BMFReverseGeoCodeSearch();
+
     search.onGetReverseGeoCodeSearchResult(
       callback: (result, error) {
         if (error != BMFSearchErrorCode.NO_ERROR) return;
@@ -297,37 +144,40 @@ class _MapChoosePageState extends State<MapChoosePage> {
 
     await search.reverseGeoCodeSearch(option);
   }
-  /// 处理搜索建议结果
+
   void _onSuggestSearchResult(BMFSuggestionSearchResult result, BMFSearchErrorCode error) {
     if (error != BMFSearchErrorCode.NO_ERROR) {
       print("搜索失败，错误码：$error");
       return;
     }
+
     setState(() {
       _suggestionList = result.suggestionList ?? [];
       _isSearch = true;
     });
   }
-  /// 执行搜索建议请求
+
   void _searchLocation(String keyword) async {
     final option = BMFSuggestionSearchOption(
       keyword: keyword,
-      cityname: _currentLocation.city ?? "全国", // 使用当前定位城市
+      cityname: _currentLocation.city ?? "全国",
     );
+
     await _suggestionSearch.suggestionSearch(option);
   }
 
-  /// 点击搜索建议项
   void _onSuggestionTap(BMFSuggestionInfo info) {
     if (info.location == null) return;
+
     final coordinate = info.location!;
     _mapController.updateMapOptions(BMFMapOptions(
       center: coordinate,
       zoomLevel: 17,
     ));
+
     _getPoiByLocation(coordinate);
     _searchController.clear();
-    FocusScope.of(context).unfocus(); // 隐藏键盘
+    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -352,19 +202,19 @@ class _MapChoosePageState extends State<MapChoosePage> {
       ),
       body: Column(
         children: [
-          if (!_isLocationReceived)
-            const LinearProgressIndicator(
-              color: Colors.blue,
-              backgroundColor: Colors.grey,
-            ),
           Expanded(
             child: Stack(
               alignment: Alignment.center,
               children: [
-                BMFMapWidget(
+                _initialCenter != null
+                    ? BMFMapWidget(
                   onBMFMapCreated: _onMapCreated,
-                  mapOptions: _mapOptions,
-                ),
+                  mapOptions: BMFMapOptions(
+                    center: _initialCenter!,
+                    zoomLevel: 15,
+                  ),
+                )
+                    : const Center(child: CircularProgressIndicator()),
                 const Icon(Icons.location_pin, size: 40, color: Colors.red),
               ],
             ),
@@ -377,8 +227,8 @@ class _MapChoosePageState extends State<MapChoosePage> {
 
   Widget _buildBottomPanel() {
     return Container(
-      height: 400,
-      decoration: const BoxDecoration(
+      height: 240,
+      decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
       ),
@@ -400,9 +250,7 @@ class _MapChoosePageState extends State<MapChoosePage> {
             ),
           ),
           Expanded(
-            child: _isSearch
-                ? _buildSuggestionList()
-                : _buildPoiList(),
+            child: _isSearch ? _buildSuggestionList() : _buildPoiList(),
           ),
         ],
       ),
