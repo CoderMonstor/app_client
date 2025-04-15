@@ -277,9 +277,8 @@ class Apis {
     return '/goods/getBuyList?userId=$userId&page=$page';
   }
 
-  static String getMyGoods(int page){
-    int? userId = Global.profile.user?.userId;
-    return '/goods/getMyGoods?userId=$userId&page=$page';
+  static String getGoodsById(int userId, int page){
+    return '/goods/getGoodsById?userId=$userId&page=$page';
   }
 
   static String edit(Goods goods) {
@@ -296,9 +295,12 @@ class Apis {
     int? userId = Global.profile.user?.userId;
     return '/goods/cancelCollectGoods?userId=$userId&goodsId=$goodsId';
   }
-  static String getMyOrder(int page) {
-    int? userId = Global.profile.user?.userId;
-    return '/order/getMyOrder?userId=$userId&page=$page';
+
+  static String addOrder(int goodsId,int buyer) {
+    return '/goods/addOrder?goodsId=$goodsId&buyer=$buyer';
+  }
+  static String getMyOrder(int userId, int pageIndex) {
+    return '/goods/getMyOrder?userId=$userId&page=$pageIndex';
   }
 
   static String getGoodsCommentByGoodsId(int goodsId, int pageIndex) {
@@ -323,7 +325,7 @@ class Apis {
     return '/activity/getAllActivities?userId=$userId&page=$pageIndex';
   }
 
-  static String getMyActivities(int userId, int pageIndex) {
+  static String getActivitiesByUser(int userId, int pageIndex) {
     return '/activity/getActivitiesByUser?userId=$userId&page=$pageIndex';
   }
 
@@ -362,4 +364,28 @@ class Apis {
     int? userId = Global.profile.user?.userId;
     return '/activity/cancelRegister?userId=$userId&activityId=$activityId';
   }
+
+  static String getMyResaleGoods(int userId, int pageIndex) {
+    return '/goods/getMyResaleGoods?userId=$userId&page=$pageIndex';
+  }
+
+  static String getMyRequestGoods(int userId, int pageIndex) {
+    return '/goods/getMyRequestGoods?userId=$userId&page=$pageIndex';
+  }
+
+  static String praiseActivity(int i) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/praise?userId=$userId&activityId=$i';
+  }
+
+  static String cancelPraiseActivity(int i) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/cancelPraise?userId=$userId&activityId=$i';
+  }
+
+  static String getActivitiesRegistered(int pageIndex) {
+    int? userId = Global.profile.user?.userId;
+    return '/activity/getActivitiesRegistered?userId=$userId&page=$pageIndex';
+  }
+  
 }

@@ -31,7 +31,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
   final FocusNode _focusNode = FocusNode();
   Discuss? _replyToDiscuss;
   Activity? _activity;
-
+  late bool isFavorite;
   @override
   void initState() {
     super.initState();
@@ -59,6 +59,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
       if (response['code'] == '1') {
         setState(() {
           _activity = Activity.fromJson(response['data']);
+          isFavorite = _activity!.isPraised==1?true:false;
         });
         _discussRepo = DiscussRepo(_activity!.activityId!);
       }
@@ -200,11 +201,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     FocusScope.of(context).requestFocus(_focusNode);
   }
   // 提交回复
-  void _submitReply(Discuss comment, String replyContent) {
-    if (replyContent.isNotEmpty) {
-      // 提交回复的逻辑
-    }
-  }
 
 // 评论提交
   List<Widget> _headerSliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
@@ -242,21 +238,27 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
               _buildDetailRow('报名人数', '${_activity?.currentParticipants}/${_activity?.maxParticipants}'),
               TextButton(
                 onPressed: () async {
+                  // 新增组织者判断
+                  if (Global.profile.user?.userId == _activity!.hostUserId) {
+                    Toast.popToast('你是活动组织者');
+                    return;
+                  }
+
                   if (_activity!.isRegistered == 1) {
-                    // 取消报名
+                    // 取消报名逻辑保持不变
                     var res = await NetRequester.request(Apis.cancelRegister(_activity!.activityId!));
                     if (res['code'] == '1') {
                       Toast.popToast('取消报名成功');
                       setState(() {
                         _activity!
                           ..currentParticipants = _activity!.currentParticipants! - 1
-                          ..isRegistered = 0; // 增加状态更新
+                          ..isRegistered = 0;
                       });
                     } else {
                       Toast.popToast('取消报名失败');
                     }
                   } else {
-                    // 报名
+                    // 报名逻辑保持不变
                     if (_activity!.currentParticipants! < _activity!.maxParticipants!) {
                       var res = await NetRequester.request(Apis.registerActivity(_activity!.activityId!));
                       if (res['code'] == '1') {
@@ -264,7 +266,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                         setState(() {
                           _activity!
                             ..currentParticipants = _activity!.currentParticipants! + 1
-                            ..isRegistered = 1; // 增加状态更新
+                            ..isRegistered = 1;
                         });
                       } else {
                         Toast.popToast('报名失败');
@@ -341,7 +343,25 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10.w),
+                // SizedBox(width: 10.w),
+                IconButton(
+                    onPressed: ()async{
+                      String url= isFavorite ? Apis.cancelPraiseActivity(_activity!.activityId!):Apis.praiseActivity(_activity!.activityId!);
+                      var res = await NetRequester.request(url);
+                      if(res['code']=='1'){
+                        Toast.popToast(isFavorite ? '取消点赞成功' : '点赞成功');
+                        setState(() {
+                          isFavorite = !isFavorite;
+                        });
+                      }else {
+                        Toast.popToast(isFavorite? '取消点赞失败' :'点赞失败');
+                      }
+                    },
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : null,
+                  ),
+                ),
                 IconButton(
                   onPressed: _submitComment,
                   icon: const Icon(Icons.send),

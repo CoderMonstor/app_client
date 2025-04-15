@@ -37,10 +37,10 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
   var _future;
   late Goods _goods;
   late User _user;
+// 默认是微信支付
   late TabController _tabController;
   late GoodsCommentRepository _goodsCommentRepository;
   final ScrollController _scrollController=ScrollController();
-
 
   @override
   void initState() {
@@ -162,8 +162,6 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
                       color: Colors.grey,
                     ),
                   ),
-                  // 如果需要在右侧添加其他元素，加入以下代码
-                  // Icon(Icons.arrow_forward),
                 ],
               ),
             );
@@ -173,8 +171,6 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
       ),
     );
   }
-
-
   Widget _goodsInfo() {
     return SliverToBoxAdapter(
       child: Column(
@@ -329,7 +325,7 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
       child: Container(
         height: 1.0,
         color: Colors.grey[300],
-        margin: const EdgeInsets.symmetric(horizontal: 4.0), // 控制横线与圆点的间距
+        margin: const EdgeInsets.symmetric(horizontal: 4.0),
       ),
     );
   }
@@ -340,15 +336,15 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
           width: 35.w,
           height: 35.w,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.w), // 关键点：圆角设为宽度的一半
+            borderRadius: BorderRadius.circular(20.w),
             color: Colors.pink,
           ),
-          alignment: Alignment.center, // 关键点：让文本居中
+          alignment: Alignment.center,
           child: Text(
             '√',
             style: TextStyle(
-              fontSize: 18.w, // 根据需求调整对勾大小
-              color: Colors.white, // 确保对勾颜色可见
+              fontSize: 18.w,
+              color: Colors.white,
             ),
           ),
         ),
@@ -506,13 +502,62 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.chat,
+                      size: 20,
+                    ),
+                    Text(
+                      '私聊',
+                      style: TextStyle(fontSize: 12), // 调小字体
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if(_goods.type==GoodsType.idle)
+            SizedBox(
+              height: 42,
+              child: ElevatedButton(
+                onPressed: () {
+                  if(Global.profile.user?.userId != _goods.userId) {
+                    // 唤起底部弹窗
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      ),
+                      builder: (context) {
+                        return PurchaseFormWidget(
+                          goods: _goods,
+                          onPaymentChanged: (selectedPayment) {
+                            setState(() {
+                            });
+                          },
+                        );
+                      },
+                    );
+
+                  } else {
+                    Toast.popToast('这是你的商品欸');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                child: const Text('联系买家'),
+                child: const Text('立即购买'),
               ),
             ),
           ],
@@ -523,5 +568,183 @@ class _GoodsDetailPageState extends State<GoodsDetailPage> with TickerProviderSt
 
 }
 
+class PurchaseFormWidget extends StatefulWidget {
+  final Goods goods;
+  final Function(String selectedPayment) onPaymentChanged;
+  const PurchaseFormWidget({super.key, required this.goods, required this.onPaymentChanged});
+
+  @override
+  _PurchaseFormWidgetState createState() => _PurchaseFormWidgetState();
+}
+
+class _PurchaseFormWidgetState extends State<PurchaseFormWidget> {
+  String _selectedPayment = 'wechat';
+  static const _paymentMethods = [
+    {'title': '微信支付', 'value': 'wechat'},
+    {'title': '支付宝', 'value': 'alipay'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 商品信息头
+          Row(
+            children: [
+              Image.network(
+                '${NetConfig.ip}${widget.goods.image?.split('￥').first ?? ''}',
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.goods.goodsName ?? '未知商品',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '单价：￥${widget.goods.goodsPrice}',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 30),
+          // 费用明细
+          Column(
+            children: [
+              _buildPriceRow('商品金额', '￥${(widget.goods.goodsPrice!).toStringAsFixed(2)}'),
+              _buildPriceRow(
+                '实付款',
+                '￥${_calculateTotalPrice()}',
+                isBold: true,
+              ),
+            ],
+          ),
+          const Divider(height: 30),
+          // 付款方式
+          const Text(
+            '选择付款方式：',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 10),
+          ..._paymentMethods.map((method) => RadioListTile<String>(
+            value: method['value']!,
+            groupValue: _selectedPayment,
+            title: Row(
+              children: [
+                Image.asset(
+                  'assets/images/${method['value']}.png',
+                  width: 24,
+                  height: 24,
+                ),
+                const SizedBox(width: 10),
+                Text(method['title']!),
+              ],
+            ),
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() {
+                _selectedPayment = value;
+                // 通知父 widget 改变支付方式
+                widget.onPaymentChanged(_selectedPayment);
+              });
+            },
+          )),
+          // 底部确认栏
+          Container(
+            padding: const EdgeInsets.only(top: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: '合计：',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      TextSpan(
+                        text: '￥${widget.goods.goodsPrice?.toStringAsFixed(2) ?? '0.00'}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _handlePurchase();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    '确认支付',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _buildPriceRow(String label, String value, {bool isBold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(
+              fontSize: 14,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal
+          )),
+          Text(value, style: TextStyle(
+            fontSize: 14,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            color: isBold ? Colors.red : Colors.black,
+          )),
+        ],
+      ),
+    );
+  }
+  String _calculateTotalPrice() {
+    return (widget.goods.goodsPrice!).toStringAsFixed(2);
+  }
+
+  void _handlePurchase() async{
+    if(widget.goods.sellStatus=='0'){
+      var result = await NetRequester.request(Apis.addOrder(widget.goods.goodsId!, Global.profile.user!.userId!));
+      if(result['code']=='1'){
+        Toast.popToast('下单成功');
+        Navigator.of(context).pop();
+      }else{
+        Toast.popToast('下单失败');
+      }
+    }
+  }
+}
 
 

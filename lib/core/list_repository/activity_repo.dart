@@ -6,7 +6,7 @@ import '../model/activity.dart';
 import '../net/my_api.dart';
 import '../net/net_request.dart';
 
-class ActivityRepo extends LoadingMoreBase<Activity> {
+class ActivityRepository extends LoadingMoreBase<Activity> {
   int pageIndex = 1;
   bool _hasMore = true;
   bool forceRefresh = false;
@@ -14,7 +14,7 @@ class ActivityRepo extends LoadingMoreBase<Activity> {
   int type;
   String? key;
   String? orderBy;
-  ActivityRepo(this.userId ,this.type, [this.key, this.orderBy]);
+  ActivityRepository(this.userId ,this.type, [this.key, this.orderBy]);
 
   @override
   bool get hasMore => _hasMore || forceRefresh;
@@ -23,8 +23,6 @@ class ActivityRepo extends LoadingMoreBase<Activity> {
   Future<bool> refresh([bool clearBeforeRequest = false]) async {
     _hasMore = true;
     pageIndex = 1;
-    //force to refresh list when you don't want clear list before request
-    //for the case, if your list already has 20 items.
     forceRefresh = !clearBeforeRequest;
     var result = await super.refresh(clearBeforeRequest);
     if(result){
@@ -41,7 +39,7 @@ class ActivityRepo extends LoadingMoreBase<Activity> {
         url = Apis.getAllActivities(userId, pageIndex);
         break;
        case 2:
-        url = Apis.getMyActivities(userId, pageIndex);
+        url = Apis.getActivitiesByUser(userId, pageIndex);
         break;
       case 3:
         url = Apis.getMyStarActivities(userId, pageIndex);
@@ -49,7 +47,9 @@ class ActivityRepo extends LoadingMoreBase<Activity> {
       case 4:
         url = Apis.searchActivity(key!, pageIndex);
         break;
-
+      case 5:
+        url = Apis.getActivitiesRegistered(pageIndex);
+        break;
       default:
         throw Exception("Unsupported post type: $type"); // 添加默认处理
     }

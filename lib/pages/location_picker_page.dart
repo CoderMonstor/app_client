@@ -27,9 +27,6 @@ class _MapChoosePageState extends State<MapChoosePage> {
 
   // 地图相关
   late BMFMapController _mapController;
-  // final BMFMapOptions _mapOptions = BMFMapOptions(
-  //   zoomLevel: 15,
-  // );
   final BMFMapOptions _mapOptions = BMFMapOptions(
     center: BMFCoordinate(39.915, 116.404), // 默认北京坐标
     zoomLevel: 15,
@@ -43,6 +40,7 @@ class _MapChoosePageState extends State<MapChoosePage> {
   List<BMFPoiInfo> _poiList = [];
   bool _isSearch = false;
   Timer? _debounceTimer; // 防抖计时器
+
   // 新增地图初始化完成标记
   bool _isMapInitialized = false;
   // 新增定位坐标缓存
@@ -51,14 +49,22 @@ class _MapChoosePageState extends State<MapChoosePage> {
   @override
   void initState() {
     super.initState();
-    BMFMapSDK.setApiKeyAndCoordType("Iqz97wmkFTMnFOBRzjk0MGDydy0SKqfN", BMF_COORD_TYPE.BD09LL); // 必须设置
+    // 设置API Key及坐标系
+    BMFMapSDK.setApiKeyAndCoordType(
+        "Iqz97wmkFTMnFOBRzjk0MGDydy0SKqfN", BMF_COORD_TYPE.BD09LL);
     BMFMapSDK.setAgreePrivacy(true);
     _initializeLocation();
+
+    // 监听搜索输入变化
     _searchController.addListener(_handleSearchInput);
-    _suggestionSearch.onGetSuggestSearchResult(callback: _onSuggestSearchResult);
+    // 注册搜索建议回调
+    _suggestionSearch
+        .onGetSuggestSearchResult(callback: _onSuggestSearchResult);
   }
 
   void _handleSearchInput() {
+    // 打印当前输入关键字（调试信息）
+    debugPrint("搜索输入：${_searchController.text}");
     // 添加防抖处理（500毫秒）
     if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
@@ -89,6 +95,7 @@ class _MapChoosePageState extends State<MapChoosePage> {
       _startLocationService();
     }
   }
+
   Future<bool> _requestLocationPermission() async {
     final status = await Permission.location.request();
     if (!status.isGranted) {
@@ -113,6 +120,7 @@ class _MapChoosePageState extends State<MapChoosePage> {
     }
     return true;
   }
+
   void _configureLocationOptions() {
     // Android配置
     _androidOption
@@ -128,11 +136,12 @@ class _MapChoosePageState extends State<MapChoosePage> {
     try {
       _locationPlugin.startLocation();
       _locationPlugin.seriesLocationCallback(callback: (BaiduLocation result) {
-        print("定位结果: lat=${result.latitude}, lng=${result.longitude}, address=${result.address}");
+        debugPrint(
+            "定位结果: lat=${result.latitude}, lng=${result.longitude}, address=${result.address}");
         if (!mounted) return;
         // 增强型空值检查
         if (result.latitude == null || result.longitude == null) {
-          print("定位数据异常: ${result}");
+          debugPrint("定位数据异常: ${result}");
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("获取定位信息失败，请检查GPS设置")),
@@ -142,10 +151,8 @@ class _MapChoosePageState extends State<MapChoosePage> {
         }
         setState(() {
           _currentLocation = result;
-          _currentCoordinate = BMFCoordinate(
-              result.latitude!,
-              result.longitude!
-          );
+          _currentCoordinate =
+              BMFCoordinate(result.latitude!, result.longitude!);
         });
         if (_isMapInitialized) {
           _mapController.updateMapOptions(BMFMapOptions(
@@ -153,61 +160,50 @@ class _MapChoosePageState extends State<MapChoosePage> {
             zoomLevel: 17,
           ));
         }
-        // _tryUpdateMapCenter();
       });
-    }catch(e){
-      print("启动定位服务失败: $e");
+    } catch (e) {
+      debugPrint("启动定位服务失败: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("无法启动定位服务")),
         );
       }
     }
-
   }
+
   /// 更新地图中心到当前位置
   void _updateMapToCurrentLocation() {
-    // _getPoiByLocation(coordinate);
     if (_currentCoordinate != null) {
       _mapController.updateMapOptions(BMFMapOptions(
         center: _currentCoordinate!,
         zoomLevel: 17,
       ));
     } else {
-      print("No valid coordinate available");
-      // 添加重新定位逻辑
+      debugPrint("No valid coordinate available");
       _startLocationService();
     }
   }
 
   void _onMapCreated(BMFMapController controller) {
     _mapController = controller;
-    // BMFUserLocationOptions options = BMFUserLocationOptions(
-    //   locationMode: BMFUserLocationMode.FOLLOW,
-    //   isAccuracyCircleShow: true,
-    //   accuracyCircleFillColor: Colors.blue.withOpacity(0.3),
-    //   icon: BitmapDescriptor.fromAsset('assets/my_location_icon.png'),
-    // );
-    //
-    // _mapController.showUserLocationWithOptions(options);
     _mapController.showUserLocation(true);
     _mapController.setMapDidLoadCallback(callback: () {
-      setState(() => _isMapInitialized = true);
-      _tryUpdateMapCenter();
-    });
-    _mapController.setMapDidLoadCallback(callback: () {
-      print("地图初始化完成");
+      debugPrint("地图初始化完成");
       setState(() => _isMapInitialized = true);
       if (_currentCoordinate != null) {
         _tryUpdateMapCenter();
       } else {
-        print("等待定位数据...");
-        _startLocationService(); // 如果还没有定位数据，重新请求
+        debugPrint("等待定位数据...");
+        _startLocationService();
       }
     });
     // 监听地图移动
     _mapController.setMapRegionDidChangeWithReasonCallback(
-      callback: (status, reason) => _getPoiByLocation(status.targetGeoPt!),
+      callback: (status, reason) {
+        if (status.targetGeoPt != null) {
+          _getPoiByLocation(status.targetGeoPt!);
+        }
+      },
     );
   }
 
@@ -220,20 +216,24 @@ class _MapChoosePageState extends State<MapChoosePage> {
       _getPoiByLocation(_currentCoordinate!);
     }
   }
+
   /// 逆地理编码获取POI
   void _getPoiByLocation(BMFCoordinate coordinate) async {
     final option = BMFReverseGeoCodeSearchOption(location: coordinate);
     final search = BMFReverseGeoCodeSearch();
     search.onGetReverseGeoCodeSearchResult(
       callback: (result, error) {
-        if (error != BMFSearchErrorCode.NO_ERROR) return;
+        if (error != BMFSearchErrorCode.NO_ERROR) {
+          debugPrint("逆地理编码错误码：$error");
+          return;
+        }
         setState(() {
           _poiList = result.poiList ?? [];
           // 更新当前定位信息为逆地理编码结果
           _currentLocation = BaiduLocation(
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
-            address: result.address ?? "未知地址", // 使用逆地理编码地址
+            address: result.address ?? "未知地址",
             country: result.addressDetail?.country,
             province: result.addressDetail?.province,
             city: result.addressDetail?.city,
@@ -249,26 +249,25 @@ class _MapChoosePageState extends State<MapChoosePage> {
   void _onSuggestionTap(BMFSuggestionInfo info) {
     if (info.location == null) return;
     final coordinate = info.location!;
-    // 立即更新定位信息（临时地址）
+    debugPrint("点击建议：${info.key}, 坐标：${coordinate.latitude}, ${coordinate.longitude}");
     setState(() {
       _currentLocation = BaiduLocation(
           latitude: coordinate.latitude,
           longitude: coordinate.longitude,
-          address: _buildTemporaryAddress(info), // 构建临时地址
+          address: _buildTemporaryAddress(info),
           city: info.city,
-          district: info.district
-      );
+          district: info.district);
     });
     _mapController.updateMapOptions(BMFMapOptions(
       center: coordinate,
       zoomLevel: 17,
     ));
-    _getPoiByLocation(coordinate); // 后续会通过逆地理编码更新详细地址
+    _getPoiByLocation(coordinate);
     _searchController.clear();
     FocusScope.of(context).unfocus();
   }
 
-// 构建临时地址的辅助方法
+  // 构建临时地址的辅助方法
   String _buildTemporaryAddress(BMFSuggestionInfo info) {
     return [
       info.city?.replaceAll("市", "") ?? "",
@@ -276,22 +275,27 @@ class _MapChoosePageState extends State<MapChoosePage> {
       info.key ?? ""
     ].join(" ");
   }
+
   /// 处理搜索建议结果
-  void _onSuggestSearchResult(BMFSuggestionSearchResult result, BMFSearchErrorCode error) {
+  void _onSuggestSearchResult(
+      BMFSuggestionSearchResult result, BMFSearchErrorCode error) {
     if (error != BMFSearchErrorCode.NO_ERROR) {
-      print("搜索失败，错误码：$error");
+      debugPrint("搜索建议出错，错误码：$error");
       return;
     }
+    debugPrint("搜索建议返回：${result.suggestionList?.length ?? 0}条数据");
     setState(() {
       _suggestionList = result.suggestionList ?? [];
       _isSearch = true;
     });
   }
+
   /// 执行搜索建议请求
   void _searchLocation(String keyword) async {
+    debugPrint("开始搜索：$keyword");
     final option = BMFSuggestionSearchOption(
       keyword: keyword,
-      cityname: _currentLocation.city ?? "全国", // 使用当前定位城市
+      cityname: _currentLocation.city ?? "全国",
     );
     await _suggestionSearch.suggestionSearch(option);
   }
@@ -307,8 +311,8 @@ class _MapChoosePageState extends State<MapChoosePage> {
             onPressed: _updateMapToCurrentLocation,
           ),
           TextButton(
-            onPressed: (){
-              print('返回的数据：');
+            onPressed: () {
+              debugPrint('返回的数据：lat=${_currentLocation.latitude}, lng=${_currentLocation.longitude}, address=${_currentLocation.address}');
               Navigator.pop(context, {
                 "latitude": _currentLocation.latitude,
                 "longitude": _currentLocation.longitude,
@@ -358,7 +362,10 @@ class _MapChoosePageState extends State<MapChoosePage> {
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
-                  onPressed: () => _searchController.clear(),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() => _isSearch = false);
+                  },
                 ),
               ),
             ),
@@ -381,7 +388,7 @@ class _MapChoosePageState extends State<MapChoosePage> {
         return ListTile(
           leading: const Icon(Icons.location_on),
           title: Text(info.key ?? "未知地点"),
-          subtitle: Text("${info.city} ${info.district}"),
+          subtitle: Text("${info.city ?? ""} ${info.district ?? ""}"),
           onTap: () => _onSuggestionTap(info),
         );
       },
@@ -398,6 +405,7 @@ class _MapChoosePageState extends State<MapChoosePage> {
           title: Text(poi.name ?? "未知名称"),
           subtitle: Text(poi.address ?? "无地址信息"),
           onTap: () {
+            debugPrint("点击POI: ${poi.name}");
             _mapController.updateMapOptions(BMFMapOptions(
               center: poi.pt,
               zoomLevel: 18,

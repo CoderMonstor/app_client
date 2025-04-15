@@ -188,7 +188,7 @@ class ItemBuilderPost {
                   SizedBox(
                     height: ScreenUtil().setHeight(50),
                     child: comment.avatarUrl == '' || comment.avatarUrl == null
-                        ? Image.asset("images/flutter_logo.png")
+                        ? Image.asset("assets/images/head/head.jpg")
                         : ClipOval(
                           child: ExtendedImage.network('${NetConfig.ip}/images/${comment.avatarUrl!}', cache: true),
                     ),
@@ -197,7 +197,7 @@ class ItemBuilderPost {
               ),
             ),
             center: SizedBox(
-              width: 350,
+              width: 350.w,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

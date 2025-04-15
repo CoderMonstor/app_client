@@ -118,24 +118,6 @@ class _ResaleCommentDialogState extends State<ResaleCommentDialog> {
     _textController.text += '\n';
   }
 
-  void updateEmojiStatus() {
-    change() {
-      _showEmoji = !_showEmoji;
-      if (mounted) setState(() {});
-    }
-    if (_showEmoji) {
-      change();
-    } else {
-      if (MediaQuery.of(context).viewInsets.bottom != 0.0) {
-        SystemChannels.textInput.invokeMethod('TextInput.hide').whenComplete(
-              () {Future.delayed(const Duration(milliseconds: 40), (){
-            change();
-          });},);
-      } else {
-        change();
-      }
-    }
-  }
 
   _buildTextFiled() {
     return Card(

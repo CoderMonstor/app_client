@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../../util/my_icon/my_icon.dart';
 import 'fans_page.dart';
 import 'follow_page.dart';
-import '../resale/common_goods_page.dart';
 
 class AboutMePage extends StatefulWidget {
   const AboutMePage({super.key});
@@ -212,7 +211,7 @@ class _AboutMePageState extends State<AboutMePage> with AutomaticKeepAliveClient
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              _buildShowNum(model.user.postNum==null ? '0' : model.user.postNum.toString() , '动态', const CommonGoodsPage()),
+                              // _buildShowNum(model.user.postNum==null ? '0' : model.user.postNum.toString() , '动态', const CommonGoodsPage()),
                               Container(
                                 height: 40,
                                 decoration: BoxDecoration(

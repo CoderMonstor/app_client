@@ -59,34 +59,34 @@ class _ChatPageState extends State<ChatPage> {
       _historyMessageList.addAll(messages);
       //把_historyMessageList顺序反转，message.messageType保持不变
       _historyMessageList = _historyMessageList.reversed.toList();
+      // 更新 _messageList，确保历史消息能够显示
+      setState(() {
+        _messageList.addAll(_historyMessageList);
+      });
     }
 
-    // channel = IOWebSocketChannel.connect("ws://47.109.108.66:8003");
-    channel = IOWebSocketChannel.connect("ws://192.168.1.108:8003");
-    var data = {
-      "userId": Global.profile.user?.userId.toString(),
-      "type": "REGISTER"
-    };
-    // 注册登录
-    channel.sink.add(const JsonEncoder().convert(data));
-    channel.stream.listen((data) {
-      Map res = jsonDecode(data);
-      print(res);
-      if (res['status'] != -1) {
-        var receive = ReceiveMsg.fromJson(res['data']);
-        if (receive.fromUserId != null &&
-            receive.fromUserId == widget.user?.userId.toString()) {
-          _messageList.insert(0, Message(receive.content!, 2));
-          setState(() {});
-        }
-      }
-    });
+    try {
+      channel = IOWebSocketChannel.connect("ws://47.109.108.66:8003");
+      print("WebSocket连接尝试中...");
 
+      channel.ready.then((_) {
+        print("WebSocket连接成功");
+        var registerData = {
+          "userId": Global.profile.user?.userId.toString(),
+          "type": "REGISTER"
+        };
+        channel.sink.add(jsonEncode(registerData));
+      });
 
-    // 把_historyMessageList加到_messageList后面
-    _messageList.addAll(_historyMessageList);
-    print("-------------------------------_messageList :${_messageList}");
-    setState(() {}); // 通知框架更新UI
+      channel.stream
+        ..handleError((error) => print("WebSocket错误: $error"))
+        ..listen((data) {
+          print("收到服务器数据: $data");
+          // 原有处理逻辑...
+        });
+    } catch (e) {
+      print("初始化WebSocket失败: $e");
+    }
   }
 
   @override
@@ -184,7 +184,7 @@ class _ChatPageState extends State<ChatPage> {
       width: ScreenUtil().setWidth(35),
       height: ScreenUtil().setHeight(35),
       child: avatar == ''
-          ? Image.asset("images/app_logo.png")
+          ? Image.asset("images/head/head.jpg")
           : ClipOval(
             child: ExtendedImage.network('${NetConfig.ip}/images/$avatar', cache: true),
       ),
@@ -255,18 +255,32 @@ class _ChatPageState extends State<ChatPage> {
       channel.sink.add(const JsonEncoder().convert(data));
       _textController.text = '';
     }
+    // if (_textController.text.isEmpty) return;
+    //
+    // final message = {
+    //   "fromUserId": Global.profile.user?.userId,
+    //   "toUserId": widget.user?.userId,
+    //   "content": _textController.text,
+    //   "type": "SINGLE_SENDING"  // 根据服务器协议调整
+    // };
+    //
+    // print("发送消息: ${jsonEncode(message)}");
+    //
+    // if (channel.closeCode != null) {
+    //   print("连接已关闭，尝试重连...");
+    //   initializeAsyncTask(); // 尝试重新连接
+    //   return;
+    // }
+    //
+    // try {
+    //   channel.sink.add(jsonEncode(message));
+    //   setState(() {
+    //     _messageList.insert(0, Message(_textController.text, 1));
+    //   });
+    //   _textController.clear();
+    // } catch (e) {
+    //   print("消息发送失败: $e");
+    // }
   }
 
-  // _buildAvatar(int type) {
-  //   var avatar =
-  //   type == 1 ? Global.profile.user?.avatarUrl : widget.user?.avatarUrl;
-  //   return SizedBox(
-  //     height: ScreenUtil().setHeight(40),
-  //     child: avatar == ''
-  //         ? Image.asset("images/app_logo.png")
-  //         : ClipOval(
-  //           child: ExtendedImage.network('${NetConfig.ip}/images/$avatar', cache: true),
-  //     ),
-  //   );
-  // }
 }

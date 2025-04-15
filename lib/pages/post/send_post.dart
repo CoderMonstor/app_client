@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:client/core/global.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
@@ -17,7 +18,6 @@ import '../../core/net/net.dart';
 import '../../core/net/net_request.dart';
 import '../../util/my_icon/my_icon.dart';
 import '../../util/permission_request.dart';
-import '../../util/text_util/emoji_text.dart';
 import '../../util/text_util/special_text_span.dart';
 import '../../util/toast.dart';
 import '../../util/upload.dart';
@@ -36,8 +36,6 @@ class _SendPostPageState extends State<SendPostPage> {
 
   List<AssetEntity> images = [];
   TextEditingController _textController = TextEditingController();
-  late double _keyboardHeight= 0;
-  late bool _showEmoji;
   final FocusNode _focusNode = FocusNode();
   late int _maxImgNum;
   late PermissionUtil _permissionUtil;
@@ -54,7 +52,6 @@ class _SendPostPageState extends State<SendPostPage> {
   }
   @override
   void initState() {
-    _showEmoji = false;
     _maxImgNum = widget.type==1 ? 9:1;
     if(widget.text!='' && widget.text!= null){
       _textController.text='//@${widget.post?.username} :${widget.text}';
@@ -74,8 +71,6 @@ class _SendPostPageState extends State<SendPostPage> {
   Widget build(BuildContext context) {
     var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     if (keyboardHeight > 0) {
-      _keyboardHeight = keyboardHeight;
-      _showEmoji = false;
     }
 
     return Scaffold(
@@ -300,7 +295,7 @@ class _SendPostPageState extends State<SendPostPage> {
         imageUrl=imageUrl.substring(0,imageUrl.length-1);
       }
       var map ={
-        'userId':model.user.userId,
+        'userId':Global.profile.user?.userId,
         'text': text,
         'imageUrl':imageUrl,
         'date':now.toString().substring(0,19),

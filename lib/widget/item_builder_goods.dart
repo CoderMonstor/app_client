@@ -273,6 +273,7 @@ class ItemBuilderGoods {
         crossAxis: CrossAxisAlignment.start,
         betweenLeadingAndCenter: 10,
         top: 10,
+        left: 10,
         leading: InkWell(
           onTap: () {
             Navigator.push(context,
@@ -294,7 +295,7 @@ class ItemBuilderGoods {
           ),
         ),
         center: SizedBox(
-          width: 350,
+          width: 330.w,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

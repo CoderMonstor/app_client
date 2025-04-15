@@ -12,8 +12,9 @@ import '../../widget/build_indicator.dart';
 
 class CommonGoodsPage extends StatefulWidget{
   final int? type;
+  final int? userId;
   final String? str;
-  const CommonGoodsPage({super.key, this.type, this.str});
+  const CommonGoodsPage({super.key, this.type, this.str, this.userId});
 
   @override
   State<StatefulWidget> createState() {
@@ -27,7 +28,7 @@ class _CommonGoodsPageState extends State<CommonGoodsPage> {
   @override
   void initState() {
     super.initState();
-    _goodsRepository = GoodsRepository(Global.profile.user!.userId!, widget.type!,widget.str);
+    _goodsRepository = GoodsRepository(widget.userId!, widget.type!,widget.str);
   }
 
   @override

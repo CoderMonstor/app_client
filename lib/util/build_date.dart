@@ -67,5 +67,8 @@ String buildActivityTime(String dateTimeStr) {
       return "Invalid date format";
     }
   }
-  return DateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime); // 格式化为 "yyyy-MM-dd HH:mm:ss"
+  return DateFormat("yyyy-MM-dd HH:mm").format(dateTime); // 格式化为 "yyyy-MM-dd HH:mm:ss"
+}
+String buildFormatTime(DateTime dateTime){
+  return DateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
 }

@@ -1,4 +1,5 @@
 import 'package:client/pages/activity/common_activity.dart';
+import 'package:client/pages/post/common_post.dart';
 import 'package:client/pages/resale/common_goods_page.dart';
 import 'package:client/pages/user/qr_page.dart';
 import 'package:client/util/my_icon/my_app_icons.dart';
@@ -12,7 +13,10 @@ import 'package:loading_more_list/loading_more_list.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/global.dart';
+import '../../core/list_repository/activity_repo.dart';
+import '../../core/list_repository/goods_repo.dart';
 import '../../core/list_repository/post_repo.dart';
+import '../../core/model/activity.dart';
 import '../../core/model/post.dart';
 import '../../core/model/theme_model.dart';
 import '../../core/model/user.dart';
@@ -24,6 +28,7 @@ import '../../util/my_icon/my_icon.dart';
 import '../../util/toast.dart';
 import '../../widget/build_indicator.dart';
 import '../../widget/flexible_detail_bar.dart';
+import '../../widget/my_card/activity_card.dart';
 import '../../widget/my_card/post_card.dart';
 import '../../widget/my_list_tile.dart';
 import '../mobile_scan_dialog.dart';
@@ -39,8 +44,7 @@ class ProfilePage extends StatefulWidget {
   State<StatefulWidget> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   late User _user;
   late TabController _tabController;
   late PageController _pageController;
@@ -61,7 +65,6 @@ class _ProfilePageState extends State<ProfilePage>
     var downLock = true;
     var upLock = false;
     _scrollController.addListener(() {
-      //滚动了140px之后锁定上拉
       if (_scrollController.position.pixels > 140 && downLock) {
         setState(() {
           _offLittleAvatar = false;
@@ -92,7 +95,6 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return Material(
-      //异步加载数据，并显示加载结果
       child: FutureBuilder(
           future: _future,
           builder: (context, snap){
@@ -106,7 +108,6 @@ class _ProfilePageState extends State<ProfilePage>
               }
             }else{
               return Center(
-                //加载中
                 child: SpinKitRing(
                   lineWidth: 3,
                   color: Theme.of(context).primaryColor,
@@ -135,18 +136,43 @@ class _ProfilePageState extends State<ProfilePage>
         },
         controller: _pageController,
         children: <Widget>[
-          LoadingMoreList(
-            ListConfig<Post>(
-              itemBuilder: (BuildContext context, Post item, int index){
-                // return PostCard(post: item,list: _postRepository,index: index);
-                return PostCard(post: item,index: index);
-              },
-              sourceList: _postRepository,
-              indicatorBuilder: _buildIndicator,
-            ),
-          ),
-          const CommonGoodsPage(type: 3,),
-          const CommonActivity(type: 2,)
+          CommonPostPage(type: 1,userId: _user.userId ?? _localUser!.userId),
+          // LoadingMoreList(
+          //   ListConfig<Post>(
+          //     itemBuilder: (BuildContext context, Post item, int index){
+          //       // return PostCard(post: item,list: _postRepository,index: index);
+          //       return PostCard(post: item,index: index);
+          //     },
+          //     sourceList: _postRepository,
+          //     indicatorBuilder: _buildIndicator,
+          //   ),
+          // ),
+          CommonGoodsPage(type: 3,userId: _user.userId ?? _localUser!.userId,),
+          // LoadingMoreList(
+          //   ListConfig<Goods>(
+          //     itemBuilder: (BuildContext context, Goods item, int index){
+          //       return MyGoodsCard(goods: item);
+          //     },
+          //     sourceList: _goodsRepository,
+          //     indicatorBuilder: _buildIndicator,
+          //     padding: EdgeInsets.only(
+          //         top:ScreenUtil().setWidth(20),
+          //         left: ScreenUtil().setWidth(20),
+          //         right: ScreenUtil().setWidth(20)
+          //     ),
+          //   ),
+          // ),
+          CommonActivity(type: 2,userId: _user.userId ?? _localUser!.userId,)
+          // LoadingMoreList(
+          //   ListConfig<Activity>(
+          //     itemBuilder: (BuildContext context, Activity item, int index){
+          //       // return PostCard(post: item,list: _postRepository,index: index);
+          //       return ActivityCard(activity: item);
+          //     },
+          //     sourceList: _activityRepository,
+          //     indicatorBuilder: _buildIndicator,
+          //   ),
+          // ),
         ],
       ),
     );
@@ -155,8 +181,7 @@ class _ProfilePageState extends State<ProfilePage>
   Widget _buildIndicator(BuildContext context, IndicatorStatus status) {
     return buildIndicator(context, status, _postRepository);
   }
-  List<Widget> _headerSliverBuilder(
-      BuildContext context, bool innerBoxIsScrolled) {
+  List<Widget> _headerSliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
     return <Widget>[_sliverAppBar(context)];
   }
 
@@ -178,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage>
           },
         ),
         Container(
-          margin: EdgeInsets.only(right: ScreenUtil().setWidth(24)),
+          margin: EdgeInsets.only(right: ScreenUtil().setWidth(20)),
           child: TextButton(
             child: const Icon(MyIcons.setting, color: Colors.white),
             onPressed: () {
@@ -298,7 +323,6 @@ class _ProfilePageState extends State<ProfilePage>
               Expanded(flex: 1,child: Container(),),
               Text(
                   _user.bio ?? '这个人很懒，什么都没写',
-                  // '这个人很懒，什么都没写',
                   style: TextStyle(
                       fontSize: ScreenUtil().setSp(16),
                       color: Colors.white)),
@@ -348,9 +372,7 @@ class _ProfilePageState extends State<ProfilePage>
                 labelColor: Theme.of(context).colorScheme.secondary,
                 unselectedLabelColor: themeModel.isDark?Colors.white:Colors.grey,
                 indicatorSize: TabBarIndicatorSize.label,
-                //indicatorColor: Theme.of(context).primaryColorDark,
-                unselectedLabelStyle:
-                const TextStyle(fontWeight: FontWeight.w300),
+                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w300),
                 tabs: const <Widget>[
                   Tab(text:'动态'),
                   Tab(text:'闲置'),
@@ -372,7 +394,7 @@ class _ProfilePageState extends State<ProfilePage>
         Offstage(
           offstage: _user.gender == 2,
           child: Container(
-            margin: EdgeInsets.only(right: ScreenUtil().setWidth(20)),
+            margin: EdgeInsets.only(right: ScreenUtil().setWidth(15)),
             padding: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(4),
                 horizontal: ScreenUtil().setWidth(20)),
             decoration: BoxDecoration(
@@ -463,7 +485,6 @@ class _ProfilePageState extends State<ProfilePage>
       }
     }
   }
-
 
   String ageBuilder() {
 

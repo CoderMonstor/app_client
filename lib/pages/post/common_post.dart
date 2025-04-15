@@ -19,7 +19,8 @@ class CommonPostPage extends StatefulWidget {
   final int? type;
   final String? str;
   final String? orderBy;
-  const CommonPostPage({super.key, this.type, this.str, this.orderBy});
+  final int? userId;
+  const CommonPostPage({super.key, this.type, this.str, this.orderBy, this.userId});
   @override
   State<StatefulWidget> createState() {
     return _CommonPostPageState();
@@ -31,7 +32,7 @@ class _CommonPostPageState extends State<CommonPostPage> {
   @override
   void initState() {
     super.initState();
-    _postRepository =  PostRepository(Global.profile.user!.userId!, widget.type!,widget.str,widget.orderBy);
+    _postRepository =  PostRepository(widget.userId!, widget.type!,widget.str,widget.orderBy);
   }
 
   @override

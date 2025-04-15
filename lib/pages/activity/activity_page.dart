@@ -1,12 +1,9 @@
 import 'package:client/core/list_repository/activity_repo.dart';
 import 'package:client/pages/activity/common_activity.dart';
 import 'package:client/util/app_bar/my_app_bar.dart';
-import 'package:client/widget/my_card/activity_card.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../core/global.dart';
-import '../../core/model/activity.dart';
 import '../../widget/send_button.dart';
 
 
@@ -21,15 +18,7 @@ class GatherPage extends StatefulWidget {
 class _GatherPageState extends State<GatherPage> {
   final GlobalKey _fabKey = GlobalKey(); // 用于定位FAB位置
   bool _isFabExpanded = false;
-  late ActivityRepo _activityRepo;
-  /// 处理外部点击事件，用于判断点击位置是否在Floating Action Button (FAB) 外部，
-  /// 如果在外部且FAB处于展开状态，则将其收起。
-  ///
-  /// 参数:
-  ///   - `event`: PointerDownEvent对象，包含点击事件的位置信息。
-  ///
-  /// 返回值:
-  ///   - 无返回值，但会根据点击位置更新FAB的展开状态。
+
   void _handleOutsideTap(PointerDownEvent event) {
     // 获取FAB的渲染对象，用于计算FAB的位置和大小
     final RenderBox? fabRenderBox =
@@ -40,10 +29,8 @@ class _GatherPageState extends State<GatherPage> {
       // 获取FAB的大小和位置
       final fabSize = fabRenderBox.size;
       final fabOffset = fabRenderBox.localToGlobal(Offset.zero);
-
       // 获取点击事件的位置
       final tapPosition = event.position;
-
       // 判断点击位置是否在FAB内部
       final isInsideFab = tapPosition.dx >= fabOffset.dx &&
           tapPosition.dx <= fabOffset.dx + fabSize.width &&
@@ -60,17 +47,11 @@ class _GatherPageState extends State<GatherPage> {
   @override
   void initState() {
     super.initState();
-    _initialData();
-  }
-
-  Future<void> _initialData() async {
-    _activityRepo = ActivityRepo(Global.profile.user!.userId!,1);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _activityRepo.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -78,7 +59,7 @@ class _GatherPageState extends State<GatherPage> {
       onPointerDown: _handleOutsideTap,
       child: Scaffold(
         appBar: MyAppbar.buildNormalAppbar(context, false, true, null, null),
-        body:  const CommonActivity(type: 1),
+        body:  CommonActivity(type: 1,userId: Global.profile.user!.userId!,),
         floatingActionButton: SendButton(
           key: _fabKey, // 绑定GlobalKey
           isExpanded: _isFabExpanded,

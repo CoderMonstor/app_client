@@ -57,7 +57,7 @@ class NetRequester {
       }
     } on DioException catch (e) {
       if (kDebugMode) {
-        print('dioError::::::::$e');
+        print('dioError:::::::::::::::::$e');
       }
       switch (e.type) {
         case DioExceptionType.cancel:

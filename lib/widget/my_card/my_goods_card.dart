@@ -5,7 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../core/global.dart';
 import '../../core/model/goods.dart';
+import '../../core/net/my_api.dart';
+import '../../core/net/net_request.dart';
+import '../../pages/resale/edit_goods.dart';
+import '../../util/toast.dart';
 import '../dialog_build.dart';
 class MyGoodsCard extends StatefulWidget {
   final Goods goods;
@@ -22,94 +27,117 @@ class _MyGoodsCardState extends State<MyGoodsCard> {
   }
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onLongPress: () {
-        DialogBuild.showGoodsDialog(context, widget.goods.goodsId);
+    return MyListTile(
+      onTap: () {
+        Navigator.push(context, CupertinoPageRoute(builder: (context)=>GoodsDetailPage(goodsId: widget.goods.goodsId!)));
       },
-      child: MyListTile(
-        onTap: () {
-          Navigator.push(context, CupertinoPageRoute(builder: (context)=>GoodsDetailPage(goodsId: widget.goods.goodsId!)));
-        },
-        bottom: 20.h,
-        leading: Container(
-          width: 80.w,
-          height: 80.w,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.r),
-            image: DecorationImage(
-              image: NetworkImage(_getImageUrl()),
-              fit: BoxFit.cover,
+      bottom: 20.h,
+      leading: Stack(
+        children: [
+          Container(
+            width: 80.w,
+            height: 80.w,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.r),
+              image: DecorationImage(
+                image: NetworkImage(_getImageUrl()),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        center: Column(
-          children: [
-            Row(
-              children: [
-                SizedBox(width:15.w),
-                SizedBox(
-                  width: 200.w,
-                  child: SizedBox(
-                    child: Text(widget.goods.goodsName ?? '未命名商品',
-                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
+          if (widget.goods.sellStatus=='1')
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: Colors.redAccent.withOpacity(0.8),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(6.r),
+                    bottomRight: Radius.circular(8.r),
                   ),
                 ),
-              ],
+                child: Text(
+                  '已售',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            SizedBox(height: 20.h),
-            Row(
-              children: [
-                SizedBox(width: 15.w),
-                SizedBox(
-                  width: 200.w,
-                  child: Text(widget.goods.goodsDesc!,
-                      style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+        ],
+      ),
+      center: Column(
+        children: [
+          Row(
+            children: [
+              SizedBox(width:15.w),
+              SizedBox(
+                width: 200.w,
+                child: SizedBox(
+                  child: Text(widget.goods.goodsName ?? '未命名商品',
+                      style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
+
                 ),
-              ],
-            ),
-            // Row(
-            //   children: [
-            //     Offstage(
-            //       offstage: widget.goods.type=='1',
-            //       child:widget.goods.status=='0'?
-            //       TextButton(onPressed: () async{
-            //         var res=await NetRequester.request(Apis.updateSaleOrNot(widget.goods.goodsId!));
-            //         if(res['code'] == '1'){
-            //           setState(() {
-            //             widget.goods.status='1';
-            //           });
-            //         }
-            //         }, child: const Text('下架')):
-            //       TextButton(onPressed: ()async{
-            //         var res=await NetRequester.request(Apis.updateSaleOrNot(widget.goods.goodsId!));
-            //         if(res['code'] == '1'){
-            //           setState(() {
-            //             widget.goods.status='0';
-            //           });
-            //         }
-            //       }, child: const Text('上架')),
-            //     ),
-            //     TextButton(onPressed: ()async{
-            //       var res=await NetRequester.request(Apis.deleteGoods(widget.goods.goodsId!));
-            //       if(res['code'] == '1'){
-            //         Toast.popToast('已删除');
-            //       }
-            //     }, child: const Text('删除')),
-            //     TextButton(onPressed: () async{
-            //       Navigator.push(context, CupertinoPageRoute(builder: (context)=>EditGoods(goodsId: widget.goods.goodsId!)));
-            //       }, child: const Text('编辑')),
-            //   ],
-            // )
-          ],
-        ),
-        trailing: _buildSellOrNot(),
-        ),
-    );
+              ),
+            ],
+          ),
+          SizedBox(height: 20.h),
+          Row(
+            children: [
+              SizedBox(width: 15.w),
+              SizedBox(
+                width: 200.w,
+                child: Text(widget.goods.goodsDesc!,
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          if(widget.goods.userId==Global.profile.user!.userId)
+          Row(
+            children: [
+              Offstage(
+                offstage: widget.goods.type=='1',
+                child:widget.goods.status=='0'?
+                TextButton(onPressed: () async{
+                  var res=await NetRequester.request(Apis.updateSaleOrNot(widget.goods.goodsId!));
+                  if(res['code'] == '1'){
+                    setState(() {
+                      widget.goods.status='1';
+                    });
+                  }
+                  }, child: const Text('下架')):
+                TextButton(onPressed: ()async{
+                  var res=await NetRequester.request(Apis.updateSaleOrNot(widget.goods.goodsId!));
+                  if(res['code'] == '1'){
+                    setState(() {
+                      widget.goods.status='0';
+                    });
+                  }
+                }, child: const Text('上架')),
+              ),
+              TextButton(onPressed: ()async{
+                var res=await NetRequester.request(Apis.deleteGoods(widget.goods.goodsId!));
+                if(res['code'] == '1'){
+                  Toast.popToast('已删除');
+                }
+              }, child: const Text('删除')),
+              TextButton(onPressed: () async{
+                Navigator.push(context, CupertinoPageRoute(builder: (context)=>EditGoods(goodsId: widget.goods.goodsId!)));
+                }, child: const Text('编辑')),
+            ],
+          )
+        ],
+      ),
+      trailing: _buildSellOrNot(),
+      );
   }
   Widget _buildSellOrNot(){
     return Container(

@@ -1,9 +1,15 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:client/core/global.dart';
+import 'package:client/core/net/net_request.dart';
 import 'package:flutter/material.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import 'package:intl/intl.dart';  // 用于格式化日期
+// 用于格式化日期
 
+import '../../util/toast.dart';
+import '../../util/upload.dart';
 import '../location_picker_page.dart';
-import '../map_full.dart';
 
 class PostActivityPage extends StatefulWidget {
   const PostActivityPage({Key? key}) : super(key: key);
@@ -117,7 +123,7 @@ class _PostActivityPageState extends State<PostActivityPage> {
   String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
   // 提交表单
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       // 打印提交数据，仅供调试
@@ -128,10 +134,68 @@ class _PostActivityPageState extends State<PostActivityPage> {
       print("活动详情: $_details");
       print("选择的图片数量: ${_selectedAssets.length}");
 
-      // 可在此处调用接口或其他业务逻辑
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('活动发布成功！')),
-      );
+      if(_selectedAssets.isEmpty){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('请选择至少一张图片！')),
+        );
+      }else{
+        var flag=1;
+        String imageUrl="";
+        for (final asset in _selectedAssets) {
+          try {
+            // 1. 获取文件名和扩展名
+            final String? fileName = asset.title; // 获取带扩展名的文件名（如 "IMG_1234.JPG"）
+            final String extension = fileName != null && fileName.contains('.')
+                ? '.${fileName.split('.').last}' // 提取扩展名（如 ".JPG"）
+                : '.jpg'; // 默认扩展名
+
+            // 2. 生成唯一文件名
+            final String timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+            final String filename = '${Global.profile.user?.userId}_$timeStamp$extension';
+
+            // 3. 获取文件二进制数据
+            final File? file = await asset.file; // 获取原图文件
+            if (file == null) {
+              Toast.popToast('文件读取失败');
+              flag = 0;
+              continue;
+            }
+            final Uint8List fileData = await file.readAsBytes();
+
+            // 4. 上传文件
+            final res = await UpLoad.upLoad(fileData, filename);
+            if (res == 0) {
+              Toast.popToast('上传失败请重试');
+              flag = 0;
+            } else {
+              imageUrl += "/images/$filename￥";
+            }
+          } catch (e) {
+            flag = 0;
+            debugPrint('上传错误: $e');
+          }
+        }
+        if (flag == 1) {
+          var now=DateTime.now();
+          var result;
+          var map={
+            "hostUserId": Global.profile.user?.userId,
+            "activityName": _activityName,
+            "activityImage": imageUrl,
+            "activityTime": _activityTime,
+            "location": _locationController.text,
+            "maxParticipants": _maxParticipants,
+            "details": _details,
+          };
+          result =await NetRequester.request('/activity/add',data: map);
+          if(result['code'=='1']){
+            Toast.popToast('活动发布成功');
+            Navigator.pop(context);
+          }else{
+            Toast.popToast('活动发布失败');
+          }
+        }
+      }
     }
   }
 
@@ -183,6 +247,7 @@ class _PostActivityPageState extends State<PostActivityPage> {
     return TextFormField(
       decoration: const InputDecoration(
         labelText: '最大参与人数',
+        hintText: '不包含活动组织者',
         border: OutlineInputBorder(),
       ),
       keyboardType: TextInputType.number,

@@ -1,6 +1,7 @@
 import 'package:client/util/app_bar/my_app_bar.dart';
 import 'package:client/widget/send_button.dart';
 import 'package:flutter/material.dart';
+import '../../core/global.dart';
 import 'common_post.dart';
 
 class PostPage extends StatefulWidget {
@@ -16,14 +17,15 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
   final GlobalKey _fabKey = GlobalKey(); // 用于定位FAB位置
   final List<Widget> _pageList = [];
   bool _isFabExpanded = false;
+  final int? _userId=Global.profile.user?.userId;
 
   @override
   void initState() {
     super.initState();
     _pageList
-      ..add(const CommonPostPage(type: 5))
-      ..add(const CommonPostPage(type: 6))
-      ..add(const CommonPostPage(type: 2));
+      ..add(CommonPostPage(type: 5, userId: _userId))
+      ..add(CommonPostPage(type: 6, userId: _userId))
+      ..add(CommonPostPage(type: 2, userId: _userId));
     _tabController = TabController(length: 3, vsync: this);
     _pageController = PageController();
   }

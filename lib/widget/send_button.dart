@@ -1,10 +1,8 @@
 import 'package:client/pages/post/send_post.dart';
-import 'package:client/pages/resale/goods_post.dart';
 import 'package:client/pages/resale/post_resale.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../pages/activity/post_activity.dart';
 
 class SendButton extends StatefulWidget {
@@ -16,6 +14,7 @@ class SendButton extends StatefulWidget {
     required this.onToggle,
     required this.isExpanded,
   });
+
   @override
   State<SendButton> createState() => _SendButtonState();
 }
@@ -23,10 +22,20 @@ class SendButton extends StatefulWidget {
 class _SendButtonState extends State<SendButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final List<IconData> _icons = [
-    Icons.ac_unit,
-    Icons.cabin,
-    Icons.ice_skating,
+  final List<Map<String, dynamic>> _buttons = [
+
+    {
+      'icon': Icons.post_add, // 普通发帖图标
+      'page': const SendPostPage(type: 1),
+    },
+    {
+      'icon': Icons.sell, // 商品转售图标
+      'page': const SendResalePage(),
+    },
+    {
+      'icon': Icons.event, // 活动发布图标
+      'page': const PostActivityPage(),
+    },
   ];
 
   @override
@@ -51,18 +60,16 @@ class _SendButtonState extends State<SendButton>
     widget.isExpanded ? _controller.forward() : _controller.reverse();
   }
 
-  void _toggleMenu() {
-    widget.onToggle(!widget.isExpanded);
-  }
+  void _toggleMenu() => widget.onToggle(!widget.isExpanded);
 
   void _navigateToPage(int index) {
-    const pages = [SendResalePage(), BuyingRequestPage(), PostActivityPage()];
     Navigator.push(
       context,
-      CupertinoPageRoute(builder: (context) => pages[index]),
+      CupertinoPageRoute(builder: (_) => _buttons[index]['page']),
     );
     _toggleMenu();
   }
+
   @override
   Widget build(BuildContext context) {
     final fabSize = ScreenUtil().setWidth(56);
@@ -75,8 +82,7 @@ class _SendButtonState extends State<SendButton>
         alignment: Alignment.bottomRight,
         clipBehavior: Clip.none,
         children: [
-          // 修改点：使用 widget.isExpanded
-          ...List.generate(_icons.length, (index) {
+          ...List.generate(_buttons.length, (index) {
             final offsetY = (fabSize + spacing) * (index + 1) + ScreenUtil().setHeight(20);
             return AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
@@ -100,16 +106,13 @@ class _SendButtonState extends State<SendButton>
       onPressed: _toggleMenu,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
-        child: widget.isExpanded // 修改点：使用父级状态
-            ? IconButton(
-          onPressed: () => Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (context) => const SendPostPage(type: 1)),
-          ),
-              icon: const Icon(Icons.accessibility_new_rounded),
-        )
-            : const Icon(Icons.add),
+        transitionBuilder: (child, animation) => RotationTransition(
+          turns: animation,
+          child: child,
+        ),
+        child: widget.isExpanded
+            ? const Icon(Icons.close, key: ValueKey('close'))
+            : const Icon(Icons.add, key: ValueKey('add')),
       ),
     );
   }
@@ -123,12 +126,11 @@ class _SendButtonState extends State<SendButton>
       child: FadeTransition(
         opacity: _controller,
         child: FloatingActionButton(
-          heroTag: 'btn$index',
+          heroTag: 'fab_$index',
           onPressed: () => _navigateToPage(index),
-          child: Icon(_icons[index]),
+          child: Icon(_buttons[index]['icon']),
         ),
       ),
     );
   }
 }
-

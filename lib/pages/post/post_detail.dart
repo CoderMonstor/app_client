@@ -237,8 +237,6 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
   _postInfo() {
     return SliverToBoxAdapter(
       child: Card(
-        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ScreenUtil().setWidth(0))),
-        // margin: const EdgeInsets.all(0),
         elevation: 0,
         child: MyListTile(
           top: 20,
@@ -256,7 +254,7 @@ class _PostDetailPageState extends State<PostDetailPage> with TickerProviderStat
               child: SizedBox(
                 height: ScreenUtil().setWidth(60),
                 child:  _post.avatarUrl==''|| _post.avatarUrl == null
-                    ?Image.asset("images/flutter_logo.png")
+                    ?Image.asset("assets/images/head/head.jpg")
                     :ClipOval(
                       child: ExtendedImage.network('${NetConfig.ip}/images/${_post.avatarUrl!}',cache: true),
                 ),

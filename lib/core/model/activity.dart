@@ -13,6 +13,7 @@ class Activity {
   String? createTime;
   String? updateTime;
   int? isRegistered;
+  int? isPraised;
 
   Activity({
     this.activityId,
@@ -29,6 +30,7 @@ class Activity {
     this.createTime,
     this.updateTime,
     this.isRegistered,
+    this.isPraised,
   });
 
   // 增强版解析方法
@@ -48,6 +50,7 @@ class Activity {
       createTime: json['createTime']?.toString(),
       updateTime: json['updateTime']?.toString(),
       isRegistered: _parseInt(json['isRegistered']),
+      isPraised: _parseInt(json['isPraised']),
     );
   }
 
@@ -76,6 +79,7 @@ class Activity {
       'createTime': createTime,
       'updateTime': updateTime,
       'isRegistered': isRegistered,
+      'isPraised': isPraised,
     };
   }
 }

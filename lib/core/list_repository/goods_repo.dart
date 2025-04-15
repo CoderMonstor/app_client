@@ -44,13 +44,22 @@ class GoodsRepository  extends LoadingMoreBase<Goods>{
         url=Apis.getBuyList(pageIndex);
         break;
       case 3:
-        url=Apis.getMyGoods(pageIndex);
+        url=Apis.getGoodsById(userId, pageIndex);
         break;
       case 4:
         url=Apis.getCollectedGoodsByUserId(userId, pageIndex);
         break;
       case 5:
         url=Apis.searchGoods(key!, pageIndex);
+        break;
+      case 6:
+        url=Apis.getMyResaleGoods(userId, pageIndex);
+        break;
+      case 7:
+        url=Apis.getMyRequestGoods(userId, pageIndex);
+        break;
+      case 8:
+        url=Apis.getMyOrder(userId, pageIndex);
         break;
       default:
         throw Exception('Unsupported goods type : $type');

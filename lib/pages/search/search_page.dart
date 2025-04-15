@@ -1,4 +1,4 @@
-import 'package:client/core/list_repository/goods_repo.dart';
+import 'package:client/pages/activity/common_activity.dart';
 import 'package:client/pages/resale/common_goods_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
 
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _showTabBar=false;
     super.initState();
   }
@@ -57,7 +57,7 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
                     Tab(text: '帖子'),
                     Tab(text: '用户'),
                     Tab(text: '交易'),
-                    // Tab(text: '实时'),
+                    Tab(text: '活动'),
                   ],
                 ))
                 :Container()
@@ -69,12 +69,10 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
           _tabController.animateTo(index);
         },
         children: <Widget>[
-          CommonPostPage(type: 7,orderBy: 'hot',str: str),
+          CommonPostPage(type: 7,orderBy: 'hot',str: str,userId: Global.profile.user?.userId,),
           CommonUserPage(str: str),
-          CommonGoodsPage(type: 5,str: str)
-          // SearchGoods(str: str),
-          // CommonPostPage(type: 8,str: str),
-          // CommonPostPage(type: 7,orderBy: 'postId',str: str),
+          CommonGoodsPage(type: 5,str: str,userId: Global.profile.user?.userId,),
+          CommonActivity(type: 4,str: str,userId: Global.profile.user?.userId,)
         ],
       ):_buildSearchHistory(),
     );
@@ -96,7 +94,6 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
               focusNode: _focusNode,
               controller: _editingController,
               autofocus: true,
-              // padding: EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(0)),
               textInputAction: TextInputAction.search,
               style: TextStyle(
                   color: Colors.black,
@@ -140,21 +137,29 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
   }
 
   void sendHandler() {
-    if(_editingController.text!='' ){
+    if (_editingController.text.isNotEmpty) {
       _focusNode.unfocus();
       setState(() {
         _showTabBar = true;
         str = _editingController.text;
-        if(Global.profile.searchList!.contains(str)){
+        // 确保 searchList 为可变列表
+        if (Global.profile.searchList == null) {
+          Global.profile.searchList = [];
+        } else {
+          Global.profile.searchList = List<String>.from(Global.profile.searchList!);
+        }
+
+        if (Global.profile.searchList!.contains(str)) {
           Global.profile.searchList?.remove(str);
           Global.profile.searchList?.insert(0, str);
-        }else{
-          Global.profile.searchList?.insert(0,str);
+        } else {
+          Global.profile.searchList?.insert(0, str);
         }
         Global.saveProfile();
       });
     }
   }
+
 
   _buildSearchHistory(){
     return Container(
@@ -198,15 +203,17 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
   _buildItem(int index) {
     String? content = Global.profile.searchList?[index];
     return ActionChip(
-      label: Text(content!,style: TextStyle(fontSize: ScreenUtil().setSp(18))),
+      label: Text(content!, style: TextStyle(fontSize: ScreenUtil().setSp(18))),
       backgroundColor: Colors.black.withOpacity(0.1),
-      labelPadding: EdgeInsets.symmetric(vertical:0,horizontal: ScreenUtil().setWidth(10)),
-      onPressed: (){
+      labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: ScreenUtil().setWidth(10)),
+      onPressed: () {
         _focusNode.unfocus();
         setState(() {
           _showTabBar = true;
           str = content;
-          _editingController.text=content;
+          _editingController.text = content;
+          // 确保搜索历史列表为可变列表
+          Global.profile.searchList = List<String>.from(Global.profile.searchList!);
           Global.profile.searchList?.removeAt(index);
           Global.profile.searchList?.insert(0, str);
           Global.saveProfile();
@@ -214,5 +221,6 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
       },
     );
   }
+
 
 }

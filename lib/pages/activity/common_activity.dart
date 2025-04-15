@@ -9,10 +9,11 @@ import '../../core/global.dart';
 import '../../widget/build_indicator.dart';
 
 class CommonActivity extends StatefulWidget {
+  final int? userId;
   final int? type;
   final String? str;
   final String? orderBy;
-  const CommonActivity({super.key, this.type, this.str, this.orderBy});
+  const CommonActivity({super.key, this.type, this.str, this.orderBy,  this.userId});
   @override
   State<StatefulWidget> createState() {
     return _CommonActivityState();
@@ -20,11 +21,11 @@ class CommonActivity extends StatefulWidget {
 }
 
 class _CommonActivityState extends State<CommonActivity> {
-  late ActivityRepo _activityRepository;
+  late ActivityRepository _activityRepository;
   @override
   void initState() {
     super.initState();
-    _activityRepository =  ActivityRepo(Global.profile.user!.userId!, widget.type!,widget.str,widget.orderBy);
+    _activityRepository =  ActivityRepository(widget.userId!, widget.type!,widget.str,widget.orderBy);
   }
 
   @override
