@@ -212,7 +212,6 @@ class _MobileScanCameraDialogState extends State<MobileScanCameraDialog>
                                     image.path,
                                     formats: [BarcodeFormat.qrCode],
                                   );
-
                                   if (capture != null && capture.barcodes.isNotEmpty) {
                                     final Barcode barcode = capture.barcodes.first;
                                     if (isFirst) {

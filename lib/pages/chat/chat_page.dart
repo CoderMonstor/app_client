@@ -11,7 +11,6 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../core/global.dart';
 import '../../core/model/message.dart';
-import '../../core/model/receive_msg.dart';
 import '../../core/model/user.dart';
 import '../../core/net/my_api.dart';
 import '../../core/net/net.dart';
@@ -66,7 +65,9 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     try {
-      channel = IOWebSocketChannel.connect("ws://47.109.108.66:8003");
+      // channel = IOWebSocketChannel.connect("ws://47.109.108.66:8003");
+      // channel = IOWebSocketChannel.connect("ws://192.168.1.108:8003");
+      channel = IOWebSocketChannel.connect("ws://10.0.2.2:8003");
       print("WebSocket连接尝试中...");
 
       channel.ready.then((_) {
@@ -83,6 +84,25 @@ class _ChatPageState extends State<ChatPage> {
         ..listen((data) {
           print("收到服务器数据: $data");
           // 原有处理逻辑...
+          try {
+            final Map<String, dynamic> messageData = jsonDecode(data);
+
+            // 判断是否是消息类型
+            if (messageData['data']['type'] == 'SINGLE_SENDING') {
+              final String content = messageData['data']['content'];
+              final int senderType = messageData['data']['fromUserId'] == Global.profile.user?.userId.toString()
+                  ? 1
+                  : 0;
+
+              final Message newMessage = Message(content, senderType);
+
+              setState(() {
+                _messageList.insert(0, newMessage); // 插入到列表顶部
+              });
+            }
+          } catch (e) {
+            print("解析消息失败: $e");
+          }
         });
     } catch (e) {
       print("初始化WebSocket失败: $e");

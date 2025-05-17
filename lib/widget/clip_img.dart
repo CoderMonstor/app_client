@@ -4,8 +4,6 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-
 import '../core/global.dart';
 import '../core/net/net_request.dart';
 import '../util/clip_editor_helper.dart';
@@ -79,7 +77,6 @@ class _ClipImgPageState extends State<ClipImgPage> {
       ),
     );
   }
-
   _upLoadImg() async {
     print('---------------------------_upLoadImg have been called------------------------------------------');
     Toast.popLoading('上传中...');

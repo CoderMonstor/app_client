@@ -100,7 +100,7 @@ class _MyGoodsCardState extends State<MyGoodsCard> {
               ),
             ],
           ),
-          if(widget.goods.userId==Global.profile.user!.userId)
+          if(widget.goods.userId==Global.profile.user!.userId&&widget.goods.sellStatus=='0')
           Row(
             children: [
               Offstage(

@@ -15,6 +15,7 @@ import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../core/model/discuss.dart';
 import '../../widget/build_indicator.dart';
+import '../../widget/error_widget.dart';
 
 class ActivityDetailPage extends StatefulWidget {
   final int? activityId;
@@ -75,7 +76,23 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError || _activity == null) {
-            return const Center(child: Text('加载失败，请稍后重试', style: TextStyle(fontSize: 18)));
+            return MyErrorWidget(
+              message: _activity == null ? '活动已被删除' : '加载失败，请稍后重试',
+              onClose: () => Navigator.pop(context),
+              countdownSeconds: 3,
+              icon: _activity == null ? Icons.delete_forever : Icons.error_outline,
+              actions: [
+                if (_activity == null)
+                  TextButton(
+                    onPressed: () => Navigator.pushReplacementNamed(context, '/root'),
+                    child: const Text('返回首页'),
+                  ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('返回上一页'),
+                ),
+              ],
+            );
           }
           return Scaffold(
             body: GestureDetector(
@@ -91,7 +108,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
               ),
             ),
           );
-
         } else {
           return Center(
             child: SpinKitRing(
@@ -200,14 +216,22 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     print(_replyToDiscuss?.toJson());
     FocusScope.of(context).requestFocus(_focusNode);
   }
-  // 提交回复
 
-// 评论提交
   List<Widget> _headerSliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
     return [
-      const SliverAppBar(
+      SliverAppBar(
         pinned: true,
-        title: Text('活动详情'),
+        title: const Text('活动详情'),
+        actions: [
+          // 条件判断：当前用户是活动主持人时显示操作按钮
+          if (_activity != null && Global.profile.user?.userId == _activity!.hostUserId)
+            TextButton(
+              onPressed: (){
+                _showCancelConfirmDialog(context);
+              },
+              child: const Icon(Icons.more_horiz),
+            ),
+        ],
       ),
       if (_activity != null) _activityInfo(),
     ];
@@ -243,7 +267,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                     Toast.popToast('你是活动组织者');
                     return;
                   }
-
                   if (_activity!.isRegistered == 1) {
                     // 取消报名逻辑保持不变
                     var res = await NetRequester.request(Apis.cancelRegister(_activity!.activityId!));
@@ -431,5 +454,40 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     } catch (e) {
       print('Error submitting comment: $e');
     }
+  }
+
+  cancelActivity() async{
+      var res = await NetRequester.request(Apis.cancelActivity(widget.activityId));
+      if(res['code']=='1'){
+        Toast.popToast('取消活动成功');
+        Navigator.pop(context);
+      }else{
+        Toast.popToast('取消活动失败');
+      }
+  }
+  void _showCancelConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('确认取消活动'),
+        content: const Text('确定要取消当前活动吗？此操作不可恢复'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('再想想'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // 关闭对话框
+              cancelActivity();      // 执行取消逻辑
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red, // 强调危险操作
+            ),
+            child: const Text('确认取消'),
+          ),
+        ],
+      ),
+    );
   }
 }

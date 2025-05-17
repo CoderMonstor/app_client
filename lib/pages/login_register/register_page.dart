@@ -59,7 +59,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     decoration: const InputDecoration(
                       labelText: "验证码",
                       icon: Icon(Icons.security),
-                      //suffix是输入框右边的图标，点击后会执行onPressed回调
                     ),
                     validator: (v) {
                       if (v!.trim().length < 4) {
@@ -73,7 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   flex: 1,
                   child: TextButton(
                       onPressed: () async {
-                        if ((_formKey.currentState)?.validate() == true) {
+                        if (_emailController.text.trim().isNotEmpty) {
                           startCountdownTimer(); //点击后开始倒计时
                           Toast.popToast("验证码发送中，请稍等");
                           //请求发送验证码
@@ -110,19 +109,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 child: const Text("注册"),
                 onPressed: () async {
-                  if ((_formKey.currentState)?.validate() == true &&
-                      _emailController.text == _email) {
-                    _password = _passwordController.text;
-                    _code = _codeController.text;
-                    var result = await NetRequester.request(
-                        Apis.addUser(_email, _password, _code));
-                    // 根据服务器返回结果进行提示
-                    if (result != null) {
-                      Toast.popToast(result['msg']);
+                  final formState = _formKey.currentState;
+                  if (formState != null && formState.validate()) {
+                    // 表单整体验证通过后再比较邮箱一致性
+                    if (_emailController.text == _email) {
+                      _password = _passwordController.text;
+                      _code = _codeController.text;
+
+                      var result = await NetRequester.request(Apis.addUser(_email, _password, _code));
+                      if (result != null) {
+                        Toast.popToast(result['msg']);
+                      }
+                    } else {
+                      Toast.popToast("当前邮箱与获取验证码时不一致");
                     }
-                  } else {
-                    Toast.popToast("与获得验证码的邮箱不符");
                   }
+                  // 如果验证不通过，Form会自动显示对应字段的错误提示，不需要额外Toast
                 },
               ),
             )

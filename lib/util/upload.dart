@@ -9,8 +9,6 @@ class UpLoad {
 
   // 上传图片
   static Future<int> upLoad(Uint8List fileData, String filename) async {
-
-
     FormData formData = FormData.fromMap({"file": MultipartFile.fromBytes(fileData, filename: filename)});
 
     try {

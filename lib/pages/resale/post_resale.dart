@@ -87,7 +87,7 @@ class _SendResalePageState extends State<SendResalePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('发布交易'),
+        title: const Text('二手交易'),
         actions: <Widget>[
           Consumer<UserModel>(builder: (BuildContext context, model, _) {
             return IconButton(
@@ -122,7 +122,7 @@ class _SendResalePageState extends State<SendResalePage> {
       padding: const EdgeInsets.all(10),
       child: Row(
         children: <Widget>[
-          const Text('交易类型:          ',style: TextStyle(fontSize: 16),),
+          const Text('类型:    ',style: TextStyle(fontSize: 16),),
           Expanded(
             child: _buildRadioTile('闲置', GoodsType.idle),
           ),

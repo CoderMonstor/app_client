@@ -188,7 +188,8 @@ class _PostActivityPageState extends State<PostActivityPage> {
             "details": _details,
           };
           result =await NetRequester.request('/activity/add',data: map);
-          if(result['code'=='1']){
+          print("走到这了");
+          if(result['code']=='1'){
             Toast.popToast('活动发布成功');
             Navigator.pop(context);
           }else{

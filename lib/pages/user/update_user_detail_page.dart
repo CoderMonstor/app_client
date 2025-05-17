@@ -54,7 +54,7 @@ class _UpdateUserDetailPageState extends State<UpdateUserDetailPage> {
                   width: 90,
                   child: CircleAvatar(
                     // backgroundImage: AssetImage('assets/images/head/head1.jpg'),
-                    backgroundImage: model.user.avatarUrl == null ?const AssetImage("assets/images/head/head1.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.avatarUrl}'),
+                    backgroundImage: model.user.avatarUrl == null||model.user.avatarUrl!.isEmpty ?const AssetImage("assets/images/head/head1.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.avatarUrl}'),
                   ),
                 ),
               ),
@@ -76,7 +76,7 @@ class _UpdateUserDetailPageState extends State<UpdateUserDetailPage> {
                       // borderRadius: BorderRadius.circular(ScreenUtil().setWidth(12)),
                       image: DecorationImage(
                         // image: AssetImage('assets/images/back.jpg'),
-                          image: model.user.backImgUrl == null ?const AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.backImgUrl}'),
+                          image: model.user.backImgUrl == null||model.user.backImgUrl!.isEmpty ?const AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${model.user.backImgUrl}'),
                           fit: BoxFit.cover
                       )
                   ),

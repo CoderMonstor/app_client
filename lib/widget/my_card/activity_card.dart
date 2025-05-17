@@ -2,6 +2,7 @@ import 'package:client/util/build_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/global.dart';
 import '../../core/model/activity.dart';
 import '../../core/net/net.dart';
 import '../../pages/activity/activity_detail_page.dart';
@@ -57,7 +58,6 @@ class _ActivityCardState extends State<ActivityCard> {
           ),
           child: Row(
             children: [
-              // 图片区域优化
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Stack(
@@ -89,7 +89,7 @@ class _ActivityCardState extends State<ActivityCard> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -109,7 +109,7 @@ class _ActivityCardState extends State<ActivityCard> {
                             child: Text(
                               active.activityName!,
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w600,  // 调整为半粗体
+                                fontWeight: FontWeight.w600,
                                 color: Colors.blue[800],
                                 height: 1.2,
                               ),
@@ -122,7 +122,7 @@ class _ActivityCardState extends State<ActivityCard> {
                         _buildInfoRow(Icons.calendar_today, buildActivityTime(active.activityTime!)),
                         const SizedBox(height: 8),
                         _buildInfoRow(Icons.location_on, active.location!),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 7),
                         _buildInfoRow(Icons.people, '已报名：${active.currentParticipants}/${active.maxParticipants}人'),
                       ]
                     )

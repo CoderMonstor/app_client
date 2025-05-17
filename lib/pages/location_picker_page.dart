@@ -352,24 +352,24 @@ class _MapChoosePageState extends State<MapChoosePage> {
       ),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "搜索地点...",
-                prefixIcon: const Icon(Icons.search),
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() => _isSearch = false);
-                  },
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: TextField(
+          //     controller: _searchController,
+          //     decoration: InputDecoration(
+          //       hintText: "搜索地点...",
+          //       prefixIcon: const Icon(Icons.search),
+          //       border: const OutlineInputBorder(),
+          //       suffixIcon: IconButton(
+          //         icon: const Icon(Icons.clear),
+          //         onPressed: () {
+          //           _searchController.clear();
+          //           setState(() => _isSearch = false);
+          //         },
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: _isSearch
                 ? _buildSuggestionList()

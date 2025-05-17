@@ -217,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       flexibleSpace: FlexibleDetailBar(
         background: FlexShadowBackground(
             child:Image(
-              image:_user.backImgUrl == null ?const AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${_user.backImgUrl}'),
+              image:_user.backImgUrl == null||_user.backImgUrl!.isEmpty ?const AssetImage("assets/images/back.jpg") :NetworkImage('${NetConfig.ip}/images/${_user.backImgUrl}'),
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,)),
@@ -236,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     height: 90,
                     width: 90,
                     child: CircleAvatar(
-                        backgroundImage:_user.avatarUrl == null ? const AssetImage("assets/images/head/head1.jpg") : NetworkImage('${NetConfig.ip}/images/${_user.avatarUrl}')
+                        backgroundImage:_user.avatarUrl == null ||_user.backImgUrl!.isEmpty? const AssetImage("assets/images/head/head1.jpg") : NetworkImage('${NetConfig.ip}/images/${_user.avatarUrl}')
                     )),
                 trailing: Row(
                   children: <Widget>[

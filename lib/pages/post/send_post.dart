@@ -44,7 +44,6 @@ class _SendPostPageState extends State<SendPostPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         _permissionUtil = PermissionUtil(context);
-        // 如果有异步初始化逻辑，可以在这里处理
       } catch (e) {
         print('初始化权限工具失败: $e');
       }
@@ -54,7 +53,7 @@ class _SendPostPageState extends State<SendPostPage> {
   void initState() {
     _maxImgNum = widget.type==1 ? 9:1;
     if(widget.text!='' && widget.text!= null){
-      _textController.text='//@${widget.post?.username} :${widget.text}';
+      _textController.text='@${widget.post?.username} :${widget.text}';
       _textController.selection = const TextSelection.collapsed(offset: 0);
     }
     _initializePermissionUtil();
@@ -247,7 +246,6 @@ class _SendPostPageState extends State<SendPostPage> {
         final String extension = fileName != null && fileName.contains('.')
             ? '.${fileName.split('.').last}' // 提取扩展名（如 ".JPG"）
             : '.jpg'; // 默认扩展名
-
         // 2. 生成唯一文件名
         final String timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
         final String filename = '${model.user.userId}_$timeStamp$extension';

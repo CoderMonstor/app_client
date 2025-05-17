@@ -61,9 +61,9 @@ class _ForgetPageState extends State<ForgetPage> {
                   icon: const Icon(Icons.security),
                   suffix: GestureDetector(
                     onTap: () async {
-                      if (_countdownTime == 0 &&
+                      if (_countdownTime == 30 &&
                           (_formKey.currentState as FormState).validate()) {
-                        startCountdownTimer(); //点击后开始倒计时
+                        startCountdownTimer();
                         Toast.popToast("验证码发送中，请稍等");
                         //请求发送验证码
                         email = _emailController.text;
@@ -105,7 +105,6 @@ class _ForgetPageState extends State<ForgetPage> {
                     pwd = _pwdController.text;
                     code = _codeController.text;
                     var result = await NetRequester.request(Apis.updatePassword(email, pwd, code));
-                    // 根据服务器返回结果进行提示
                     switch (result) {
                       case 1:
                         Toast.popToast("修改成功请前往登陆");

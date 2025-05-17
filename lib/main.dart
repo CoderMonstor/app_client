@@ -5,6 +5,8 @@ import 'package:client/pages/first_lunch.dart';
 import 'package:client/pages/root_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // 添加导入
+import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
+import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +32,11 @@ void main() async {
     // 设置状态栏样式为浅色，并应用到状态栏。
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    await BMFAndroidVersion.initAndroidVersion();
+    // 隐私合规（Flutter 侧）
+    BMFMapSDK.setAgreePrivacy(true);
+    // 设置坐标类型
+    BMFMapSDK.setCoordType(BMF_COORD_TYPE.BD09LL);
   }
   // 设置设备方向为竖屏
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);

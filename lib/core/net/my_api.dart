@@ -387,5 +387,9 @@ class Apis {
     int? userId = Global.profile.user?.userId;
     return '/activity/getActivitiesRegistered?userId=$userId&page=$pageIndex';
   }
+
+  static String cancelActivity(int? activityId) {
+    return '/activity/cancelActivity?activityId=$activityId';
+  }
   
 }
