@@ -2,7 +2,6 @@ import 'package:client/util/build_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/global.dart';
 import '../../core/model/activity.dart';
 import '../../core/net/net.dart';
 import '../../pages/activity/activity_detail_page.dart';
@@ -23,19 +22,48 @@ class _ActivityCardState extends State<ActivityCard> {
 
   late final int? currentUserId;
 
+  // (String text, Color color) get _statusInfo {
+  //   final now = DateTime.now();
+  //   final active = widget.activity;
+  //   // 报名状态判断（需确保活动未取消未结束）
+  //   if (active.isRegistered == 1) return ('已报名', Colors.green);
+  //   // 强制结束或超时结束判断
+  //   final isExpired =parseDateTime(active.activityTime)?.isBefore(now) ?? false;
+  //   if (active.status == 2 || isExpired) return ('已结束', Colors.grey);
+  //   // 时间状态判断
+  //   final isFuture = parseDateTime(active.activityTime)?.isAfter(now) ?? false;
+  //   return isFuture ? ('未开始', Colors.orange) : ('进行中', Colors.blue);
+  // }
   (String text, Color color) get _statusInfo {
     final now = DateTime.now();
     final active = widget.activity;
-    // 报名状态判断（需确保活动未取消未结束）
-    if (active.isRegistered == 1) return ('已报名', Colors.green);
-    // 强制结束或超时结束判断
-    final isExpired =parseDateTime(active.activityTime)?.isBefore(now) ?? false;
-    if (active.status == 2 || isExpired) return ('已结束', Colors.grey);
-    // 时间状态判断
-    final isFuture = parseDateTime(active.activityTime)?.isAfter(now) ?? false;
-    return isFuture ? ('未开始', Colors.orange) : ('进行中', Colors.blue);
-  }
 
+    // 1. 最高优先级：已取消
+    if (active.status == 0) return ('已取消', Colors.red);
+
+    // 2. 第二优先级：已报名
+    if (active.isRegistered == 1) return ('已报名', Colors.green);
+
+    // 3. 第三优先级：人数状态
+    final isFull = () {
+      final current = active.currentParticipants ?? 0;
+      final max = active.maxParticipants;
+
+      // 处理无限制或异常数据
+      if (max == null) return false;    // 无人数限制
+      if (max <= 0) return true;        // 异常数据视为满员
+      return current >= max;
+    }();
+    if (isFull) return ('已满员', Colors.purple);
+
+    // 4. 最后处理时间状态
+    final activityTime = parseDateTime(active.activityTime);
+    if (activityTime == null) return ('时间错误', Colors.grey); // 时间解析失败
+
+    return activityTime.isAfter(now)
+        ? ('可报名15', Colors.orange)
+        : ('已结束', Colors.blue);
+  }
   @override
   Widget build(BuildContext context) {
 

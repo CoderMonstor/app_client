@@ -161,45 +161,96 @@ class _SearchPageState extends State<SearchPage>  with TickerProviderStateMixin 
   }
 
 
-  _buildSearchHistory(){
+  // _buildSearchHistory(){
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(
+  //         horizontal: ScreenUtil().setWidth(42),
+  //         vertical: ScreenUtil().setHeight(40)),
+  //     child: ListView(
+  //       children: <Widget>[
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: <Widget>[
+  //             Text('搜索历史',style: TextStyle(fontSize: ScreenUtil().setSp(22))),
+  //             TextButton.icon(
+  //               onPressed: () {
+  //                 Global.profile.searchList?.clear();
+  //                 Global.saveProfile();
+  //                 setState(() {});
+  //               },
+  //               icon: Icon(Icons.delete, color: Colors.grey, size: ScreenUtil().setWidth(20)),
+  //               label: Text('清除', style: TextStyle(color: Colors.grey, fontSize: ScreenUtil().setSp(18))),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(height: ScreenUtil().setHeight(10)),
+  //             Global.profile.searchList!.isEmpty
+  //             ?Container()
+  //             :Wrap(
+  //           spacing: ScreenUtil().setWidth(20),
+  //           children: List<Widget>.generate(
+  //             Global.profile.searchList!.length,
+  //                 (int index) {
+  //               return _buildItem(index);
+  //             },
+  //           ).toList(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  Widget _buildSearchHistory() {
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: ScreenUtil().setWidth(42),
-          vertical: ScreenUtil().setHeight(40)),
+        horizontal: ScreenUtil().setWidth(42),
+        vertical: ScreenUtil().setHeight(40),
+      ),
       child: ListView(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('搜索历史',style: TextStyle(fontSize: ScreenUtil().setSp(22))),
+              Text(
+                '搜索历史',
+                style: TextStyle(fontSize: ScreenUtil().setSp(22)),
+              ),
               TextButton.icon(
                 onPressed: () {
+                  // 安全清除搜索记录
                   Global.profile.searchList?.clear();
                   Global.saveProfile();
                   setState(() {});
                 },
-                icon: Icon(Icons.delete, color: Colors.grey, size: ScreenUtil().setWidth(20)),
-                label: Text('清除', style: TextStyle(color: Colors.grey, fontSize: ScreenUtil().setSp(18))),
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.grey,
+                  size: ScreenUtil().setWidth(20),
+                ),
+                label: Text(
+                  '清除',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: ScreenUtil().setSp(18),
+                  ),
+                ),
               ),
             ],
           ),
           SizedBox(height: ScreenUtil().setHeight(10)),
-              Global.profile.searchList!.isEmpty
-              ?Container()
-              :Wrap(
+          // 关键修复：处理空值情况
+          (Global.profile.searchList?.isEmpty ?? true)
+              ? const SizedBox.shrink()
+              : Wrap(
             spacing: ScreenUtil().setWidth(20),
             children: List<Widget>.generate(
-              Global.profile.searchList!.length,
-                  (int index) {
-                return _buildItem(index);
-              },
-            ).toList(),
+              Global.profile.searchList!.length, // 这里可以安全使用!因为前面已经判空
+                  (int index) => _buildItem(index),
+            ),
           ),
         ],
       ),
     );
   }
-
   _buildItem(int index) {
     String? content = Global.profile.searchList?[index];
     return ActionChip(

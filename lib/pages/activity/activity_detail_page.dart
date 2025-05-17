@@ -217,19 +217,79 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     FocusScope.of(context).requestFocus(_focusNode);
   }
 
+  // List<Widget> _headerSliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
+  //   return [
+  //     SliverAppBar(
+  //       pinned: true,
+  //       title: const Text('活动详情'),
+  //       // actions: [
+  //       //   // 条件判断：当前用户是活动主持人时显示操作按钮
+  //       //   if (_activity != null && Global.profile.user?.userId == _activity!.hostUserId)
+  //       //     TextButton(
+  //       //       onPressed: (){
+  //       //         _showCancelConfirmDialog(context);
+  //       //       },
+  //       //       child: const Icon(Icons.more_horiz),
+  //       //     ),
+  //       // ],
+  //         // 修改 SliverAppBar 的 actions 部分
+  //         actions: [
+  //           if (_activity != null && Global.profile.user?.userId == _activity!.hostUserId)
+  //             PopupMenuButton<String>(
+  //               icon: const Icon(Icons.more_horiz),
+  //               onSelected: (value) {
+  //                 if (value == 'cancel') {
+  //                   _showCancelConfirmDialog(context);
+  //                 }
+  //               },
+  //               itemBuilder: (BuildContext context) => [
+  //                 PopupMenuItem<String>(
+  //                   value: 'cancel',
+  //                   child: Row(
+  //                     children: [
+  //                       Icon(Icons.cancel, color: Colors.red, size: 20.w),
+  //                       SizedBox(width: 8.w),
+  //                       Text('取消活动', style: TextStyle(fontSize: 14.w)),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //         ]
+  //     ),
+  //     if (_activity != null) _activityInfo(),
+  //   ];
+  // }
   List<Widget> _headerSliverBuilder(BuildContext context, bool innerBoxIsScrolled) {
     return [
       SliverAppBar(
         pinned: true,
         title: const Text('活动详情'),
         actions: [
-          // 条件判断：当前用户是活动主持人时显示操作按钮
           if (_activity != null && Global.profile.user?.userId == _activity!.hostUserId)
-            TextButton(
-              onPressed: (){
-                _showCancelConfirmDialog(context);
-              },
-              child: const Icon(Icons.more_horiz),
+            Padding(
+              padding: EdgeInsets.only(right: 12.w), // 增加右侧边距防止贴边
+              child: PopupMenuButton<String>(
+                icon: const Icon(Icons.more_horiz),
+                offset: Offset(0, 40.w), // 控制下拉菜单垂直偏移
+                onSelected: (value) {
+                  if (value == 'cancel') {
+                    _showCancelConfirmDialog(context);
+                  }
+                },
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem<String>(
+                    value: 'cancel',
+                    child: Row(
+                      children: [
+                        Icon(Icons.cancel, color: Colors.red, size: 20.w),
+                        SizedBox(width: 8.w),
+                        Text('取消活动', style: TextStyle(fontSize: 14.w)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
         ],
       ),
@@ -260,56 +320,155 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
               _buildDetailRow('开始时间', buildActivityTime(_activity!.activityTime!)),
               _buildDetailRow('活动地点', _activity!.location),
               _buildDetailRow('报名人数', '${_activity?.currentParticipants}/${_activity?.maxParticipants}'),
-              TextButton(
-                onPressed: () async {
-                  // 新增组织者判断
-                  if (Global.profile.user?.userId == _activity!.hostUserId) {
-                    Toast.popToast('你是活动组织者');
-                    return;
-                  }
-                  if (_activity!.isRegistered == 1) {
-                    // 取消报名逻辑保持不变
-                    var res = await NetRequester.request(Apis.cancelRegister(_activity!.activityId!));
-                    if (res['code'] == '1') {
-                      Toast.popToast('取消报名成功');
-                      setState(() {
-                        _activity!
-                          ..currentParticipants = _activity!.currentParticipants! - 1
-                          ..isRegistered = 0;
-                      });
-                    } else {
-                      Toast.popToast('取消报名失败');
-                    }
-                  } else {
-                    // 报名逻辑保持不变
-                    if (_activity!.currentParticipants! < _activity!.maxParticipants!) {
-                      var res = await NetRequester.request(Apis.registerActivity(_activity!.activityId!));
-                      if (res['code'] == '1') {
-                        Toast.popToast('报名成功');
-                        setState(() {
-                          _activity!
-                            ..currentParticipants = _activity!.currentParticipants! + 1
-                            ..isRegistered = 1;
-                        });
-                      } else {
-                        Toast.popToast('报名失败');
-                      }
-                    } else {
-                      Toast.popToast('报名人数已满');
-                    }
-                  }
-                },
-                child: Center(
-                  child: Text(_activity!.isRegistered == 1 ? '取消报名' : '我要报名'),
-                ),
-              )
+              // TextButton(
+              //   onPressed: () async {
+              //     // 新增组织者判断
+              //     if (Global.profile.user?.userId == _activity!.hostUserId) {
+              //       Toast.popToast('你是活动组织者');
+              //       return;
+              //     }
+              //     if (_activity!.isRegistered == 1) {
+              //       // 取消报名逻辑保持不变
+              //       var res = await NetRequester.request(Apis.cancelRegister(_activity!.activityId!));
+              //       if (res['code'] == '1') {
+              //         Toast.popToast('取消报名成功');
+              //         setState(() {
+              //           _activity!
+              //             ..currentParticipants = _activity!.currentParticipants! - 1
+              //             ..isRegistered = 0;
+              //         });
+              //       } else {
+              //         Toast.popToast('取消报名失败');
+              //       }
+              //     } else {
+              //       // 报名逻辑保持不变
+              //       if (_activity!.currentParticipants! < _activity!.maxParticipants!) {
+              //         var res = await NetRequester.request(Apis.registerActivity(_activity!.activityId!));
+              //         if (res['code'] == '1') {
+              //           Toast.popToast('报名成功');
+              //           setState(() {
+              //             _activity!
+              //               ..currentParticipants = _activity!.currentParticipants! + 1
+              //               ..isRegistered = 1;
+              //           });
+              //         } else {
+              //           Toast.popToast('报名失败');
+              //         }
+              //       } else {
+              //         Toast.popToast('报名人数已满');
+              //       }
+              //     }
+              //   },
+              //   child: Center(
+              //     child: Text(_activity!.isRegistered == 1 ? '取消报名' : '我要报名'),
+              //   ),
+              // )
+              _buildRegistrationButton(), // 这里替换
             ],
           ),
         ),
       ),
     );
   }
+  Widget _buildRegistrationButton() {
+    // 空值安全判断
+    if (_activity == null) return const SizedBox.shrink();
 
+    final isHost = Global.profile.user?.userId == _activity!.hostUserId;
+    final isFull = _activity!.currentParticipants! >= _activity!.maxParticipants!;
+
+    // 直接使用 activity.status 判断状态
+    if (_activity!.status == 0) { // 假设 status=2 表示已取消
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 10.w),
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(8.w),
+        ),
+        child: Center(
+          child: Text(
+              '活动已取消',
+              style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 16.w,
+                  fontWeight: FontWeight.w500)),
+        ),
+      );
+    }
+
+    // 正常状态按钮
+    return TextButton(
+      onPressed: () => _handleRegistration(),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(
+            _activity!.isRegistered == 1 ? Colors.grey[300] : Theme.of(context).primaryColor),
+        minimumSize: MaterialStateProperty.all(Size(double.infinity, 44.w)),
+      ),
+      child: Text(
+          _activity!.isRegistered == 1 ? '取消报名' : '我要报名',
+          style: TextStyle(
+              color: _activity!.isRegistered == 1 ? Colors.grey[600] : Colors.white,
+              fontSize: 16.w)),
+    );
+  }
+
+// 取消活动的方法需要更新状态字段
+  void cancelActivity() async {
+    var res = await NetRequester.request(Apis.cancelActivity(widget.activityId));
+    if(res['code']=='1'){
+      Toast.popToast('取消活动成功');
+      setState(() {
+        // 直接更新活动状态
+        _activity!.status = 0; // 假设 2 表示已取消
+      });
+    }else{
+      Toast.popToast('取消活动失败');
+    }
+  }
+// 在 class 中添加方法：
+  void _handleRegistration() async {
+    if (_activity == null) return;
+
+    // 组织者判断
+    if (Global.profile.user?.userId == _activity!.hostUserId) {
+      Toast.popToast('你是活动组织者');
+      return;
+    }
+
+    try {
+      if (_activity!.isRegistered == 1) {
+        // 取消报名逻辑
+        var res = await NetRequester.request(Apis.cancelRegister(_activity!.activityId!));
+        if (res['code'] == '1') {
+          setState(() {
+            _activity!
+              ..currentParticipants = _activity!.currentParticipants! - 1
+              ..isRegistered = 0;
+          });
+          Toast.popToast('取消报名成功');
+        }
+      } else {
+        // 报名逻辑
+        if (_activity!.currentParticipants! >= _activity!.maxParticipants!) {
+          Toast.popToast('报名人数已满');
+          return;
+        }
+        var res = await NetRequester.request(Apis.registerActivity(_activity!.activityId!));
+        if (res['code'] == '1') {
+          setState(() {
+            _activity!
+              ..currentParticipants = _activity!.currentParticipants! + 1
+              ..isRegistered = 1;
+          });
+          Toast.popToast('报名成功');
+        }
+      }
+    } catch (e) {
+      print('报名操作异常: $e');
+      Toast.popToast('操作失败，请重试');
+    }
+  }
   Widget _buildDetailRow(String label, String? value) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.w),
@@ -456,36 +615,72 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     }
   }
 
-  cancelActivity() async{
-      var res = await NetRequester.request(Apis.cancelActivity(widget.activityId));
-      if(res['code']=='1'){
-        Toast.popToast('取消活动成功');
-        Navigator.pop(context);
-      }else{
-        Toast.popToast('取消活动失败');
-      }
-  }
+  // cancelActivity() async{
+  //     var res = await NetRequester.request(Apis.cancelActivity(widget.activityId));
+  //     if(res['code']=='1'){
+  //       Toast.popToast('取消活动成功');
+  //       Navigator.pop(context);
+  //     }else{
+  //       Toast.popToast('取消活动失败');
+  //     }
+  // }
+  // void _showCancelConfirmDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('确认取消活动'),
+  //       content: const Text('确定要取消当前活动吗？此操作不可恢复'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('再想想'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.pop(context); // 关闭对话框
+  //             cancelActivity();      // 执行取消逻辑
+  //           },
+  //           style: TextButton.styleFrom(
+  //             foregroundColor: Colors.red, // 强调危险操作
+  //           ),
+  //           child: const Text('确认取消'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   void _showCancelConfirmDialog(BuildContext context) {
+    final isCanceled = _activity?.status == 0;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('确认取消活动'),
-        content: const Text('确定要取消当前活动吗？此操作不可恢复'),
+        title: Text(isCanceled ? '活动已取消' : '确认取消活动'),
+        content: Text(isCanceled
+            ? '该活动已处于取消状态'
+            : '确定要取消当前活动吗？此操作不可恢复'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('再想想'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // 关闭对话框
-              cancelActivity();      // 执行取消逻辑
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red, // 强调危险操作
+          if (!isCanceled) ...[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('再想想'),
             ),
-            child: const Text('确认取消'),
-          ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                cancelActivity();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('确认取消'),
+            ),
+          ] else ...[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('知道了'),
+            ),
+          ]
         ],
       ),
     );
